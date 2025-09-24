@@ -1,0 +1,334 @@
+{%- comment -%}
+  renders product card
+  usage
+    {%- render 'product-column-card', product: product, prefix_class: section_prefix_class -%}
+{%- endcomment -%}
+{%- liquid
+  capture money_price
+    if settings.show_currency_code
+      echo 1999 | money_with_currency
+      else
+        echo 1999 | money
+    endif
+  endcapture
+
+  capture product_clean_url
+    if product.url contains '?'
+      assign parts = product.url | split: '?'
+      echo parts[0]
+      else
+        echo product.url
+    endif
+  endcapture
+-%}
+<article class="product-column-card {{ prefix_class }}_product-column-card {% if section.settings.enable_border %}enable-border{% endif %}">
+  <div class="product-column-card_top-wrap --align-{{ section.settings.card_text_alignment }} {% unless section.settings.show_discount %}space-remove{% endunless %}">
+    <div class="product-column-card_media-wrapper">
+      <div class="product-column-card_media">
+        <a class="--media-size-{{ section.settings.section_media_size }} --featured-image --placeholder-image" data-media-id="null" style="--media-ratio: 1;">
+          {{- 'product-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+          <span class="visually-hidden">
+            {{ 'product.title' | t }}
+          </span>
+        </a>
+      </div>
+      {%- if section.settings.btn_overlay -%}
+        {%- liquid
+          assign selected_layout = section.settings.bt_btns_layout
+          assign selected_gallery = section.settings.thumbnails_layout
+          assign check_against_inventory = true
+          if product.selected_or_first_available_variant.inventory_management != 'shopify' or  product.selected_or_first_available_variant.inventory_policy == 'continue'
+            assign check_against_inventory = false
+          endif
+          if product.selected_or_first_available_variant.quantity_rule.min > product.selected_or_first_available_variant.inventory_quantity and check_against_inventory
+            assign quantity_rule_soldout = true
+          endif
+          capture atc_button_label
+            if product.selected_or_first_available_variant.available == false or quantity_rule_soldout
+              echo 'product.atc_buttons.sold_out' | t
+              else
+                echo 'product.atc_buttons.label' | t
+            endif
+          endcapture
+        -%}
+        {%- unless selected_layout == 'none' -%}
+          <div class="product-column-card_btns-overlay">
+            <div class="product-column-card_btns">
+              {%- case selected_layout -%}
+                {%- when 'enable_atc_guick_view' -%}
+                  <a aria-disabled="true" class="btn-icn-ixi product-column-card_qv-btn">
+                      <span class="btn-icn-ixi_wrapper">
+                        {%- render 'icons-data', width: 42, height: 42, use_icon: true, icon_reference: 'eye' -%}
+                        <span class="visually-hidden">
+                          {{- 'product.atc_buttons.quick_view' | t -}}
+                        </span>
+                      </span>
+                    </a>
+                {%- when 'enable_atc' -%}
+                  <a aria-disabled="true"
+                    class="button button--primary product-column-card_atc-btn"
+                  >
+                    {{- atc_button_label -}}
+                  </a>
+                {%- when 'enable_quick_view' -%}
+                  <a aria-disabled="true" class="button button--primary product-column-card_btn--full">
+                      {{- 'product.atc_buttons.quick_view' | t -}}
+                    </a>
+                {%- else -%}
+                  <a aria-disabled="true" class="button button--primary product-column-card_btn--details product-column-card_btn--full">
+                    {{- 'product_column_card.view_details_label' | t -}}
+                  </a>
+              {%- endcase -%}
+            </div>
+          </div>
+        {%- endunless -%}
+      {%- endif -%}
+      {%- if section.settings.show_stock  -%}
+        <strong class="product-column-card_bage" {% if section.settings.thumbnails_layout == 'variant_gallery' and enable_thumbnails == 'true' %}data-render-stock=""{% endif %}>
+          {%- render 'product-stock', product: product -%}
+        </strong>
+      {%- endif -%}
+      {%- if section.settings.show_compare and settings.enable_compare -%}
+        <compare-togller-button
+          data-handle="{{- product.handle -}}"
+        >
+          <a aria-disabled="true" class="compare-toggler btn-icn-ixi" data-tooltip="{{- 'product_column_card.compare_label' | t -}}">
+            <span class="btn-icn-ixi_wrapper">
+              <span class="visually-hidden">
+                {{- 'product_column_card.add_to_compare' | t: product_title: product.title -}}
+              </span>
+              {%- render 'icons-data', width: 14, height: 14, use_icon: true, icon_reference: 'compare' -%}
+            </span>
+          </a>
+        </compare-togller-button>
+      {%- endif -%}
+      {%- if section.settings.show_stock  -%}
+        <strong class="product-column-card_bage" {% if section.settings.thumbnails_layout == 'variant_gallery' and enable_thumbnails == 'true' %}data-render-stock=""{% endif %}>
+          {%- render 'product-stock', product: product -%}
+        </strong>
+      {%- endif -%}
+      {%- if section.settings.show_compare and settings.enable_compare -%}
+        <compare-togller-button
+          data-handle="{{- product.handle -}}"
+        >
+          <a aria-disabled="true" class="compare-toggler btn-icn-ixi" data-tooltip="{{- 'product_column_card.compare_label' | t -}}">
+            <span class="btn-icn-ixi_wrapper">
+              <span class="visually-hidden">
+                {{- 'product_column_card.add_to_compare' | t: product_title: product.title -}}
+              </span>
+              {%- render 'icons-data', width: 14, height: 14, use_icon: true, icon_reference: 'compare' -%}
+            </span>
+          </a>
+        </compare-togller-button>
+      {%- endif -%}
+    </div>
+    {%- unless selected_gallery == 'none' -%}
+      {%- if section.settings.variants_position -%}
+        <div class="product-column-card_scroll-wrap">
+          <fieldset class="product-column-card_fieldset-list">
+            <ul class="list-unstyled product-column-card_image-list">
+              {%- if section.settings.show_availables_only -%}
+                <li class="product-column-card_image-item">
+                  <label class="product-column-card-placeholder_image-btn">
+                    {{- 'product-apparel-2' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                  </label>
+                </li>
+                <li class="product-column-card_image-item">
+                  <label class="product-column-card-placeholder_image-btn">
+                    {{- 'product-apparel-3' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                  </label>
+                </li>
+                <li class="product-column-card_image-item">
+                  <label class="product-column-card-placeholder_image-btn">
+                    {{- 'product-apparel-4' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                  </label>
+                </li>
+              {%- endif -%}
+            </ul>
+          </fieldset>
+        </div>
+      {%- endif -%}
+    {%- endunless -%}
+    {%- if section.settings.title_top -%}
+      <h2 class="product-column-card_heading text-size--large mty">
+        <a class="product-column-card_link --hover-underline">
+          {{- 'product.title' | t -}}
+        </a>
+      </h2>
+    {%- endif -%}
+    <header class="product-column-card_stats-bar">
+      {%- if section.settings.show_vendor -%}
+        <strong role="heading" aria-level="2" class="product-column-card_text product-column-card_text--vendor --word-break">
+          {{ 'product.vendor' | t }}
+        </strong>
+      {%- endif -%}
+      {%- if section.settings.show_discount or section.settings.show_rating -%}
+        <div class="product-column-card_others {% unless section.settings.show_vendor %}other--full{% endunless %}">
+          {%- if section.settings.show_discount -%}
+            <div class="product-column-card_saving-badge" data-render-sale-badge="">
+              {%- render 'product-saving-badge', product: product, use_variant: true -%}
+            </div>
+          {%- endif -%}
+          {%- liquid
+            if section.settings.show_rating
+              render 'product-rating', product: product
+            endif
+          -%}
+        </div>
+      {%- endif -%}
+    </header>
+    {% unless section.settings.title_top %}
+      <h2 class="product-column-card_heading text-size--large mty">
+        <a class="product-column-card_link --hover-underline">
+          {{ 'product.title' | t }}
+        </a>
+      </h2>
+    {% endunless %}
+    <h4 class="mty product-featured-card_price text-size--small">
+      {{- 'product.price' | t }}: {{ money_price -}}
+    </h4>
+  </div>
+  {%- liquid
+    assign selected_layout = section.settings.bt_btns_layout
+    assign selected_gallery = section.settings.thumbnails_layout
+    assign check_against_inventory = true
+    if product.selected_or_first_available_variant.inventory_management != 'shopify' or  product.selected_or_first_available_variant.inventory_policy == 'continue'
+      assign check_against_inventory = false
+    endif
+    if product.selected_or_first_available_variant.quantity_rule.min > product.selected_or_first_available_variant.inventory_quantity and check_against_inventory
+      assign quantity_rule_soldout = true
+    endif
+    capture atc_button_label
+      if product.selected_or_first_available_variant.available == false or quantity_rule_soldout
+        echo 'product.atc_buttons.sold_out' | t
+        else
+          echo 'product.atc_buttons.label' | t
+      endif
+    endcapture
+  -%}
+  {%- if selected_layout != 'none'-%}
+    <div class="product-column-card_bottom-wrap">
+      {%- unless selected_gallery == 'none' -%}
+        {%- unless section.settings.variants_position -%}
+          <div class="product-column-card_scroll-wrap">
+            <fieldset class="product-column-card_fieldset-list">
+              <ul class="list-unstyled product-column-card_image-list">
+                {%- if section.settings.show_availables_only -%}
+                  <li class="product-column-card_image-item">
+                    <label class="product-column-card-placeholder_image-btn">
+                      {{- 'product-apparel-2' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                    </label>
+                  </li>
+                  <li class="product-column-card_image-item">
+                    <label class="product-column-card-placeholder_image-btn">
+                      {{- 'product-apparel-3' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                    </label>
+                  </li>
+                  <li class="product-column-card_image-item">
+                    <label class="product-column-card-placeholder_image-btn">
+                      {{- 'product-apparel-4' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                    </label>
+                  </li>
+                {%- endif -%}
+              </ul>
+            </fieldset>
+          </div>
+        {%- endunless -%}
+      {%- endunless -%}
+      {% unless section.settings.btn_overlay %}
+        {%- unless selected_layout == 'none' -%}
+          <div class="product-column-card_btns">
+            {%- case selected_layout -%}
+              {%- when 'enable_atc_guick_view' -%}
+                    <a aria-disabled="true"
+                      class="button button--primary product-column-card_atc-btn"
+                    >
+                      {{- atc_button_label -}}
+                    </a>
+                  <a aria-disabled="true"
+                    class="btn-icn-ixi product-column-card_qv-btn"
+                  >
+                    <span class="btn-icn-ixi_wrapper">
+                      {%- render 'icons-data', width: 42, height: 42, use_icon: true, icon_reference: 'eye' -%}
+                      <span class="visually-hidden">
+                        {{- 'product.atc_buttons.quick_view' | t -}}
+                      </span>
+                    </span>
+                  </a>
+              {%- when 'enable_atc' -%}
+                  <a aria-disabled="true"
+                    class="button button--primary product-column-card_atc-btn"
+                  >
+                    {{- atc_button_label -}}
+                  </a>
+              {%- when 'enable_quick_view' -%}
+                  <a aria-disabled="true" class="button button--primary product-column-card_btn--full">
+                    {{- 'product.atc_buttons.quick_view' | t -}}
+                  </a>
+              {%- else -%}
+                <a aria-disabled="true" class="button button--primary product-column-card_btn--details product-column-card_btn--full">
+                  {{- 'product_column_card.view_details_label' | t -}}
+                </a>
+            {%- endcase -%}
+          </div>
+        {%- endunless -%}
+      {% endunless %}
+    </div>
+  {%- endif -%}
+  {%- unless selected_gallery == 'none' -%}
+    {%- if selected_gallery == 'variant_gallery' -%}
+      {%- unless product.has_only_default_variant -%}
+        <template id="{{ section.id }}-product-column-{{ product.id }}">
+          {%- if first_image != blank -%}
+            <a href="{{- product_clean_url -}}" class="--media-size-{{ section.settings.section_media_size }} --template-image" style="--media-ratio: {{ first_media_size }};" data-media-id="{{ section.id }}-{{ product.id }}-{{- first_image.id -}}">
+              {{- first_image.preview_image | image_url: width: 969 | image_tag: alt: product.title, class: 'object-fit object-fit--absolute', loading: loading, widths: '646, 969', sizes: '(max-width: 767px) 646vw, 969vw' -}}
+            </a>
+          {%- endif -%}
+          {%- for variant in product.variants -%}
+            {%- liquid
+              capture image_alt
+                echo variant.title | prepend: product.title 
+              endcapture
+
+              capture variant_media_size
+              if section.settings.section_media_size == 'adapt'
+                  echo variant.featured_image.aspect_ratio | default: '1'
+              else 
+                 echo '1'
+              endif
+            endcapture
+            -%}
+            <a href="{{- product_clean_url -}}" class="--media-size-{{ section.settings.section_media_size }} --template-image" style="--media-ratio: {{ variant_media_size }};"  data-media-id="{{ section.id }}-{{ product.id }}-{{ variant.featured_media.id }}">
+              {%- unless variant.featured_image == blank -%}
+                {{- variant.featured_image.src | image_url: width: 969 | image_tag: alt: image_alt, class: 'object-fit object-fit--absolute', loading: loading, widths: '646, 969', sizes: '(max-width: 767px) 646vw, 969vw' -}}
+                {%- else -%}
+                  {{- 'image' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                  <span class="visually-hidden">
+                    {{- image_alt -}}
+                  </span>
+              {%- endunless -%}
+            </a>
+          {%- endfor -%}
+        </template>
+      {%- endunless -%}
+      {%- else -%}
+        <template id="{{ section.id }}-product-column-{{ product.id }}">
+          {%- if first_image != blank -%}
+            <a href="{{- product_clean_url -}}" class="--media-size-{{ section.settings.section_media_size }} --template-image" style="--media-ratio: {{ first_media_size }};" data-media-id="{{ section.id }}-{{ product.id }}-{{- first_image.id -}}">
+              {{- first_image.preview_image | image_url: width: 969 | image_tag: alt: product.title, class: 'object-fit object-fit--absolute', loading: loading, widths: '646, 969', sizes: '(max-width: 767px) 646vw, 969vw' -}}
+            </a>
+          {%- endif -%}
+          {%- for media in product.media -%}
+            {%- if media.id != first_image.id -%}
+              <a href="{{- product_clean_url -}}" class="--media-size-{{ section.settings.section_media_size }} --template-image" style="--media-ratio: {{ card_media_size }};"  data-media-id="{{ section.id }}-{{ product.id }}-{{- media.id -}}">
+                {{- media.preview_image | image_url: width: 969 | image_tag: alt: product.title, class: 'object-fit object-fit--absolute', loading: loading, widths: '646, 969', sizes: '(max-width: 767px) 646vw, 969vw' -}}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </template>
+    {%- endif -%}
+  {%- endunless -%}
+  <script id="{{- productJsonId -}}" type="application/json">
+    {{- product | json -}}
+  </script>
+</article>

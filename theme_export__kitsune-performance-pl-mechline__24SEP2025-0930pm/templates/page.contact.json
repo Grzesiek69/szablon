@@ -1,0 +1,66 @@
+{
+  "sections": {
+    "main_page": {
+      "type": "main-page",
+      "settings": {
+        "section_heading_size": "heading_x_large",
+        "show_breadcrumb": true,
+        "show_top_bdr": false,
+        "show_bottom_bdr": true,
+        "breadcrumb_color_scheme": "scheme2",
+        "section_text_alignment": "center",
+        "section_mobile_text_alignment": "center",
+        "section_color_scheme": "scheme1",
+        "section_top_padding": 50,
+        "section_bottom_padding": 32
+      }
+    },
+    "contact_form": {
+      "type": "contact-form",
+      "blocks": {
+        "info_box": {
+          "type": "information_box",
+          "settings": {
+            "heading": "Need Further Assistance?",
+            "block_heading_size": "heading_small",
+            "description": "<p>Our customer support is available Monday to Friday: 11am-7pm.</p><p>We can help answer any questions about our products, shipping, or anything else on your mind!</p><p><strong>Call:</strong>  (800) 555-6688</p><p><strong>Visit:</strong>  789 Mechline Drive, Houston, TX 77001</p>",
+            "block_text_size": "large",
+            "block_color_scheme": ""
+          }
+        },
+        "social_box": {
+          "type": "social_box",
+          "settings": {
+            "bg_image": "",
+            "image": "",
+            "heading": "@Mechline",
+            "block_heading_size": "heading_small",
+            "subheading": "1.3k followers",
+            "description": "Our Inspiration: Capturing Life's Moments",
+            "link_url": "",
+            "open_new_window": false,
+            "block_text_size": "large",
+            "block_color_scheme": ""
+          }
+        }
+      },
+      "block_order": [
+        "info_box",
+        "social_box"
+      ],
+      "settings": {
+        "heading": "Contact Our Team",
+        "section_heading_size": "heading_medium",
+        "section_description": "We’re happy to help with any inquiries or feedback.",
+        "section_text_size": "large",
+        "section_color_scheme": "",
+        "section_top_padding": 20,
+        "section_bottom_padding": 70
+      }
+    }
+  },
+  "order": [
+    "main_page",
+    "contact_form"
+  ]
+}

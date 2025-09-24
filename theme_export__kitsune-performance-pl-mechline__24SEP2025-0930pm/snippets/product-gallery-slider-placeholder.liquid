@@ -1,0 +1,83 @@
+{%- comment -%}
+  renders product gallery slider
+  usage
+    {%- render 'product-gallery-slider-placeholder', media_size: section.settings.section_media_size -%}
+{%- endcomment -%}
+<splide-slider
+  data-type='slide'
+  data-gap='10px'
+  data-arrows="{{- section.settings.show_navigation -}}"
+  data-pagination="false"
+  data-autoplay='false'
+  data-interval="{{- section.settings.change_slides_every | times: 1000 -}}"
+  data-per-move='1'
+  data-drag='true'
+  data-diable-go-to="true"
+  data-fixed-height="59px"
+  data-fixed-width="59px"
+  data-is-navigation="true"
+  data-breakpoints='{"responsive":{"992":{"fixedWidth": "89px", "fixedHeight": "89px"}}}'
+>
+  <div class="splide main-thumb-slider">
+    <div class="splide__track">
+      <div class="splide__list">
+        {%- for img in (1..3) -%}
+          {%- liquid
+            capture placeholder_image
+              if forloop.index > 4
+                echo 'product-apparel-1'
+                else
+                  echo 'product-apparel-' | append: forloop.index
+              endif
+            endcapture
+          -%}
+          <div class="splide__slide">
+            <div class="product-gallery-thumbnail --media-size-{{ media_size }}" style="--media-ratio: 1;">
+              {{- placeholder_image | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+  <div class="splide switcher-thumb-slider">
+    <div class="splide__track">
+      <div class="splide__list">
+        {%- for img in (1..3) -%}
+          {%- liquid
+            capture placeholder_image
+              if forloop.index > 4
+                echo 'product-apparel-1'
+                else
+                  echo 'product-apparel-' | append: forloop.index
+              endif
+            endcapture
+          -%}
+          <div class="splide__slide">
+            <div class="product-switcher-thumbnail-holder">
+              <div class="product-switcher-thumbnail">
+                {{- placeholder_image | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- if section.settings.show_navigation -%}
+      <div class="splide-controls --justify-between">
+        <button class="splide__arrow splide__arrow--prev btn-icn-ixi">
+          <span class="btn-icn-ixi_wrapper">
+            <span class="visually-hidden">{{- 'accessibility.slider.previous' | t -}}</span>
+            {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'left-arrow' -%}
+          </span>
+        </button>
+        <button class="splide__arrow splide__arrow--next btn-icn-ixi">
+          <span class="btn-icn-ixi_wrapper">
+            <span class="visually-hidden">{{- 'accessibility.slider.next' | t -}}</span>
+            {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'right-arrow' -%}
+          </span>
+        </button>
+      </div>
+    {%- endif -%}
+  </div>
+</splide-slider>

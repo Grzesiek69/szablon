@@ -1,0 +1,366 @@
+{%- comment -%}
+  ------------------------------------------------------------------------------
+  Snippet: Header mobile menu list
+  Render header mobile menu  list
+  - menu: menu object;
+  - blocks: transfer block object;
+  - menu_id: menu id;
+  - type: type (burger-menu).
+  - menu_highlighted_link_name: menu highlighted link name.
+
+  Usage:
+  {%- render 'header-mobile-menu-list' -%}
+  ------------------------------------------------------------------------------
+{%- endcomment -%}
+
+<ul class="header-mobile__menu-list">
+  {%- for first_level_link in menu.links -%}
+    {%- assign has_megamenu = false -%}
+    {%- assign megamenu_object = '' -%}
+    {%- assign item_class_highlighted = '' -%}
+
+    {%- if first_level_link.title == menu_highlighted_link_name -%}
+      {%- assign item_class_highlighted = 'header-mobile__menu-item--highlighted' -%}
+    {%- endif -%}
+
+    {%- for block in blocks -%}
+      {%- if type == 'burger-menu' -%}
+        {%- if block.type == 'megamenu-brands' -%}
+          {%- assign menu_handle = block.settings.burger_menu_handle | handleize -%}
+
+          {%- if first_level_link.handle == menu_handle -%}
+            {%- if first_level_link.links != blank -%}
+              {%- assign has_megamenu = true -%}
+              {%- assign megamenu_object = block -%}
+
+              {%- break -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- else -%}
+        {%- if block.type != 'megamenu-brands-logo' -%}
+          {%- assign menu_handle = block.settings.menu_handle | handleize -%}
+
+          {%- if first_level_link.handle == menu_handle -%}
+            {% if block.type == 'megamenu' or block.type == 'megamenu-row-menus' %}
+              {%- if first_level_link.links != blank -%}
+                {%- assign has_megamenu = true -%}
+                {%- assign megamenu_object = block -%}
+
+                {%- break -%}
+              {%- endif -%}
+            {%- else -%}
+              {%- assign has_megamenu = true -%}
+              {%- assign megamenu_object = block -%}
+
+              {%- break -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    <li>
+      {%- if first_level_link.links != blank or has_megamenu == true -%}
+        <button
+          class="header-mobile__menu-item js-mobile-header-menu-toggler {{ item_class_highlighted -}}"
+          type="button"
+          data-target="headerMobileMenu:{{- menu_id -}}-{{- menu.handle -}}-{{ forloop.index }}-{{- first_level_link.title | handleize -}}"
+          aria-controls="headerMobileMenu:{{- menu_id -}}-{{- menu.handle -}}-{{ forloop.index }}-{{- first_level_link.title | handleize -}}"
+          aria-expanded="false"
+        >
+          {% assign item_icon = first_level_link.object.metafields.custom.menu_icon %}
+
+          {%- if item_icon != blank -%}
+            <span class="header-mobile__menu-item-icon-wrapper">
+              <picture>
+                <img
+                  class="header-mobile__menu-item-icon"
+                  src="{{ item_icon | image_url: width: 32, height: 32 }}"
+                  srcset="{{ item_icon | image_url: width: 32, height: 32 }} 1x, {{ item_icon | image_url: width: 64, height: 64 }} 2x"
+                  alt="{{- item_icon.alt -}}"
+                >
+              </picture>
+            </span>
+          {%- endif -%}
+
+          <span class="header-mobile__menu-item-text">
+            {{- first_level_link.title | escape -}}
+          </span>
+
+          {% assign badge_text = megamenu_object.settings.badge_text %}
+          {% assign badge_text_color = megamenu_object.settings.badge_text_color %}
+          {% assign badge_background_color = megamenu_object.settings.badge_background_color %}
+
+          {%- if badge_text != blank -%}
+            <span
+              class="header-mobile__menu-item-badge"
+              style="--header-background: {{ header_bg -}}; --badge-text-color: {{ badge_text_color }}; --badge-background-color: {{ badge_background_color }};"
+            >
+              {{- badge_text -}}
+            </span>
+          {%- endif -%}
+
+          <span class="header-mobile__menu-item-toggle-icon">
+            {%- render 'icons', icon: 'arrow-down' -%}
+          </span>
+        </button>
+
+        <div
+          id="headerMobileMenu:{{- menu_id -}}-{{- menu.handle -}}-{{ forloop.index }}-{{- first_level_link.title | handleize -}}"
+          data-menu-type="nested"
+          class="header-mobile__menu-list-wrapper header-mobile__menu-list-wrapper--nested js-mobile-header-menu is-hidden"
+        >
+          <ul class="header-mobile__menu-list header-mobile__menu-list--nested">
+            <li>
+              <button
+                class="header-mobile__menu-item header-mobile__menu-item--back js-mobile-header-menu-toggler"
+                type="button"
+                data-target="headerMobileMenu:{{- menu_id -}}-{{- menu.handle -}}-{{ forloop.index }}-{{- first_level_link.title | handleize -}}"
+                aria-controls="headerMobileMenu:{{- menu_id -}}-{{- menu.handle -}}-{{ forloop.index }}-{{- first_level_link.title | handleize -}}"
+                aria-expanded="false"
+              >
+                <span class="header-mobile__menu-item-icon-back">
+                  {%- render 'icons', icon: 'slider-arrow-left' -%}
+                </span>
+
+                <span class="header-mobile__menu-item-text">
+                  {{- first_level_link.title -}}
+                </span>
+              </button>
+            </li>
+
+            {%- capture megamenu -%}
+							{%- if megamenu_object.type == 'megamenu' and has_megamenu == true -%}
+								{%- render 'header-mobile-mega-menu', menu: first_level_link, megamenu_object: megamenu_object -%}
+							{%- endif -%}
+
+							{%- if megamenu_object.type == 'megamenu-images' and has_megamenu == true -%}
+								{%- render 'header-mobile-mega-menu-images', megamenu_object: megamenu_object -%}
+							{%- endif -%}
+
+							{%- if megamenu_object.type == 'megamenu-row-menus' and has_megamenu == true -%}
+								{%- render 'header-mobile-mega-menu-row-menus', menu: first_level_link, megamenu_object: megamenu_object -%}
+							{%- endif -%}
+
+							{%- if megamenu_object.type == 'megamenu-brands' and has_megamenu == true -%}
+								{%- assign brands_logos_blocks = section.blocks | where: 'type', 'megamenu-brands-logo' -%}
+
+								{%- render 'header-mobile-mega-menu-brands', menu: first_level_link, megamenu_object: megamenu_object, blocks: brands_logos_blocks -%}
+							{%- endif -%}
+
+							{%- if megamenu_object.type == 'megamenu-half-to-half' and has_megamenu == true -%}
+								{%- if megamenu_object.settings.heading == blank and megamenu_object.settings.subheading == blank and megamenu_object.settings.image == blank -%}
+									{%- assign has_megamenu = false -%}
+								{%- else -%}
+									{%- render 'header-mobile-mega-menu-half-to-half', megamenu_object: megamenu_object -%}
+								{%- endif -%}
+							{%- endif -%}
+						{%- endcapture -%}
+
+            {%- if megamenu != blank and has_megamenu == true and megamenu_object.type != 'megamenu' -%}
+              <li>
+                {{- megamenu -}}
+              </li>
+            {%- else -%}
+              {%- for second_level_link in first_level_link.links -%}
+                <li>
+                  {%- if second_level_link.links != blank -%}
+                    <button
+                      class="header-mobile__menu-item js-mobile-header-menu-toggler"
+                      type="button"
+                      data-target="headerMobileMenu:{{- menu_id -}}-{{- menu.handle -}}-{{ forloop.index }}-{{- first_level_link.handle -}}-{{- second_level_link.handle -}}"
+                      aria-controls="headerMobileMenu:{{- menu_id -}}-{{- menu.handle -}}-{{ forloop.index }}-{{- first_level_link.handle -}}-{{- second_level_link.handle -}}"
+                      aria-expanded="false"
+                    >
+                      {% assign item_icon = second_level_link.object.metafields.custom.menu_icon %}
+
+                      {%- if item_icon != blank -%}
+                        <span class="header-mobile__menu-item-icon-wrapper">
+                          <picture>
+                            <img
+                              class="header-mobile__menu-item-icon"
+                              src="{{ item_icon | image_url: width: 32, height: 32 }}"
+                              srcset="{{ item_icon | image_url: width: 32, height: 32 }} 1x, {{ item_icon | image_url: width: 64, height: 64 }} 2x"
+                              alt="{{- item_icon.alt -}}"
+                            >
+                          </picture>
+                        </span>
+                      {%- endif -%}
+
+                      <span class="header-mobile__menu-item-text">
+                        {{ second_level_link.title | escape }}
+                      </span>
+
+                      <span class="header-mobile__menu-item-toggle-icon">
+                        {%- render 'icons', icon: 'arrow-down' -%}
+                      </span>
+                    </button>
+
+                    <div
+                      id="headerMobileMenu:{{- menu_id -}}-{{- menu.handle -}}-{{ forloop.index }}-{{- first_level_link.handle -}}-{{- second_level_link.handle -}}"
+                      data-menu-type="deep-nested"
+                      class="header-mobile__menu-list-wrapper header-mobile__menu-list-wrapper--deep-nested js-mobile-header-menu is-hidden"
+                    >
+                      <ul class="header-mobile__menu-list header-mobile__menu-list--nested">
+                        <li>
+                          <button
+                            class="header-mobile__menu-item header-mobile__menu-item--back js-mobile-header-menu-toggler"
+                            type="button"
+                            data-target="headerMobileMenu:{{- menu_id -}}-{{- menu.handle -}}-{{ forloop.index }}-{{- first_level_link.handle -}}-{{- second_level_link.handle -}}"
+                            aria-controls="headerMobileMenu:{{- menu_id -}}-{{- menu.handle -}}-{{ forloop.index }}-{{- first_level_link.handle -}}-{{- second_level_link.handle -}}"
+                            aria-expanded="false"
+                          >
+                            <span class="header-mobile__menu-item-icon-back">
+                              {%- render 'icons', icon: 'slider-arrow-left' -%}
+                            </span>
+
+                            <span class="header-mobile__menu-item-text">
+                              {{- second_level_link.title -}}
+                            </span>
+                          </button>
+                        </li>
+
+                        {%- for third_level_link in second_level_link.links -%}
+                          {%- comment -%}
+                            Ręczny fallback na linklists wg title|handleize,
+                            bo custom link "#" nie ma `third_level_link.handle`
+                          {%- endcomment -%}
+                          {%- assign fourth_links = third_level_link.links -%}
+                          {%- assign fallback_handle = third_level_link.handle
+                            | default: third_level_link.title
+                            | handleize
+                          -%}
+                          {%- if fourth_links == blank
+                            and linklists[fallback_handle]
+                            and linklists[fallback_handle].links != blank
+                          -%}
+                            {%- assign fourth_links = linklists[fallback_handle].links -%}
+                          {%- endif -%}
+
+                          <li>
+                            {%- if fourth_links != blank -%}
+                              <!-- **3 Poziom z dziećmi → toggler do 4 poziomu** -->
+                              <button
+                                class="header-mobile__menu-item js-mobile-header-menu-toggler"
+                                type="button"
+                                data-target="headerMobileMenu:{{ menu_id }}-{{ menu.handle }}-{{ forloop.parent.parent.index }}-{{ first_level_link.handle }}-{{ second_level_link.handle }}-{{ third_level_link.handle | handleize }}"
+                                aria-controls="headerMobileMenu:{{ menu_id }}-{{ menu.handle }}-{{ forloop.parent.parent.index }}-{{ first_level_link.handle }}-{{ second_level_link.handle }}-{{ third_level_link.handle | handleize }}"
+                                aria-expanded="false"
+                              >
+                                <span class="header-mobile__menu-item-text">{{ third_level_link.title }}</span>
+                                <span class="header-mobile__menu-item-toggle-icon">
+                                  {%- render 'icons', icon: 'arrow-down' -%}
+                                </span>
+                              </button>
+
+                              <div
+                                id="headerMobileMenu:{{ menu_id }}-{{ menu.handle }}-{{ forloop.parent.parent.index }}-{{ first_level_link.handle }}-{{ second_level_link.handle }}-{{ third_level_link.handle | handleize }}"
+                                data-menu-type="deep-nested"
+                                class="header-mobile__menu-list-wrapper header-mobile__menu-list-wrapper--deep-nested js-mobile-header-menu is-hidden"
+                              >
+                                <ul class="header-mobile__menu-list header-mobile__menu-list--nested">
+                                  <li>
+                                    <button
+                                      class="header-mobile__menu-item header-mobile__menu-item--back js-mobile-header-menu-toggler"
+                                      type="button"
+                                      data-target="headerMobileMenu:{{ menu_id }}-{{ menu.handle }}-{{ forloop.parent.parent.index }}-{{ first_level_link.handle }}-{{ second_level_link.handle }}-{{ third_level_link.handle | handleize }}"
+                                      aria-controls="headerMobileMenu:{{ menu_id }}-{{ menu.handle }}-{{ forloop.parent.parent.index }}-{{ first_level_link.handle }}-{{ second_level_link.handle }}-{{ third_level_link.handle | handleize }}"
+                                      aria-expanded="false"
+                                    >
+                                      <span class="header-mobile__menu-item-icon-back">
+                                        {%- render 'icons', icon: 'slider-arrow-left' -%}
+                                      </span>
+                                      <span class="header-mobile__menu-item-text">{{ third_level_link.title }}</span>
+                                    </button>
+                                  </li>
+
+                                  {%- for fourth in fourth_links -%}
+                                    <li>
+                                      <a
+                                        class="header-mobile__menu-item header-mobile__menu-item-link"
+                                        href="{{ fourth.url }}"
+                                      >
+                                        <span class="header-mobile__menu-item-text">{{ fourth.title }}</span>
+                                      </a>
+                                    </li>
+                                  {%- endfor -%}
+                                </ul>
+                              </div>
+                            {%- else -%}
+                              <!-- normalny 3 poziom bez dzieci -->
+                              <a
+                                class="header-mobile__menu-item header-mobile__menu-item-link"
+                                href="{{ third_level_link.url }}"
+                              >
+                                <span class="header-mobile__menu-item-text">{{ third_level_link.title }}</span>
+                              </a>
+                            {%- endif -%}
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                    </div>
+                  {%- else -%}
+                    <a
+                      class="header-mobile__menu-item header-mobile__menu-item-link"
+                      href="{{- second_level_link.url -}}"
+                    >
+                      {% assign item_icon = second_level_link.object.metafields.custom.menu_icon %}
+
+                      {%- if item_icon != blank -%}
+                        <span class="header-mobile__menu-item-icon-wrapper">
+                          <picture>
+                            <img
+                              class="header-mobile__menu-item-icon"
+                              src="{{ item_icon | image_url: width: 32, height: 32 }}"
+                              srcset="{{ item_icon | image_url: width: 32, height: 32 }} 1x, {{ item_icon | image_url: width: 64, height: 64 }} 2x"
+                              alt="{{- item_icon.alt -}}"
+                            >
+                          </picture>
+                        </span>
+                      {%- endif -%}
+
+                      <span class="header-mobile__menu-item-text">
+                        {{- second_level_link.title -}}
+                      </span>
+                    </a>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+
+              {%- if megamenu != blank and has_megamenu == true and megamenu_object.type == 'megamenu' -%}
+                <li>
+                  {{- megamenu -}}
+                </li>
+              {%- endif -%}
+            {%- endif -%}
+          </ul>
+        </div>
+      {%- else -%}
+        <a
+          class="header-mobile__menu-item header-mobile__menu-item-link {{ item_class_highlighted -}}"
+          href="{{- first_level_link.url -}}"
+        >
+          {% assign item_icon = first_level_link.object.metafields.custom.menu_icon %}
+
+          {%- if item_icon != blank -%}
+            <span class="header-mobile__menu-item-icon-wrapper">
+              <picture>
+                <img
+                  class="header-mobile__menu-item-icon"
+                  src="{{ item_icon | image_url: width: 32, height: 32 }}"
+                  srcset="{{ item_icon | image_url: width: 32, height: 32 }} 1x, {{ item_icon | image_url: width: 64, height: 64 }} 2x"
+                  alt="{{- item_icon.alt -}}"
+                >
+              </picture>
+            </span>
+          {%- endif -%}
+
+          <span class="header-mobile__menu-item-text">
+            {{- first_level_link.title | escape -}}
+          </span>
+        </a>
+      {%- endif -%}
+    </li>
+  {%- endfor -%}
+</ul>

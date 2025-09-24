@@ -1,0 +1,389 @@
+{{- 'component-socials-list.css' | asset_url | stylesheet_tag -}}
+{{- 'component-newsletter-form.css' | asset_url | stylesheet_tag -}}
+{{- 'component-box-aside.css' | asset_url | stylesheet_tag -}}
+{{- 'email-signup.css' | asset_url | stylesheet_tag -}}
+{%- liquid
+  assign section_prefix_class = 'email-signup'
+
+  capture section_heading_size
+    case section.settings.section_heading_size
+      when 'heading_x_large'
+        echo 'h2'
+      when 'heading_large'
+        echo 'h3'
+      when 'heading_medium'
+        echo 'h4'
+      else
+        echo 'h'
+    endcase
+  endcapture
+
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+
+  capture q_justify_mobile
+    case section.settings.section_mobile_text_alignment
+      when 'left'
+        echo 'flex-start'
+      when 'center'
+        echo 'center'
+      when 'right'
+        echo 'flex-end'
+    endcase
+  endcapture
+
+  capture q_justify_desktop
+    case section.settings.section_text_alignment
+      when 'left'
+        echo 'flex-start'
+      when 'center'
+        echo 'center'
+      when 'right'
+        echo 'flex-end'
+    endcase
+  endcapture
+
+  capture enable_social_list
+    if settings.social_instagram_link != blank
+      echo 'true'
+      elsif settings.social_linkedin_link != blank
+        echo 'true'
+      elsif settings.social_facebook_link != blank
+        echo 'true'
+      elsif settings.social_youtube_link != blank
+        echo 'true'
+      elsif settings.social_twitter_link != blank
+        echo 'true'
+      elsif settings.social_snapchat_link != blank
+        echo 'true'
+      elsif settings.social_pinterest_link != blank
+        echo 'true'
+      elsif  settings.social_tiktok_link != blank
+        echo 'true'
+      elsif settings.social_tumblr_link != blank
+        echo 'true'
+      elsif settings.social_vimeo_link != blank
+        echo 'true'
+      else
+        echo 'false'
+    endif
+  endcapture
+
+  capture box_enabled
+    if section.settings.box_heading != blank or section.settings.banner_image_1 != blank or section.settings.banner_image_2 != blank or section.settings.banner_image_3 != blank
+      echo 'true'
+    endif
+  endcapture
+-%}
+{%- style -%}
+  .{{ section_prefix_class }}-{{ section.id }}{
+    --section-radius: 20px;
+    --section-padding-top: {{ section.settings.section_top_padding }}px;
+    --section-padding-bottom: {{ section.settings.section_bottom_padding }}px;
+    --mobile-q-align: {{ section.settings.section_mobile_text_alignment }};
+    --mobile-justify-align: {{ q_justify_mobile }};
+    --desktop-q-align: {{ section.settings.section_text_alignment }};
+    --desktop-justify-align: {{ q_justify_desktop }};
+  }
+{%- endstyle -%}
+
+<div class="global-block {{ section_prefix_class }} {{ section_prefix_class }}-{{ section.id }} scheme--{{ section.settings.section_color_scheme }} --q-align {% if section.settings.section_full_width %}{{ section_prefix_class }}--full-size{% endif %}">
+  <div class="container">
+    <div class="{{ section_prefix_class }}_wrapper --v-align-middle">
+      <div class="{{ section_prefix_class }}_col {{ section_prefix_class }}_col--description">
+        {%- if section.settings.image != blank or section.settings.heading != blank or section.settings.section_description != blank -%}
+          <header class="heading-head">
+            {%- if section.settings.image != blank -%}
+              <span class="{{ section_prefix_class }}_icn-image">
+                {%- liquid
+                  capture widths
+                  echo section.settings.image.width | times: 2
+                  endcapture
+                  capture sizes
+                    echo '(max-width: 767px) ' | append: section.settings.image.width | append: 'px, ' | append: widths | append: 'px'
+                  endcapture
+                -%}
+                {{- section.settings.image | image_url: width: section.settings.image.width | image_tag: loading: loading_attr, sizes: sizes, alt: section.settings.heading -}}
+              </span>
+            {%- endif -%}
+            {%- if section.settings.heading != blank -%}
+              <h2 class="{{ section_heading_size }} mty {{ section_prefix_class }}_heading">
+                {{- section.settings.heading -}}
+              </h2>
+            {%- endif -%}
+            {%- if section.settings.section_description != blank -%}
+              <div class="text-size--{{ section.settings.section_text_size }} {{ section_prefix_class }}_description mty">
+                <p>{{- section.settings.section_description -}}</p>
+              </div>
+            {%- endif -%}
+          </header>
+        {%- endif -%}
+        <div class="{{ section_prefix_class }}_form --q-align-justify">
+          <div class="{{ section_prefix_class }}_form-wrap {% unless box_enabled == 'true' %}{{ section_prefix_class }}_form-wrap--centered{% endunless %}">
+            {%- liquid
+              assign id = 'email-signup-' | append: section.id
+              render 'newsletter-form', prefix_class: section_prefix_class, form_id: id
+            -%}
+          </div>
+        </div>
+        {%- if box_enabled != 'true' and enable_social_list == 'true' -%}
+          <div class="{{ section_prefix_class }}_socials-wrap --q-align-justify">
+            {%- render 'social-icons' | prefix_class: section_prefix_class | social_icons_enable: true -%}
+          </div>
+        {%- endif -%}
+      </div>
+      {%- if box_enabled == 'true' -%}
+        {%- liquid
+          capture box_heading_size
+            case section.settings.box_heading_size
+              when 'heading_large'
+                echo 'h3'
+              when 'heading_medium'
+                echo 'h4'
+              when 'heading_small'
+                echo 'h5'
+              else
+                echo 'h'
+            endcase
+          endcapture
+          assign box_scheme_class = section.settings.box_color_scheme | prepend: 'scheme scheme--'
+        -%}
+        <div class="{{ section_prefix_class }}_col {{ section_prefix_class }}_col--box">
+          <aside class="box-aside {{ box_scheme_class }}">
+            {%- if section.settings.box_heading != blank or section.settings.show_socials -%}
+              <header class="box-aside_head">
+                {%- if section.settings.box_heading != blank -%}
+                  <h3 class="box-aside_heading mty --h-anchor-none {{ box_heading_size }}">
+                    {{- section.settings.box_heading -}}
+                  </h3>
+                {%- endif -%}
+                {%- if section.settings.show_socials and enable_social_list == 'true' -%}
+                  <div class="box-aside_socials-wrap --q-align-justify">
+                    <strong class="box-aside_title-text">
+                      {{- 'email_signup.socials.title' | t -}}
+                    </strong>
+                    {%- render 'social-icons' | prefix_class: section_prefix_class | social_icons_enable: true -%}
+                  </div>
+                {%- endif -%}
+              </header>
+            {%- endif -%}
+            {% if section.settings.banner_image_1 != blank or section.settings.banner_image_2 != blank or section.settings.banner_image_3 != blank %}
+              <div class="box-aside_banner-wrapper {% if section.settings.banner_image_2 != blank or section.settings.banner_image_3 != blank %}--banner-height{% endif %}">
+                {%- if section.settings.banner_image_1 != blank -%}
+                  <div class="box-aside_banner">
+                    {{- section.settings.banner_image_1 | image_url: width: 1348 | image_tag: loading: loading_attr, widths: '674, 1348', sizes: '(max-width: 767px) 674vw, 1348vw' -}}
+                  </div>
+                {%- endif -%}
+                {%- if section.settings.banner_image_2 != blank -%}
+                  <div class="box-aside_banner">
+                    {{- section.settings.banner_image_2 | image_url: width: 1348 | image_tag: loading: loading_attr, widths: '674, 1348', sizes: '(max-width: 767px) 674vw, 1348vw' -}}
+                  </div>
+                {%- endif -%}
+                {%- if section.settings.banner_image_3 != blank -%}
+                  <div class="box-aside_banner">
+                    {{- section.settings.banner_image_3 | image_url: width: 1348 | image_tag: loading: loading_attr, widths: '674, 1348', sizes: '(max-width: 767px) 674vw, 1348vw' -}}
+                  </div>
+                {%- endif -%}
+              </div>
+            {% endif %}
+          </aside>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.email_signup.name",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.email_signup.settings.icon.label",
+      "info": "t:sections.email_signup.settings.icon.info"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.common.heading.label",
+      "default": "Subscribe to Newsletter"
+    },
+    {
+      "type": "select",
+      "id": "section_heading_size",
+      "label": "t:sections.common.heading.size.label",
+      "options": [
+        {
+          "value": "heading_x_large",
+          "label": "t:sections.common.heading.size.options.opt_2.label"
+        },
+        {
+          "value": "heading_large",
+          "label": "t:sections.common.heading.size.options.opt_3.label"
+        },
+        {
+          "value": "heading_medium",
+          "label": "t:sections.common.heading.size.options.opt_4.label"
+        }
+      ],
+      "default": "heading_medium"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "section_description",
+      "label": "t:sections.common.description.label",
+      "default": "Subscribe and receive exclusive information and offers!"
+    },
+    {
+      "type": "select",
+      "id": "section_text_size",
+      "label": "t:sections.common.text.settings.fz_sizes.label",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_1.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_2.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_3.label"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.email_signup.settings.additional.content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "box_heading",
+      "label": "t:sections.common.heading.label"
+    },
+    {
+      "type": "select",
+      "id": "box_heading_size",
+      "label": "t:sections.common.heading.size.label",
+      "options": [
+        {
+          "value": "heading_large",
+          "label": "t:sections.common.heading.size.options.opt_3.label"
+        },
+        {
+          "value": "heading_medium",
+          "label": "t:sections.common.heading.size.options.opt_4.label"
+        },
+        {
+          "value": "heading_small",
+          "label": "t:sections.common.heading.size.options.opt_5.label"
+        }
+      ],
+      "default": "heading_large"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image_1",
+      "label": "t:sections.email_signup.settings.additional.banner_1.label",
+      "info": "t:sections.email_signup.settings.additional.banner_1.info"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image_2",
+      "label": "t:sections.email_signup.settings.additional.banner_2.label",
+      "info": "t:sections.email_signup.settings.additional.banner_2.info"
+    },
+    {
+      "type": "image_picker",
+      "id": "banner_image_3",
+      "label": "t:sections.email_signup.settings.additional.banner_3.label",
+      "info": "t:sections.email_signup.settings.additional.banner_3.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "box_color_scheme",
+      "default": "scheme3",
+      "label": "t:sections.common.clr_scheme.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.layout.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_socials",
+      "label": "t:sections.email_signup.settings.additional.socials.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "section_full_width",
+      "label": "t:sections.common.full_width.label",
+      "default": false
+    },
+    {
+      "type": "text_alignment",
+      "id": "section_text_alignment",
+      "label": "t:sections.banner.settings.text_alignment.desktop.label",
+      "default": "center"
+    },
+    {
+      "type": "text_alignment",
+      "id": "section_mobile_text_alignment",
+      "label": "t:sections.banner.settings.text_alignment.mobile.label",
+      "default": "center"
+    },
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "default": "scheme2",
+      "label": "t:sections.common.clr_scheme.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.spacing.content"
+    },
+    {
+      "type": "range",
+      "id": "section_top_padding",
+      "label": "t:sections.common.spacing.settings.top.label",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_bottom_padding",
+      "label": "t:sections.common.spacing.settings.bottom.label",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 50,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.email_signup.name"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,62 @@
+{%- comment -%}
+  renders carousel card on section templates
+  usage
+    {%- render 'carousel-card', card: block, index: forloop.index, height: section_height_class, prefix_class -%}
+{%- endcomment -%}
+{% liquid
+  assign block_scheme_class = card.settings.block_color_scheme | prepend: 'scheme scheme--'
+  
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+
+  capture placeholder_image
+    if index > 3
+      echo 'hero-apparel-1'
+      else
+        echo 'hero-apparel-' | append: index
+    endif
+  endcapture
+
+  capture section_full_width
+    if card.settings.section_full_width
+      echo 'container-fluid'
+      else
+        echo 'container'
+    endif
+  endcapture
+%}
+<article class="carousel-card {{ prefix_class }}-{{ card.id }}-{{section.id}} --q-align">
+  <div class="{{ section_full_width }}">
+    <div class="carousel-height {% if section.settings.section_carousel_height != 'adapt' %}carousel-height--desktop-{{ section.settings.section_carousel_height }}{% else %}--media-size-adapt{% endif %} carousel-height--mob-{{ section.settings.section_carousel_mobile_height }}" {% if section.settings.section_carousel_height == 'adapt' %}style="--media-ratio: {{ card.settings.image.aspect_ratio | default: '1' }};"{% endif %}>
+    </div>
+  </div>
+  <div class="carousel-card_bg-wrapper">
+    {%- if card.settings.image != blank or card.settings.mobile_image != blank -%}
+      <div class="carousel-card_image --desktop-image">
+        {{- card.settings.image | image_url: width: 3840 | image_tag: class: 'object-fit object-fit--absolute', loading: loading_attr, widths: '992, 3840', sizes: '(max-width: 767px) 992vw, 3840vw', alt: 'Image' -}}
+      </div>
+      {%- if card.settings.mobile_image != blank -%}
+        <div class="carousel-card_image --mobile-image">
+          {{- card.settings.mobile_image | image_url: width: 3840 | image_tag: class: 'object-fit object-fit--absolute', loading: loading_attr, widths: '992, 3840', sizes: '(max-width: 767px) 992vw, 3840vw', alt: 'Image' -}}
+        </div>
+      {%- else -%}
+        <div class="carousel-card_image --mobile-image">
+          {{- card.settings.image | image_url: width: 3840 | image_tag: class: 'object-fit object-fit--absolute', loading: loading_attr, widths: '992, 3840', sizes: '(max-width: 767px) 992vw, 3840vw', alt: 'Image' -}}
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div class="carousel-card_image --desktop-image">
+        {{- placeholder_image | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+      </div>
+      <div class="carousel-card_image --mobile-image">
+        {{- placeholder_image | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+      </div>
+    {%- endif -%}
+  </div>
+
+</article>

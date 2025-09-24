@@ -1,0 +1,82 @@
+{%- comment -%}
+  renders collection card
+  usage
+    {%- render 'collection-card', card: card, show_counts: false, prefix_class: section_prefix_class -%}
+{%- endcomment -%}
+
+{%- liquid
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+
+  if card.featured_image != blank
+    capture a11y_text
+      echo card.featured_image.alt | default: card.title
+    endcapture
+  endif
+
+  capture card_heading_size
+    if section.settings.card_text_size != blank
+      echo section.settings.card_text_size
+      else
+        echo 'large'
+    endif
+  endcapture
+
+  capture card_media_size
+    if section.settings.card_media_size == 'adapt'
+        echo card.featured_image.aspect_ratio | default: '1'
+    else 
+        echo '1'
+    endif
+  endcapture
+
+  capture tag_heading
+    echo heading_tag | default: 'h3'
+  endcapture
+-%}
+
+<a
+  href="{{- card.url -}}"
+  class="{{ prefix_class }}_collection-card collection-card --align-{{ section.settings.card_text_alignment }} {% unless card.featured_image %}collecttion-card--blank{%- endunless %}"
+>
+  {%- if card.featured_image -%}
+      <div class="collection-card_image {% if section.settings.remove_radius %}remove-radius{% endif %} {% if section.settings.enable_border %}enable-border{% endif %} widget--styles --media-size-{{ section.settings.card_media_size }}" style="--media-ratio: {{ card_media_size }};">
+        {{- card.featured_image | image_url: width: 840 | image_tag: alt: '', class: 'object-fit object-fit--cover object-fit--absolute', loading: loading_attr, widths: '230, 460', sizes: '(max-width: 767px) 230vw, 460vw' -}}
+        {%- if section.settings.show_product_count -%}
+          <div class="collection-card_count-wrap">
+            <strong class="collection-card_count-caption">
+              {{- 'main_collections.count_tag_label' | t: count: card.all_products_count -}}
+            </strong>
+          </div>
+        {%- endif -%}
+      </div>
+    <div class="collection-card_description">
+      <{{ tag_heading }} class="mty collection-card_heading --hover-underline text-size--{{ card_heading_size }}">
+        {{- card.title -}}
+      </{{ tag_heading }}>
+    </div>
+    {%- else -%}
+      <div class="collection-card_image widget--styles --media-size-{{ section.settings.card_media_size }}" style="--media-ratio: {{ card_media_size }};">
+        <div class="collection-card_caption --align-center">
+          <div class="collection-card_caption-align">
+            <{{ tag_heading }} class="mty collection-card_heading text-size--{{ card_heading_size }}">
+              {{- card.title -}}
+            </{{ tag_heading }}>
+            {%- if show_counts -%}
+              <strong class="collection-card_count-caption">
+                {{- 'main_collections.count_tag_label' | t: count: card.all_products_count -}}
+              </strong>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+  {%- endif -%}
+  <span class="visually-hidden" style="background-color: var(--section-background-color); color: var(--section-foreground-color);">
+    {{- a11y_text -}}
+  </span>
+</a>

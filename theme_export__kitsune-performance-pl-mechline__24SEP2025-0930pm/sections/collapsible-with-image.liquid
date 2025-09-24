@@ -1,0 +1,384 @@
+{{- 'collapsible-with-image.css' | asset_url | stylesheet_tag -}}
+{%- liquid
+  assign section_prefix_class = 'collapsible-with-image'
+  assign section_scheme_class = section.settings.section_color_scheme | prepend: 'scheme scheme--'
+
+  capture section_heading_size
+    case section.settings.section_heading_size
+      when 'heading_xx_large'
+        echo 'h1'
+      when 'heading_x_large'
+        echo 'h2'
+      when 'heading_large'
+        echo 'h3'
+      when 'heading_medium'
+        echo 'h4'
+      else
+        echo 'h'
+    endcase
+  endcapture
+
+  capture cols_order_class
+    if section.settings.section_image_order == 'row_reverse'
+      echo '--row-reverse'
+    endif
+  endcapture
+
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+
+  capture row_heading_size
+    case section.settings.row_heading_size
+      when 'heading_small'
+        echo 'h5'
+      when 'heading_x_small'
+        echo 'h6'
+      else
+        echo 'h'
+    endcase
+  endcapture
+-%}
+{%- style -%}
+  .{{ section_prefix_class }}-{{ section.id }}{
+    --section-radius: 20px;
+    --section-padding-top: {{ section.settings.section_top_padding }}px;
+    --section-padding-bottom: {{ section.settings.section_bottom_padding }}px;
+  }
+{%- endstyle -%}
+<div class="global-block {{ section_prefix_class }} {{ section_prefix_class }}-{{ section.id }} --align-{{ section.settings.section_text_alignment }} {{ section_scheme_class }} {{ section_prefix_class }}--bdr-bottom {{ section_prefix_class }}--bdr-top">
+  <div class="container">
+    <div class="{{ section_prefix_class }}_wrapper {{ cols_order_class }} --v-align-{{ section.settings.content_alignment }}">
+      {%- if section.settings.image != blank -%}
+        <div class="{{ section_prefix_class }}_col {{ section_prefix_class }}_col-image">
+          <div class="{{ section_prefix_class }}_image --media-size-{{ section.settings.section_media_size }}" style="--media-ratio: {{ section.settings.image.aspect_ratio | default: '1' }};">
+            {%- liquid
+              capture image_alt
+                echo 'collapsible_with_image.image.alt' | t
+              endcapture
+            -%}
+            {{- section.settings.image | image_url: width: 3840 | image_tag: class: 'object-fit object-fit--absolute', loading: loading_attr, widths: '3840, 480', sizes: '(max-width: 767px) 3840vw', alt: image_alt -}}
+        </div>
+      </div>
+      {%- endif -%}
+      <div class="{{ section_prefix_class }}_col {{ section_prefix_class }}_col-description">
+        {%- if section.settings.heading != blank or section.settings.section_description != blank -%}
+          <header class="heading-head --q-align">
+            {%- if section.settings.heading != blank -%}
+              <h2 class="{{ section_prefix_class }}_heading {{ section_heading_size }} --h-anchor-none mty">
+                {{- section.settings.heading -}}
+              </h2>
+            {%- endif -%}
+            {%- if section.settings.section_description != blank -%}
+              <div class="{{ section_prefix_class }}_description --word-break text-size--{{ section.settings.section_text_size }} mty">
+                <p>{{- section.settings.section_description -}}</p>
+              </div>
+            {%- endif -%}
+          </header>
+        {%- endif -%}
+        <div class="{{ section_prefix_class }}_rows-wrap --align-left">
+          {%- for block in section.blocks -%}
+            {%- liquid
+              capture opener_label
+                if block.settings.heading != blank
+                  echo block.settings.heading
+                  else
+                    echo 'collapsible_with_image.opener_label' | t: index: forloop.index
+                endif
+              endcapture
+            -%}
+            <details class="open-close --accordion-view" {% if block.settings.open_by_default %}open{% endif %} {{ block.shopify_attributes }}>
+              <summary
+                class="open-close_opener {{ row_heading_size }} mty"
+                aria-controls="sect-{{ section.id }}-{{ block.id }}"
+                id="{{ section.id }}-{{ block.id }}-accordion"
+              >
+                {{- opener_label -}}
+                <i class="open-close_opener-icn open-close_opener--icn-open">
+                  {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'plus' -%}
+                </i>
+                <i class="open-close_opener-icn open-close_opener--icn-close">
+                  {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
+                </i>
+              </summary>
+              <div
+                role="region"
+                id="sect-{{ section.id }}-{{ block.id }}"
+                class="open-close_slide"
+                aria-labelledby="{{ section.id }}-{{ block.id }}-accordion"
+              >
+                <div class="open-close_slide-wrapper text-size--small --word-break">
+                  {%- liquid
+                    if block.settings.description != blank
+                      echo block.settings.description
+                    endif
+                  -%}
+                </div>
+              </div>
+            </details>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "t:sections.collapsible_with_image.name",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.common.image.label",
+      "info": "t:sections.collapsible_with_image.settings.image.info"
+    },
+    {
+      "type": "select",
+      "id": "section_media_size",
+      "label": "t:sections.common.media_size.settings.label",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.common.media_size.settings.options.opt_1.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.common.media_size.settings.options.opt_2.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.common.media_size.settings.options.opt_3.label"
+        },
+        {
+          "value": "landscape",
+          "label": "t:sections.common.media_size.settings.options.opt_4.label"
+        }
+      ],
+      "default": "adapt"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.common.heading.label",
+      "default": "Image with collpsible"
+    },
+    {
+      "type": "select",
+      "id": "section_heading_size",
+      "label": "t:sections.common.heading.size.label",
+      "options": [
+        {
+          "value": "heading_xx_large",
+          "label": "t:sections.common.heading.size.options.opt_1.label"
+        },
+        {
+          "value": "heading_x_large",
+          "label": "t:sections.common.heading.size.options.opt_2.label"
+        },
+        {
+          "value": "heading_large",
+          "label": "t:sections.common.heading.size.options.opt_3.label"
+        },
+        {
+          "value": "heading_medium",
+          "label": "t:sections.common.heading.size.options.opt_4.label"
+        }
+      ],
+      "default": "heading_x_large"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "section_description",
+      "label": "t:sections.common.description.label"
+    },
+    {
+      "type": "select",
+      "id": "section_text_size",
+      "label": "t:sections.common.text.settings.fz_sizes.label",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_1.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_2.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_3.label"
+        }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.collapsible_with_image.settings.collapse_row.content"
+    },
+    {
+      "type": "select",
+      "id": "row_heading_size",
+      "label": "t:sections.common.heading.size.label",
+      "options": [
+        {
+          "value": "heading_small",
+          "label": "t:sections.common.heading.size.options.opt_5.label"
+        },
+        {
+          "value": "heading_x_small",
+          "label": "t:sections.common.heading.size.options.opt_6.label"
+        }
+      ],
+      "default": "heading_small"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.layout.content"
+    },
+    {
+      "type": "select",
+      "id": "section_image_order",
+      "label": "t:sections.collapsible_with_image.settings.image_order.label",
+      "options": [
+        {
+          "value": "row",
+          "label": "t:sections.collapsible_with_image.settings.image_order.options.opt_1.label"
+        },
+        {
+          "value": "row_reverse",
+          "label": "t:sections.collapsible_with_image.settings.image_order.options.opt_2.label"
+        }
+      ],
+      "default": "row"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:sections.collapsible_with_image.settings.v_alignment.label",
+      "info": "t:sections.collapsible_with_image.settings.v_alignment.info",
+      "options": [
+        {
+          "value": "top",
+          "label": "t:sections.common.v_alignment.settings.alignment.options.top.label"
+        },
+        {
+          "value": "middle",
+          "label": "t:sections.common.v_alignment.settings.alignment.options.middle.label"
+        },
+        {
+          "value": "bottom",
+          "label": "t:sections.common.v_alignment.settings.alignment.options.bottom.label"
+        }
+      ],
+      "default": "middle"
+    },
+    {
+      "type": "text_alignment",
+      "id": "section_text_alignment",
+      "label": "t:sections.collapsible_with_image.settings.text_alignment.desktop.label",
+      "default": "center"
+    },
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "default": "scheme1",
+      "label": "t:sections.common.clr_scheme.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.spacing.content"
+    },
+    {
+      "type": "range",
+      "id": "section_top_padding",
+      "label": "t:sections.common.spacing.settings.top.label",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_bottom_padding",
+      "label": "t:sections.common.spacing.settings.bottom.label",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 50,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "t:sections.collapsible_with_image.blocks.collapsible_row.name",
+      "type": "collapse_row",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "t:sections.common.text.label",
+          "default": "Collapsible row"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "description",
+          "label": "t:sections.common.description.label",
+          "default": "Collapsible content"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_by_default",
+          "default": false,
+          "label": "t:sections.collapsible_with_image.blocks.collapsible_row.settings.check_default_open.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.collapsible_with_image.name",
+      "blocks": [
+        {
+          "type": "collapse_row",
+          "settings": {
+            "open_by_default": true
+          }
+        },
+        {
+          "type": "collapse_row",
+          "settings": {
+          }
+        },
+        {
+          "type": "collapse_row",
+          "settings": {
+          }
+        },
+        {
+          "type": "collapse_row",
+          "settings": {
+          }
+        },
+        {
+          "type": "collapse_row",
+          "settings": {
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

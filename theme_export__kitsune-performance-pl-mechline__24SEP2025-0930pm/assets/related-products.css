@@ -1,0 +1,32 @@
+.related-products{
+  --section-internal-spacing: 62px;
+  --desktop-columns-count: 1;
+}
+
+.related-products_heading{
+  --mt-bottom: 16px;
+}
+
+.related-products .heading-head{
+  margin-bottom: calc(var(--section-internal-spacing) / 1.6);
+}
+
+.related-products_slider .splide__slide{
+  display: flex;
+}
+
+.related-products .grid_col{
+  display: flex;
+}
+
+@media (min-width: 768px){
+  .related-products{
+    --desktop-columns-count: 3;
+  }
+}
+
+@media (min-width: 1200px){
+  .related-products{
+    --desktop-columns-count: var(--columns-count);
+  }
+}

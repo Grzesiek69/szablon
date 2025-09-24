@@ -1,0 +1,38 @@
+.collection-list .container-fluid{
+  --cp-spacer-left: 0;
+  --cp-spacer-right: 0;
+}
+
+.collection-list .heading-head{
+  margin-bottom: 45px;
+}
+
+.collection-list_description{
+  --mt-top: 24px;
+}
+
+.collection-list_description p{
+  margin-bottom: 0;
+  margin-bottom: 0;
+}
+
+.collection-list .collection-card{
+  width: 230px;
+}
+
+.collection-list marquee-component{
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.collection-list .splide__slide .collection-card{
+  width: 100%;
+}
+
+.collection-list_foot{
+  margin-top: 37px;
+}
+
+.collection-list .splide__slide {
+  padding: 4px;
+}

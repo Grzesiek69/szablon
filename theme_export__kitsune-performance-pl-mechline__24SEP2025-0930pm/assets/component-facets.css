@@ -1,0 +1,233 @@
+.facets-active_wrapper{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 11px;
+  margin-bottom: 19px;
+  position: relative;
+  width: 100%;
+}
+
+.facet-remove-btn{
+  --button-background: var(--section-widget-background-color);
+  --button-text: var(--section-widget-foreground-color);
+  --button-radius: 5px;
+  --button-border-color: var(--section-widget-background-color);
+  --button-font-size: 1.2rem;
+  --button-line-height: 1.6rem;
+  --button-padding-y: 1rem;
+  --button-padding-x: 1.7rem;
+  padding: var(--button-padding-y) var(--button-padding-x);
+  display: flex;
+  gap: 11px;
+  text-align: left;
+}
+
+.facet-remove-btn:hover{
+  --button-hover-background: var(--section-widget-foreground-color);
+  --button-hover-text: var(--section-widget-background-color);
+  --button-hover-border-color:var(--section-widget-background-color);
+}
+
+.facets-remove-all.button--link{
+  --button-padding-y: 0.3rem;
+  --button-padding-x: 0;
+  top: 2px;
+}
+
+.sticky-facets-wrapper{
+  display: block;
+  margin-top: 64px;
+}
+
+.facets_container,
+.facets_options-wrapper{
+  display: flex;
+  width: 100%;
+}
+
+[data-revealed="true"] .facets_container{
+  margin-left: auto;
+  margin-right: auto;
+  max-width: calc(var(--cp-width, 1200) * 1px);
+  padding-left: var(--cp-spacer-left, 15px);
+  padding-right: var(--cp-spacer-right, 15px);
+}
+
+.facets_options-wrapper{
+  position: relative;
+  transition: padding 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  border-top: 1px solid transparent;
+  box-shadow: none;
+}
+
+[data-revealed="true"] .facets--fixed-area{
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 9;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: var(--section-background-color);
+  border-top-color: var(--section-border-color);
+  box-shadow: 0 -2px 3px rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-component--facets .dropdown-component_wrapper{
+  --facet-offset-height: calc(100px + var(--page-header-height, 50vh));
+  width: 290px;
+  top: auto;
+  bottom: 100%;
+  max-height: calc(100vh - var(--facet-offset-height));
+  padding: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-bottom: 20px;
+  border-radius: var(--section-radius);
+  border: 1px solid var(--section-input-bdr-color);
+}
+
+.facets_text-wrap{
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.facets-active_wrapper facet-remove-button:only-child,
+.facet--hide-filters .sticky-facets-wrapper{
+  display: none;
+}
+
+.facet_widget-row{
+  padding-bottom: 24px;
+}
+
+.fwc_text{
+  --mt-bottom: 24px;
+}
+
+.facet_list-item + .facet_list-item{
+  margin-top: 14px;
+}
+
+.facet_widget-row + .facet_widget-row{
+  border-top: 1px solid var(--section-widget-border-color);
+  padding-top: 24px;
+}
+
+.facet_title-heading{
+  margin-bottom: 14px;
+  display: block;
+}
+
+.facets_options--start .dropdown-component_wrapper {
+  left: 0;
+  transform: none;
+}
+
+.facets_options--end .dropdown-component_wrapper{
+  right: 0;
+  transform: none;
+  left: auto;
+}
+
+.facet_list .custom-checkbox-span,
+.facet_list .custom-checkbox-label{
+  display: block;
+  position: relative;
+}
+
+.facet_list input:focus-visible + .custom-checkbox-label{
+  outline: 1px solid var(--section-focus-outline-color);
+  outline-offset: 1px;
+}
+
+.facets_toggler--close{
+  --btn-padding-x: 5px;
+  --btn-padding-y: 5px;
+  --btn-radius: 5px;
+  --ixi-text-color: var(--section-background-color);
+  --ixi-bg-color: var(--section-foreground-color);
+  --ixi-bg-hover-color: var(--section-background-color);
+  --ixi-text-hover-color: var(--section-foreground-color);
+  top: 24px;
+  z-index: 9999;
+  right: 8px;
+  position: absolute;
+}
+
+.facets_toggler--close:hover{
+  border-color: var(--section-border-color);
+}
+
+.dropdown-component--facets .custom-checkbox-label_text{
+  margin-bottom: 0;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  font-size: 1.4rem;
+  line-height: 1.4;
+}
+
+.dropdown-component--facets .custom-checkbox-label_icn{
+  top: 2px;
+  transition: border-color 0.3s ease;
+}
+
+.facets_count-pan{
+  width: 24px;
+  height: 24px;
+  border-radius: var(--button-radius);
+  color: var(--section-widget-foreground-color);
+  background-color: var(--section-widget-background-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color .3s ease,background-color .3s ease,color .3s ease,color .3s ease;
+}
+
+.facets_toggler:hover .facets_count-pan {
+  color: var(--section-widget-background-color);
+  background-color: var(--section-widget-foreground-color);
+}
+
+.facet_option-label:hover .custom-checkbox-label_icn{
+  border-color: currentColor;
+}
+
+.custom-checkbox-label_icn.custom-checkbox-label_icn--swatch{
+  background-position: var(--swatch-focal-point, initial);
+  background-size: cover;
+  background-image: var(--swatch--background);
+}
+
+.custom-checkbox-label_icn--swatch img{
+  border-radius: inherit;
+}
+
+.custom-checkbox-label_icn--swatch.--image-active{
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAATCAYAAACdkl3yAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABdaVRYdFNuaXBNZXRhZGF0YQAAAAAAeyJjbGlwUG9pbnRzIjpbeyJ4IjowLCJ5IjowfSx7IngiOjE4LCJ5IjowfSx7IngiOjE4LCJ5IjoxOX0seyJ4IjowLCJ5IjoxOX1dfetuk4EAAAEmSURBVDhPlZPLkkZADIXT2LGywBPg/dfKE1hT3gDFRllYMXMyf7rCjMt8VS0tlyNCm7Isd1Ls+05xHFOaph/PkWEYqK5r8jyPjDGcDxy+OGwYBCR4B0Q0VuEceIvUsZDu4r+C9tWw2bbNimH/BuTpOlNV1a9h+75PYRgeZgcQW5aFpmnimB62Wdd1F4fYvu+pbVtyXZeTBHQQRRHleW4FhG/hH+WzlXW+1/7D+ghegiKgO/6LRyEgXdzxKIQOrrrQXAqJgF4Y9lVnZhxH+zgkg3me+UzJoMUPGwQBn0UtCL8pioKzdHKSJJRlGd8DEYPtuo6aprG/htQ5CMKpF3x6AbHSJayuYSFJAvKEJ3QNePX577Cd4vK2C43U2Blho0/xW46nf6cv9tXO7HWOFxkAAAAASUVORK5CYII=');
+}
+
+.custom-checkbox-label_icn--swatch .ico{
+  background-color: #fff;
+  color: #000;
+  padding: 2px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 2px;
+}
+
+.dropdown-component--facets .custom-checkbox-label_icn.custom-checkbox-label_icn--swatch.--image-active{
+  width: 24px;
+  height: 24px;
+  top: 0;
+}
+
+@media (min-width: 576px){
+  .dropdown-component--facets .dropdown-component_wrapper{
+    width: 377px;
+  }
+}

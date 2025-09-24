@@ -1,0 +1,75 @@
+{%- comment -%}
+  renders team card on page templates
+  usage
+    {%- render 'team-card', member: block, index: forloop.index -%}
+{%- endcomment -%}
+{%- liquid
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+
+  capture placeholder_image
+    if index > 3
+      echo 'blog-apparel-1'
+      else
+        echo 'blog-apparel-' | append: index
+    endif
+  endcapture
+
+  capture heading
+    if member.settings.heading != null
+      echo member.settings.heading
+      else
+        echo 'team.heading' | t
+    endif
+  endcapture
+
+  capture designation
+    if member.settings.designation != null
+      echo member.settings.designation
+      else
+        echo 'team.designation' | t
+    endif
+  endcapture
+-%}
+{%- if member.settings.url != blank -%}
+  <a href="{{ member.settings.url }}" {% if member.settings.open_new_window %}target="_blank"{% endif %} class="team-card scheme scheme--{{ member.settings.block_color_scheme }}">
+    <div class="team-card_img">
+      {%- if member.settings.image != blank -%}
+        {{- member.settings.image | image_url: width: 350 | image_tag: sizes: '(min-width: 50px) 350px', alt: heading, widths: '350', loading: loading_attr, class: 'object-fit object-fit--absolute' -}}
+        {%- else -%}
+          {{- placeholder_image | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+      {%- endif -%}
+    </div>
+    <div class="team-card_des">
+      <h3 class="team-card_name mty">
+        {{- heading -}}
+      </h3>
+      <h4 class="team-card_designation mty">
+        {{- designation -}}
+      </h4>
+    </div>
+  </a>
+  {%- else -%}
+  <div class="team-card scheme scheme--{{ member.settings.block_color_scheme }}">
+    <div class="team-card_img">
+      {%- if member.settings.image != blank -%}
+        {{- member.settings.image | image_url: width: 350 | image_tag: sizes: '(min-width: 50px) 350px', alt: heading, widths: '350', loading: loading_attr, class: 'object-fit object-fit--absolute' -}}
+        {%- else -%}
+          {{- placeholder_image | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+      {%- endif -%}
+    </div>
+    <div class="team-card_des">
+      <h3 class="team-card_name mty">
+        {{- heading -}}
+      </h3>
+      <h4 class="team-card_designation mty">
+        {{- designation -}}
+      </h4>
+    </div>
+  </div>
+{%- endif -%}

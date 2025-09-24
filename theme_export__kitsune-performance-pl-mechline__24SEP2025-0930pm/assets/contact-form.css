@@ -1,0 +1,286 @@
+.form-wrapper .form-group {
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.form-group textarea {
+  resize: none;
+}
+
+.form-wrapper_button {
+  width: 100%;
+}
+
+.contact-form_wrapper {
+  display: flex;
+  align-items: start;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.contact-form_col-form {
+  width: 100%;
+}
+
+.contact-form_col-info {
+  flex-grow: 1;
+  flex-basis: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+.contact-form .form-wrapper_heading {
+  --mt-bottom: 7px;
+}
+
+.contact-form_col-form .heading-head {
+  margin-bottom: 25px;
+}
+
+.card{
+  padding: 15px;
+  border-radius: var(--section-radius, 10px);
+}
+
+.card_mention,
+.card_inspiration,
+.avatar-list_img--active::after {
+  display: block;
+}
+
+.card_heading,
+.card_sub-heading,
+.form-wrapper_heading {
+  font-weight: 500;
+}
+
+.card_heading {
+  --mt-bottom: 13px;
+  line-height: 4.6rem;
+}
+
+.card_address {
+  font-style: normal;
+}
+
+.card_address p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.card_address p + p {
+  margin-top: 40px;
+}
+
+.card--secondary {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  text-decoration: none;
+  position: relative;
+  min-height: 376px;
+  z-index: 1;
+}
+
+.card_mention {
+  font-weight: var(--headings-font-weight, 400);
+}
+
+.card_img {
+  position: relative;
+  width: 90px;
+  height: 90px;
+}
+
+.card_bg img {
+  z-index: -1;
+  border-radius: var(--section-radius, 10px);
+}
+
+.card_header-wrap {
+  flex-grow: 1;
+}
+
+.card_title-wrap{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.card_inspir-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 15px;
+}
+
+.card_heading-icn {
+  padding-top: 30px;
+}
+
+.card_bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.card_bg img{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card_descr-heading {
+  max-width: 275px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.card_description p a,
+.contact-form .errors-list_link {
+  text-decoration: none;
+}
+
+.card_heading-icn {
+  transition: left 0.3s ease;
+  position: relative;
+  left: 0;
+}
+
+.card--secondary:hover .card_heading-icn {
+  left: 10px;
+}
+
+.contact-form .success-message {
+  text-align: center;
+  margin-top: 39px;
+  font-size: 2rem;
+  line-height: 3.3rem;
+}
+
+.contact-form .success-message p {
+  margin: 0;
+}
+
+.contact-form .success-message .image {
+  margin-bottom: 10px;
+}
+
+.contact-form .form__message {
+  font-weight: 400;
+  font-size: 1.8rem;
+  line-height: 2.8rem;
+}
+
+.contact-form .form__message,
+.contact-form .error-email {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.contact-form .error-email {
+  margin-top: 11px;
+  position: absolute;
+  right: 0;
+  font-size: 1.4rem;
+  line-height: 2.1rem;
+}
+
+.contact-form .errors-list {
+  padding-left: 37px;
+  margin-bottom: 30px;
+}
+
+.contact-form .success-message_icn {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.card_title-wrap .image {
+  width: 92px;
+  height: 92px;
+  position: relative;
+  border-radius: 100%;
+  overflow: hidden;
+}
+
+.card_title-wrap .image img {
+  border-radius: inherit;
+}
+
+.card_title-wrap .card_title {
+  width: 76%;
+}
+
+@media (min-width:768px) {
+  .card {
+    padding: 43px 35px 26px;
+    width: 50%;
+  }
+
+  .card--secondary {
+    padding: 40px 30px;
+  }
+
+  .contact-form_col-info {
+    flex-direction: row;
+    gap: 20px;
+  }
+}
+
+@media (min-width:992px) {
+  .contact-form{
+    overflow: visible;
+  }
+
+  .contact-form_col{
+    position: sticky;
+    top: var(--page-header-height, 0);
+  }
+
+  .contact-form_wrapper {
+    gap: 60px;
+  }
+
+  .contact-form_col-form {
+    width: 51%;
+  }
+
+  .contact-form_col-info {
+    flex-direction: column;
+    gap: 35px;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .contact-form--form-center .contact-form_col-form {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 703px;
+  }
+}
+
+@media (min-width:1200px) {
+  .contact-form_wrapper {
+    gap: 120px;
+  }
+
+  .card {
+    padding: 63px 85px 46px;
+  }
+
+  .card--secondary{
+    padding: 45px 55px;
+  }
+}

@@ -1,0 +1,45 @@
+.menu-strip ul{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.menu-strip_col{
+  margin-bottom: 30px;
+}
+
+.menu-strip--vertical{
+  flex-direction: column;
+}
+
+.menu-strip_heading{
+  --headings-font-weight: 600;
+  --mt-bottom: 15px;
+}
+
+.menu-strip ul{
+  row-gap: 10px;
+}
+
+.menu-strip ul a{
+  word-break: break-word;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  line-height: 2.4rem;
+  display: block;
+}
+
+@media (min-width: 992px){
+  .menu-strip{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+
+  .menu-strip_col{
+    flex-grow: 1;
+    flex-basis: 0;
+    min-width: calc(50% - 15px);
+    margin-bottom: 0;
+  }
+}

@@ -1,0 +1,120 @@
+.email-signup{
+  --q-align-value: var(--mobile-q-align);
+  --q-justify-value: var(--mobile-justify-align);
+}
+
+.email-signup_description{
+  --mt-top: 20px;
+}
+
+.email-signup_icn-image,
+.email-signup .heading-head{
+  margin-bottom: 25px;
+}
+
+.email-signup_icn-image{
+  display: block;
+}
+
+.email-signup.email-signup--full-size{
+  color: var(--section-foreground-color);
+  background-color: var(--section-background-color);
+}
+
+.email-signup:not(.email-signup--full-size) .email-signup_wrapper{
+  padding: 25px;
+  color: var(--section-foreground-color);
+  background-color: var(--section-background-color);
+  border-radius: var(--section-radius);
+}
+
+.email-signup_col--description {
+  padding-top: 29px;
+  padding-bottom: 29px;
+  flex-grow: 1;
+}
+
+.email-signup_col--box{
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.email-signup_socials-wrap{
+  margin-top: 24px;
+}
+
+.email-signup_socials-wrap,
+.email-signup_form{
+  display: flex;
+}
+
+.email-signup_socials-wrap,
+.email-signup_form-wrap--centered{
+  width: 100%;
+}
+
+.email-signup_form-wrap--centered{
+  max-width: 500px;
+}
+
+.email-signup_form-wrap {
+  width: 100%;
+}
+
+.box-aside_banner-wrapper{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.box-aside_banner-wrapper .box-aside_banner{
+  flex: 1;
+  min-width: 0;
+}
+
+.box-aside_banner-wrapper.--banner-height .box-aside_banner img{
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 576px) {
+  .box-aside_banner-wrapper{
+    flex-direction: row;
+    gap: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .email-signup{
+    --q-align-value: var(--desktop-q-align);
+    --q-justify-value: var(--desktop-justify-align);
+  }
+
+  .email-signup .heading-head,
+  .email-signup_icn-image{
+    margin-bottom: 41px;
+  }
+
+  .email-signup .box-aside {
+    padding: 28px;
+  }
+}
+
+@media (min-width: 992px) {
+  .email-signup_wrapper {
+    display: flex;
+    gap: 25px;
+  } 
+
+  .email-signup_col--box{
+    width: 56.85%;
+  }
+} 
+
+@media (min-width: 1200px) {
+  .email-signup_col--description{
+    padding-left: 44px;
+    padding-right: 44px;
+  }
+}

@@ -1,0 +1,117 @@
+{{ 'links-bar.css' | asset_url | stylesheet_tag }}
+{%- liquid
+  assign section_prefix_class = 'links-bar'
+  assign section_scheme_class = section.settings.section_color_scheme | prepend: 'scheme scheme--'
+
+  capture container_class
+    if section.settings.section_full_width
+      echo 'container-fluid'
+      else
+        echo 'container'
+    endif
+  endcapture
+-%}
+<div class="global-block {{ section_prefix_class }} {{ section_prefix_class }}-{{ section.id }} {{ section_scheme_class }} --align-center">
+  <div class="{{ container_class }}">
+    <div class="{{ section_prefix_class }}_wrapper">
+      <ul class="list-unstyled {{ section_prefix_class }}_list --justify-self">
+        {%- for block in section.blocks -%}
+          <li {{ block.shopify_attributes }}>
+            <a
+              {% if block.settings.link_url != blank %}class="--hover-underline" href="{{ block.settings.link_url }}"{% else %}aria-disabled="true"{% endif %}
+              {% if block.settings.open_new_window %}target="_blank"{% endif %}
+            >
+              {{- block.settings.heading -}}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "t:sections.links_bar.name",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.common.layout.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_full_width",
+      "label": "t:sections.common.full_width.label",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "default": "scheme1",
+      "label": "t:sections.common.clr_scheme.label"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "t:sections.links_bar.blocks.link.name",
+      "type": "link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Link label",
+          "label": "t:sections.links_bar.blocks.link.settings.label"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "t:sections.links_bar.blocks.link.settings.url.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_new_window",
+          "label": "t:sections.common.target_blank.label",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.links_bar.name",
+      "blocks": [
+        {
+          "type": "link",
+          "settings": {
+            "heading": "Link label"
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "heading": "Link label"
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "heading": "Link label"
+          }
+        },
+        {
+          "type": "link",
+          "settings": {
+            "heading": "Link label"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,198 @@
+{{- 'age-verifier-modal.css' | asset_url | stylesheet_tag -}}
+{%- render 'age-verifier-modal' -%}
+<script defer>
+  const button = document.getElementById('age-validator-fail');
+  button.addEventListener('click', function(e){
+    e.preventDefault();
+    const errorContainer = document.getElementById('age-error-container');
+    errorContainer.classList.remove('hidden');
+  });
+</script>
+ 
+{% schema %}
+{
+  "name": "t:sections.age_verifier.name",
+  "limit": 1,
+  "enabled_on": {
+    "groups": [
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.age_verifier.settings.buttons.accept.content"
+    },
+    {
+      "type": "text",
+      "id": "button_label_1",
+      "label": "t:sections.age_verifier.settings.buttons.button.label",
+      "default": "YES, I'M OVER 18"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.age_verifier.settings.buttons.reject.content"
+    },
+    {
+      "type": "text",
+      "id": "button_label_2",
+      "label": "t:sections.age_verifier.settings.buttons.button.label",
+      "default": "NO, I'M UNDER 18"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.layout.content"
+    },
+    {
+      "type": "select",
+      "id": "age_position",
+      "label": "t:sections.age_verifier.settings.position.label",
+      "options": [
+        {
+          "value": "centered",
+          "label": "t:sections.age_verifier.settings.position.options.opt_1.label"
+        },
+        {
+          "value": "bt-left",
+          "label": "t:sections.age_verifier.settings.position.options.opt_2.label"
+        },
+        {
+          "value": "bt-right",
+          "label": "t:sections.age_verifier.settings.position.options.opt_3.label"
+        }
+      ],
+      "default": "centered"
+    },
+    {
+      "type": "text_alignment",
+      "id": "age_text_alignment",
+      "label": "t:sections.common.text.settings.alignment.label",
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.style.content"
+    },
+    {
+      "type": "color_scheme",
+      "id": "age_color_scheme",
+      "default": "scheme3",
+      "label": "t:sections.common.clr_scheme.label"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "t:sections.age_verifier.blocks.image.name",
+      "type": "image",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.common.image.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "hide_image_on_mobile",
+          "label": "t:sections.age_verifier.blocks.image.hide.label",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "block_spacing",
+          "label": "t:sections.common.blocks.settings.mb_margin.label",
+          "min": 0,
+          "max": 50,
+          "step": 1,
+          "default": 15,
+          "unit": "px"
+        }
+      ]
+    },
+    {
+      "name": "t:sections.age_verifier.blocks.heading.name",
+      "type": "heading",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.common.heading.label",
+          "default": "Age verifier"
+        },
+        {
+          "type": "select",
+          "id": "heading_size",
+          "label": "t:sections.common.heading.size.label",
+          "options": [
+            {
+              "value": "heading_x_large",
+              "label": "t:sections.common.heading.size.options.opt_2.label"
+            },
+            {
+              "value": "heading_large",
+              "label": "t:sections.common.heading.size.options.opt_3.label"
+            },
+            {
+              "value": "heading_medium",
+              "label": "t:sections.common.heading.size.options.opt_4.label"
+            }
+          ],
+          "default": "heading_x_large"
+        },
+        {
+          "type": "range",
+          "id": "block_spacing",
+          "label": "t:sections.common.blocks.settings.mb_margin.label",
+          "min": 0,
+          "max": 50,
+          "step": 1,
+          "default": 15,
+          "unit": "px"
+        }
+      ]
+    },
+    {
+      "name": "t:sections.age_verifier.blocks.text.name",
+      "type": "text",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "t:sections.common.text.label",
+          "default": "<p>You must be 18 years old to access this website. Please verify your age.</p>"
+        },
+        {
+          "type": "select",
+          "id": "block_text_size",
+          "label": "t:sections.common.text.settings.fz_sizes.label",
+          "options": [
+            {
+              "value": "small",
+              "label": "t:sections.common.text.settings.fz_sizes.options.opt_1.label"
+            },
+            {
+              "value": "medium",
+              "label": "t:sections.common.text.settings.fz_sizes.options.opt_2.label"
+            },
+            {
+              "value": "large",
+              "label": "t:sections.common.text.settings.fz_sizes.options.opt_3.label"
+            }
+          ],
+          "default": "medium"
+        },
+        {
+          "type": "range",
+          "id": "block_spacing",
+          "label": "t:sections.common.blocks.settings.mb_margin.label",
+          "min": 0,
+          "max": 50,
+          "step": 1,
+          "default": 15,
+          "unit": "px"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

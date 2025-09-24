@@ -1,0 +1,114 @@
+.locator-row_row{
+  row-gap: 20px;
+  --grid-gutter-x: 26px;
+  --grid-gutter-y: 26px;
+  --q-align-value: var(--mobile-q-align);
+}
+
+.locator-row_row.--row-reverse{
+  flex-direction: row-reverse;
+}
+
+.locator-row_image-wrap {
+  border-radius: var(--top-radius) var(--top-radius) var(--bottom-radius) var(--bottom-radius);
+  overflow: hidden;
+  min-height: 150px;
+}
+
+.locator-row_image-wrap img{
+  border-radius: inherit;
+}
+
+.locator-row_caption-title{
+  display: block;
+  margin-bottom: 17px;
+  margin-top: 0;
+}
+
+.locator-row_heading {
+  --mt-bottom: 23px;
+  --mt-top: 19px
+}
+
+.locator-row_address,
+.locator-row_contact,
+.locator-row_message,
+.locator-row_store-hours,
+.locator-row_foot,
+.locator-row_row {
+  margin-top: 25px;
+}
+
+.locator-row_address-location, .locator-row_contact-details, .locator-row_message-details{
+  line-height: 2.4rem;
+}
+
+.locator-row_address-location p, .locator-row_contact-details p, .locator-row_message-details p, .locator-row_store-time p{
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.locator-row_contact-details p a{
+  text-decoration: none;
+}
+
+.locator-row_row:first-child {
+  margin-top: 0;
+}
+
+.store-locator.--compact-carousel .locator-row_col-description{
+  padding-bottom: 18px;
+}
+
+.store-locator.--compact-carousel .locator-row_row{
+  border: 1px solid var(--section-border-color);
+}
+
+.store-locator.--compact-carousel .locator-row_row{
+  column-gap: 15px;
+}
+
+@media (min-width: 768px) {
+  .locator-row_row{
+    display: flex;
+    column-gap: 30px;
+    --grid-gutter-x: 30px;
+    --grid-gutter-y: 56px;
+    --q-align-value: var(--desktop-q-align);
+  }
+
+  .locator-row_col-media{
+    flex-shrink: 0;
+    width: 50%;
+  }
+  
+  .locator-row_col-description{
+    flex-grow: 1;
+  }
+
+  .locator-row_row {
+    margin-top: var(--grid-gutter-y);
+  }
+
+  .locator-row_row:first-child {
+    margin-top: 0;
+  }
+}
+
+@media(min-width: 992px){
+  .store-locator.--compact-carousel .locator-row_row{
+    column-gap: 30px;
+  }
+}
+
+@media(min-width: 1200px){
+  .store-locator_wrapper .splide__track{
+    padding-left: 0 !important
+  }
+}
+
+@media (max-width: 767px){
+  .store-locator.--compact-carousel .locator-row_col-description{
+    width: 100%;
+  }
+}

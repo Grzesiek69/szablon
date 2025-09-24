@@ -1,0 +1,196 @@
+{%- if section.settings.show_only_on_homepage == false or template.name == 'index' -%}
+  {{- 'announcement-bar.css' | asset_url | stylesheet_tag -}}
+  {%- liquid
+    assign section_prefix_class = 'announcement-bar'
+    assign section_scheme_class = section.settings.section_color_scheme | prepend: 'scheme scheme--'
+
+    capture container_class
+      if section.settings.section_full_width
+        echo 'container-fluid'
+        else
+          echo 'container'
+      endif
+    endcapture
+  -%}
+
+  <div class="global-block {{ section_prefix_class }} {{ section_prefix_class }}-{{ section.id }} {{ section_scheme_class }} {% if section.settings.show_bottom_bdr %}{{ section_prefix_class }}--bdr-bottom{% endif %} --align-center">
+    <div class="{{ container_class }}">
+      <div class="{{ section_prefix_class }}_wrapper">
+        <marquee-component data-direction="{{- section.settings.marquee_direction -}}" data-pause-on-hover="{{- section.settings.marquee_on_hover -}}" data-speed="{{- section.settings.marquee_speed -}}">
+          <div class="marquee-component {% unless section.settings.text_separator_style == 'text' or section.settings.text_separator_style == 'icon' %}marquee-component--gap{% endunless %}">
+            {%- for block in section.blocks -%}
+              <div class="marquee-component_col {{ section_prefix_class }}_marquee-col">
+                <span role="status" aria-live="polite" class="{{ section_prefix_class }}_text">{{- block.settings.heading -}}</span>
+                {%- if section.settings.text_separator_style == 'icon' -%}
+                  {%- liquid
+                    assign logo_width = section.settings.seperator_icon.width | round
+                    capture image_alt
+                      unless section.settings.seperator_icon.alt == blank
+                        echo section.settings.seperator_icon.alt
+                        else
+                          echo section.settings.seperator_icon.heading | escape
+                      endunless
+                    endcapture
+        
+                    capture logo_widths
+                      echo logo_width
+                    endcapture
+                  -%}
+                  {%- capture logo_sizes -%}
+                    {{- logo_width | prepend: '(min-width: 50px) ' | append: 'px' -}}
+                  {%- endcapture -%}
+                  {%- if section.settings.seperator_icon -%}
+                    <div class="separator-icon">
+                      {{- section.settings.seperator_icon | image_url: width: logo_width | image_tag: sizes: logo_sizes, alt: image_alt, widths: logo_widths -}}
+                    </div>
+                  {%- else -%}
+                    <div class="separator-icon_placeholder">
+                      {{- 'hero-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                    </div>
+                  {%- endif -%}
+                {%- endif -%}
+                {%- if section.settings.text_separator_style == 'text' -%}
+                  <i class="{{ section_prefix_class }}_separator ">
+                    {%- render 'icons-data', width: 17, height: 21, use_icon: true, icon_reference: 'slash' -%}
+                  </i>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        </marquee-component>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.announcement_bar.name",
+  "tag": "header",
+  "class": "announcement-bar-component",
+  "enabled_on": {
+    "groups": [
+      "header"
+    ]
+  },
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_only_on_homepage",
+      "label": "t:sections.announcement_bar.settings.show_home_only.label",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "text_separator_style",
+      "label": "t:sections.announcement_bar.settings.text_separator_style.label",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "text",
+          "label": "Text"
+        },
+        {
+          "value": "icon",
+          "label": "Icon"
+        }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "image_picker",
+      "id": "seperator_icon",
+      "label": "Separator Icon",
+      "visible_if": "{{ section.settings.text_separator_style == 'icon' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.layout.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "section_full_width",
+      "label": "t:sections.common.full_width.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_bdr",
+      "label": "t:sections.announcement_bar.settings.bottom_bdr.label",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "default": "scheme2",
+      "label": "t:sections.common.clr_scheme.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.scroll.content"
+    },
+    {
+      "type": "range",
+      "id": "marquee_speed",
+      "label": "t:sections.common.scroll.settings.speed.label",
+      "min": 1,
+      "max": 30,
+      "step": 1,
+      "default": 20,
+      "unit": "sec"
+    },
+    {
+      "type": "select",
+      "id": "marquee_direction",
+      "label": "t:sections.common.scroll.settings.direction.label",
+      "options": [
+        {
+          "value": "backward",
+          "label": "t:sections.common.scroll.settings.direction.options.opt_1.label"
+        },
+        {
+          "value": "forward",
+          "label": "t:sections.common.scroll.settings.direction.options.opt_2.label"
+        }
+      ],
+      "default": "backward"
+    },
+    {
+      "type": "checkbox",
+      "label": "t:sections.common.scroll.settings.on_hover.label",
+      "id": "marquee_on_hover",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "name": "t:sections.announcement_bar.blocks.text.name",
+      "type": "announcement_text",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "t:sections.common.text.label",
+          "default": "Welcome to our store"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.announcement_bar.name",
+      "blocks": [
+        {
+          "type": "announcement_text",
+          "settings": {
+            "heading": "Welcome to our store"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,115 @@
+.product-featured-card{
+  min-height: 440px;
+  position: relative;
+  width: 100%;
+  display: flex;
+}
+
+.product-featured-card_align{
+  width: 100%;
+  margin-top: auto;
+  padding: 37px 20px 114px;
+}
+
+a.product-featured-card_image{
+  --focus-outline-offset: 0;
+  display: block;
+}
+
+.product-featured-card_image{
+  width: 140px;
+  height: 140px;
+  position: relative;
+  margin: 0 auto 33px;
+  overflow: hidden;
+  border-radius: calc(var(--section-radius) * 1000);
+}
+
+.product-featured-card.--no-image .product-featured-card_image{
+  border: 1px solid var(--section-foreground-color);
+}
+
+.product-featured-card_heading > a{
+  text-decoration: none;
+}
+
+.product-featured-card_image img,
+.product-featured-card_image svg{
+  border-radius: inherit;
+}
+
+.product-featured-card_price{
+  --headings-font-family: inherit;
+}
+
+.product-featured-card--primary .product-featured-card_image{
+  height: 163px;
+  margin-bottom: 21px;
+}
+
+.product-featured-card_btn{
+  position: absolute;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product_media--show-sec .image--second{
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.product_media--show-sec:hover img:nth-child(1){
+  opacity: 0;
+  visibility: hidden;
+}
+
+.product_media--show-sec:hover .image--second{
+  opacity: 1;
+  visibility: visible;
+  bottom: 0;
+  z-index: auto;
+}
+
+.product_media--show-sec:hover .image--second{
+  height: 100%;
+  object-fit: cover;
+}
+
+.product_media--show-sec .image--second{
+  top: 0;
+  left: 0;
+  opacity: 0;
+  z-index: -1;
+  visibility: hidden;
+  position: absolute;
+}
+
+@media (min-width: 768px){
+  .product-featured-card{
+    min-height: 500px;
+  }
+
+  .product-featured-card_image{
+    width: 190px;
+    height: 190px;
+  }
+
+  .product-featured-card--primary .product-featured-card_image{
+    height: 263px;
+  }
+
+  .product-featured-card_align{
+    padding-top: 18px;
+  }
+
+  .product-featured-card:hover .product-featured-card_btn.button--primary,
+  .product-featured-card:hover .product-featured-card_btn.button--secondary{
+    --button-background: var(--button-hover-background);
+    --button-text: var(--button-hover-text);
+    --button-border-color: var(--button-hover-border-color);
+  }
+}

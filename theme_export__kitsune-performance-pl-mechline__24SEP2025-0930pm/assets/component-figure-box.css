@@ -1,0 +1,32 @@
+a.figure-box{
+  --focus-outline-offset: 1px;
+  display: block;
+}
+
+.figure-box{
+  margin: 0;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.fig-box-wrapper{
+  overflow: hidden;
+  border-radius: calc(var(--section-radius) / 1.8);
+  border: 1px solid var(--section-border-color);
+  padding: 12px;
+  width: 100%;
+  --mt-bottom: 15px;
+}
+
+.fig-box-wrapper.remove-image-bdr{
+  border: 0;
+  padding: 0;
+}
+
+.remove-spacing .fig-box-wrapper{
+  --mt-bottom: 0;
+}
+
+.remove-radius .fig-box-wrapper{
+  border-radius: 0;
+}

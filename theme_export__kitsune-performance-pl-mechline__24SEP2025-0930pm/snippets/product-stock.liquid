@@ -1,0 +1,38 @@
+{%- comment -%}
+  renders product stock
+  usage
+    {%- render 'product-stock', product: product -%}
+{%- endcomment -%}
+{%- if product == null -%}
+  <span class="product-stock --word-break">
+    {{- 'product.table_box.sold_out' | t -}}
+  </span>
+  {%- else -%}
+    {%- if product.selected_or_first_available_variant.inventory_management == 'shopify' -%}
+      {%- liquid
+        assign backordered = false
+        if product.selected_or_first_available_variant.inventory_policy == 'continue'
+          assign inventory_text = 'product.table_box.pre_text' | t
+          assign backordered = true
+          else
+            assign inventory_count = product.selected_or_first_available_variant.inventory_quantity | times: 1
+            capture inventory_text
+              if inventory_count < 1
+                echo 'product.table_box.sold_out' | t
+                elsif inventory_count < 50
+                  echo 'product.table_box.low_stock_text' | t
+                else
+                  echo 'product.table_box.in_stock_text' | t
+              endif
+            endcapture
+        endif
+      -%}
+      <span class="product-stock --word-break">
+        {{ inventory_text }}
+      </span>
+      {%- else -%}
+        {%- if on_compare -%}
+          {{- 'accessibility.compare.nil' | t -}}
+        {%- endif -%}
+    {%- endif -%}
+{%- endif -%}

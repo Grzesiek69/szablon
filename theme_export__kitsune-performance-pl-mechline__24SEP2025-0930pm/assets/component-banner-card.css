@@ -1,0 +1,97 @@
+.banner-card{
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  border-radius: var(--section-radius);
+}
+
+.banner-caption{
+  border-radius: var(--section-radius);
+  /* padding: 16px;
+  position: absolute;
+  width: calc(100% - 52px);
+  bottom: 40px;
+  margin-left: 26px;
+  margin-right: 26px;
+  max-height: 60%;
+  overflow-y: auto;
+  overflow-x: hidden; */
+  position: absolute;
+  padding: 16px;
+  max-width: 80%;
+  max-height: 60%;
+  z-index: 1;
+  overflow-y: auto;
+}
+
+.banner-image{
+  position: relative;
+}
+
+a.banner-card{
+  --focus-outline-offset: 1px;
+  display: block;
+}
+
+.banner-card_description{
+  --mt-top: 18px
+}
+
+.banner-card_description:only-child{
+  --mt-top: 0;
+}
+
+.banner-caption.remove-container{
+  background-color: transparent;
+  padding: 6px;
+}
+
+.--top-left{
+  top: 40px;
+  left: 26px;
+}
+
+.--top-right{
+  top: 40px;
+  right: 26px;
+}
+
+.--bottom-left{
+  left: 26px;
+  bottom: 40px;
+}
+
+.--bottom-right{
+  right: 26px;
+  bottom: 40px;
+}
+
+.--bottom-center{
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 320px;
+}
+
+.--top-center{
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 320px;
+}
+
+.--center{
+  top: 50%;
+  transform: translateY(-50%);
+  left: 132px;
+  right: 132px;
+}
+
+.banner_button{
+  margin-top: 22px;
+}
+
+.promotion-banners--remove-rounded .banner_button{
+  --button-radius: 0;
+}

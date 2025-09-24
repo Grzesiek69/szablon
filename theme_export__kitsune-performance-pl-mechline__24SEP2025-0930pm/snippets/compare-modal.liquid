@@ -1,0 +1,81 @@
+{%- comment -%}
+  renders compare modal on page templates
+  usage
+    {%- render 'compare-modal' -%}
+{%- endcomment -%}
+<div class="scheme scheme--{{ settings.compare_draw_color_scheme }}">
+  <modal-component-toggler class="hidden">
+    <button
+      type="button"
+      data-expanded="false"
+      data-modal-ref="modal-compare"
+      aria-haspopup="dialog"
+      aria-controls="modal-compare"
+      aria-disabled="true"
+      disabled=""
+      class="button button--primary modal-compare-opener disabled"
+    >
+      {{- 'accessibility.compare.opener_label' | t }} <compare-count></compare-count>
+    </button>
+  </modal-component-toggler>
+  <modal-component
+    data-modal="modal-compare"
+    data-includes="compare"
+    data-url="{{ request.origin }}{{ routes.root_url }}"
+  >
+    <div
+      class="modal modal-component modal-component--compare"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-compare-heading"
+      aria-describedby="modal-compare"
+      tabindex="-1"
+    >
+      <div class="modal-component_wrapper" id="modal-compare">
+        <div class="modal-component_body">
+          <div class="modal-component_head --align-center">
+            <modal-component-toggler>
+              <button
+                type="button"
+                data-expanded="true"
+                data-toggle-attribute="false"
+                data-modal-ref="modal-compare"
+                class="modal-component_btn-close btn-icn-ixi">
+                <span class="btn-icn-ixi_wrapper">
+                  {%- render 'icons-data', width: 14, height: 14, use_icon: true, icon_reference: 'cross' -%}
+                  <span class="visually-hidden">{{- 'accessibility.close' | t -}}</span>
+                </span>
+              </button>
+            </modal-component-toggler>
+            <strong id="modal-compare-heading" class="visually-hidden">
+              {{- 'product.size_chart.heading' | t -}}
+            </strong>
+          </div>
+          <div class="modal-component_content">
+            <div class="container">
+              <div class="compare-grid_scroll-wrap">
+                <div class="compare-grid" data-render-compare-grid="">
+                  {% comment %} render columns here {% endcomment %}
+                </div>
+                <div class="compare-grid--empty hidden --align-center" data-render-compare-grid-empty="">
+                  <i class="compare-grid_empty-icn">
+                    {%- render 'icons-data', width: 38, height: 38, use_icon: true, icon_reference: 'empty-box' -%}
+                  </i>
+                  <strong class="h6 compare-grid_empty-heading mty">
+                    {{- 'accessibility.compare.empty.heading' | t -}}
+                  </strong>
+                </div>
+              </div>
+            </div>
+            <span class="loader compare-column_loader hidden --justify-center --v-align-middle" data-loader="">
+              {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'loader' -%}
+              <span class="visually-hidden">
+                {{- 'accessibility.loader.label' | t -}}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </modal-component>
+</div>

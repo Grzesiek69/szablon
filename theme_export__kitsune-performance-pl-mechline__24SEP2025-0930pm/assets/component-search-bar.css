@@ -1,0 +1,88 @@
+.search-bar_dropdown-wrapper{
+  left: calc(var(--cp-spacer-left, 15px) * -1);
+  right: calc(var(--cp-spacer-left, 15px) * -1);
+  box-shadow: none;
+  top: 0;
+  bottom: 0;
+  transform: none;
+  overflow: visible;
+  display: flex;
+}
+
+.search-bar,
+.search-bar form,
+.search-bar_form-group{
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.collection-products_search-wrap{
+  margin-top: 27px;
+  margin-bottom: 27px;
+}
+
+.page-header_search-wrap input[type="search"]{
+  --input-border: 0;
+  --input-radius: 0;
+  --input-background: transparent;
+  --input-text: var(--section-foreground-color);
+  --input-height: 100%;
+  --input-padding-x: 5rem;
+}
+
+.search-bar_form-group{
+  position: relative;
+}
+
+/* .collection-products_search-wrap .search-bar_form-group input{
+  --input-border: 0;
+  --input-radius: 0;
+  --input-background: var(--section-input-background-color);
+  --input-text: var(--section-foreground-color);
+  --input-height: 100%;
+  --input-padding-x: 2.5rem;
+} */
+
+.search-bar_label.btn-icn-ixi,
+.search-bar_reset-btn.btn-icn-ixi{
+  --ixi-bg-color: var(--section-background-color);
+  --ixi-text-color: var(--section-links-color);
+  --ixi-text-hover-color: var(--section-active-hover-color);
+  --ixi-bg-hover-color: transparent;
+  --ixi-padding-x: 5px;
+  --ixi-padding-y: 5px;
+}
+
+.search-bar_label{
+  left: 5px;
+}
+
+.collection-products_search-wrap .search-bar_label{
+  left: auto;
+  right: 5px;
+}
+
+.search-bar_label,
+.search-bar_reset-btn{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.search-bar_reset-btn{
+  right: 5px;
+}
+
+.collection-products_search-wrap input[type="search"]{
+  padding-right: 5rem;
+}
+
+.collection-products_search-wrap .search-bar_label.btn-icn-ixi{
+  --ixi-bg-color: var(--section-widget-background-color);
+  --ixi-text-color: var(--section-widget-foreground-color);
+  --ixi-text-hover-color: var(--section-widget-foreground-color);
+  --ixi-bg-hover-color: var(--section-widget-background-color);
+  --ixi-padding-x: 5px;
+  --ixi-padding-y: 5px;
+}

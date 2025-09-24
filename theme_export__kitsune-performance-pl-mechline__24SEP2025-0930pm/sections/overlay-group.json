@@ -1,0 +1,1 @@
+{"type":"custom.overlay","name":"Overlay group","sections":{"age-varification-popup":{"type":"age-verification-popup","blocks":{"heading":{"type":"heading","settings":{"heading":"Age Verification"}},"text":{"type":"text","settings":{}}},"block_order":["heading","text"],"disabled":true,"settings":{}}},"order":["age-varification-popup"]}

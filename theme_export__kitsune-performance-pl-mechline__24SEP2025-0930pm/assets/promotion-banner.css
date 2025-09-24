@@ -1,0 +1,51 @@
+.promotion-banners{
+  --top-radius: 15px;
+  --bottom-radius: 15px;
+}
+
+.promotion-banners_wrapper{
+  --padding-top: calc(var(--section-padding-top)/100*70);
+  --padding-bottom: calc(var(--section-padding-bottom)/100*70);
+  padding-top: var(--padding-top);
+  padding-bottom: var(--padding-bottom);
+}
+
+.promotion-banners .container-fluid{
+  --cp-spacer-left: 0;
+  --cp-spacer-right: 0;
+}
+
+.promotion-banners--remove-gutters .collage-grid{
+  gap: 0;
+}
+
+.promotion-banners--remove-rounded .banner-card{
+  --section-radius: 0;
+}
+
+.promotion-banners .reduce-gaps .collage-grid{
+  gap: 12px;
+}
+
+.promotion-banners .collage-grid.--custom-gap{
+  gap: var(--custom-gap);
+}
+
+@media (min-width: 768px) {
+  .promotion-banners_wrapper{
+    --padding-top: calc(var(--section-padding-top)/100*85);
+    --padding-bottom: calc(var(--section-padding-bottom)/100*85);
+  }
+}
+
+@media (min-width: 1200px){
+  .promotion-banners{
+    --top-radius: var(--section-top-radius);
+    --bottom-radius: var(--section-bottom-radius);
+  }
+  
+  .promotion-banners_wrapper{
+    --padding-top: var(--section-padding-top);    
+    --padding-bottom: var(--section-padding-bottom);
+  }
+}

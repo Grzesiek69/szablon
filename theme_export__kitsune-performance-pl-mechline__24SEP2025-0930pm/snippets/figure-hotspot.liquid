@@ -1,0 +1,119 @@
+{%- comment -%}
+  renders figure with hotspots
+  usage
+    {%- render 'figure-hotspot', figure: block, prefix_class: section_prefix_class, figure_index: forloop.index, position: '1st' -%}
+{%- endcomment -%}
+
+{%- liquid
+  assign block_product_1 = figure.settings.block_product_1
+  assign block_product_2 = figure.settings.block_product_2
+
+  capture product_title_1
+    if block_product_1.title != blank
+      echo block_product_1.title | escape
+    else
+      echo 'product.title' | t
+    endif
+  endcapture
+
+  capture product_title_2
+    if block_product_2.title != blank
+      echo block_product_2.title | escape
+    else
+      echo 'product.title' | t
+    endif
+  endcapture
+
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+    else
+      echo 'eager'
+    endif
+  endcapture
+
+  capture placeholder_image
+    if figure_index > 3
+      echo 'hero-apparel-1'
+    else
+      echo 'hero-apparel-' | append: figure_index
+    endif
+  endcapture
+-%}
+<figure
+  class="hotspot mty {{ section_prefix_class }}_hotspot scheme--{{ figure.settings.block_color_scheme }}"
+  style="--position-top-first: {{ figure.settings.position_top_spot_first }}%; --position-left-first: {{ figure.settings.position_left_spot_first }}%; --position-top-second: {{ figure.settings.position_top_spot_second }}%; --position-left-second: {{ figure.settings.position_left_spot_second }}%;"
+  {{ figure.shopify_attributes }}
+>
+  {%- if figure.settings.image != blank -%}
+    {{
+      figure.settings.image
+      | image_url: width: 1350
+      | image_tag:
+        class: 'object-fit object-fit--cover object-fit--absolute',
+        loading: loading_attr,
+        widths: '675, 1350',
+        sizes: '(max-width: 767px) 675vw, 1350vw'
+    }}
+  {%- else -%}
+    {{- placeholder_image | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+  {%- endif -%}
+  {%- if figure.settings.enable_spot_first -%}
+    <div class="hotspot_dropdown hotspot_dropdown--first">
+      <splide-switcher
+        data-ref-id="slide-ref-{{ section.id }}-{{ figure.id }}-1st"
+        data-ref-slider="slider-ref-{{ section.id }}"
+        data-ref-parent="#{{ section.id }}"
+      >
+        <button
+          type="button"
+          class="dropdown-component_opener hotspot_opener btn-icn-ixi"
+          {% if figure_index == 1 %}data-selected="true"{% else %}data-selected="false"{% endif %}
+        >
+          <span class="btn-icn-ixi_wrapper">
+            <i class="hotspot_opener--icn-open">
+              {%- if section.settings.hotspot_icon_style == 'plus' -%}
+                {%- render 'icons-data', width: 30, height: 30, use_icon: true, icon_reference: 'plus' -%}
+              {%- else -%}
+                {%- render 'icons-data', width: 30, height: 30, use_icon: true, icon_reference: 'dot' -%}
+              {%- endif -%}
+              <span class="visually-hidden">{{- product_title_1 -}}</span>
+            </i>
+          </span>
+          {% if section.settings.show_title_hover %}
+            <span class="hotspot_hover-title">{{- product_title_1 -}}</span>
+          {% endif %}
+        </button>
+      </splide-switcher>
+    </div>
+  {%- endif -%}
+  {%- if figure.settings.enable_spot_second -%}
+    <div class="hotspot_dropdown hotspot_dropdown--second">
+      <splide-switcher
+        data-ref-id="slide-ref-{{ section.id }}-{{ figure.id }}-2nd"
+        data-ref-slider="slider-ref-{{ section.id }}"
+        data-ref-parent="#{{ section.id }}"
+      >
+        <button
+          type="button"
+          class="dropdown-component_opener hotspot_opener btn-icn-ixi"
+          data-selected="false"
+        >
+          <span class="btn-icn-ixi_wrapper">
+            <i class="hotspot_opener--icn-open">
+              {%- if section.settings.hotspot_icon_style == 'plus' -%}
+                {%- render 'icons-data', width: 30, height: 30, use_icon: true, icon_reference: 'plus' -%}
+              {%- else -%}
+                {%- render 'icons-data', width: 30, height: 30, use_icon: true, icon_reference: 'dot' -%}
+              {%- endif -%}
+              <span class="visually-hidden">{{- product_title_2 -}}</span>
+            </i>
+          </span>
+          {% if section.settings.show_title_hover %}
+            <span class="hotspot_hover-title">{{- product_title_2 -}}</span>
+          {% endif %}
+        </button>
+      </splide-switcher>
+    </div>
+  {%- endif -%}
+</figure>

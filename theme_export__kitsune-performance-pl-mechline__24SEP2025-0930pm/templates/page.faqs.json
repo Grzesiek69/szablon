@@ -1,0 +1,62 @@
+{
+  "sections": {
+    "main_page": {
+      "type": "main-page",
+      "settings": {
+        "section_top_padding": 50,
+        "section_bottom_padding": 0
+      }
+    },
+    "collapsible_with_image": {
+      "type": "collapsible-with-image",
+      "settings": {
+        "heading": ""
+      },
+      "blocks": {
+        "collapsible_row_1":{
+          "type": "collapse_row",
+          "settings": {
+            "open_by_default": true
+          }
+        },
+        "collapsible_row_2":{
+          "type": "collapse_row",
+          "settings": {
+          }
+        },
+        "collapsible_row_3":{
+          "type": "collapse_row",
+          "settings": {
+          }
+        },
+        "collapsible_row_4":{
+          "type": "collapse_row",
+          "settings": {
+          }
+        },
+        "collapsible_row_5":{
+          "type": "collapse_row",
+          "settings": {
+          }
+        },
+        "collapsible_row_6":{
+          "type": "collapse_row",
+          "settings": {
+          }
+        }
+      }, 
+      "block_order": [
+        "collapsible_row_1",
+        "collapsible_row_2",
+        "collapsible_row_3",
+        "collapsible_row_4",
+        "collapsible_row_5",
+        "collapsible_row_6"
+      ]
+    }
+  },
+  "order": [
+    "main_page",
+    "collapsible_with_image"
+  ]
+}

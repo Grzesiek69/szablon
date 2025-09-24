@@ -1,0 +1,203 @@
+.logo-list_wrapper{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.logo-list .container-fluid .logo-list_list-wrapper{
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.logo-list_heading{
+  --headings-font-weight: 500;
+  --heading-size-factor: 0.6;
+  font-size: 1.8rem;
+}
+
+.logo-list_list-wrapper{
+  flex-grow: 1;
+  flex-basis: 0;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+.logo-list_list-wrapper::before{
+  z-index: 1;
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  pointer-events: none;
+  background-image: linear-gradient(90deg, var(--section-background-color) 0%, transparent 100%), linear-gradient(-90deg, var(--section-background-color) 0%, transparent 100%);
+  background-repeat: no-repeat;
+  background-size: 50px 100%;
+  background-position: 0 0, 100% 0;
+}
+
+.logo-list .container-fluid .logo-list_wrapper{
+  overflow: visible;
+}
+
+.logo-list_list{
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  row-gap: 30px;
+  justify-content: center;
+}
+
+.logo-list marquee-component,
+.logo-list_list{
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.logo-list_list li{
+  flex: 0 0 calc(100% / 2);
+}
+
+.logo-list_list li,
+.logo-list .marquee-component_col{
+  display: flex;
+  justify-content: center;
+  height: 84px;
+}
+
+.logo-list_list li.--small-height,
+.logo-list .marquee-component_col.--small-height{
+  display: flex;
+  justify-content: center;
+  height: 84px;
+}
+
+.logo-list_list li.--medium-height,
+.logo-list .marquee-component_col.--medium-height{
+  display: flex;
+  justify-content: center;
+  height: 120px;
+}
+
+.logo-list_list li.--large-height,
+.logo-list .marquee-component_col.--large-height{
+  display: flex;
+  justify-content: center;
+  height: 180px;
+}
+
+.logo-list .marquee-component_col{
+  width: calc(var(--cp-width) * 1px / 7 - (var(--cp-spacer-left) + var(--cp-spacer-right)));
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.logo-list .marquee-component_col.--small-height{
+  width: calc(var(--cp-width) * 1px / 7 - (var(--cp-spacer-left) + var(--cp-spacer-right)));
+}
+
+.logo-list .marquee-component_col.--medium-height{
+  width: calc(var(--cp-width) * 1px / 6 - (var(--cp-spacer-left) + var(--cp-spacer-right)));
+}
+
+.logo-list .marquee-component_col.--large-height{
+  width: calc(var(--cp-width) * 1px / 5 - (var(--cp-spacer-left) + var(--cp-spacer-right)));
+}
+
+.logo-list .img-placeholder{
+  width: 100%;
+  height: 69px;
+}
+
+.logo-list_list-logo{
+  width: 100%;
+  display: flex;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.--medium-height .logo-list_list-logo{
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.--large-height .logo-list_list-logo{
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.logo-list_list-logo img,
+.logo-list .img-placeholder{
+  margin: auto;
+}
+
+.logo-list_list-logo img{
+  width: auto;
+  max-height: 100%;
+}
+
+.logo-list.--border-top {
+  border-top: 1px solid var(--section-border-color);
+  padding-top: 10px;
+}
+
+.logo-list.--border-bottom {
+  border-bottom: 1px solid var(--section-border-color);
+  padding-bottom: 10px;
+}
+
+@media (min-width: 576px){
+  .logo-list_list li{
+    flex: 0 0 calc(100% / 4);
+  }
+}
+@media (min-width: 992px){
+  .logo-list_wrapper{
+    flex-direction: row;
+  }
+
+  .logo-list .container-fluid .logo-list_list-wrapper{
+    margin-left: 0;
+  }
+
+  .logo-list_heading-wrapper{
+    flex-shrink: 0;
+    width: 200px;
+    display: flex;
+  }
+
+  .logo-list_col{
+    display: flex;
+  }
+
+  .logo-list_heading{
+    margin-top: auto;
+    margin-bottom: auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .logo-list_list li{
+    flex: 0 0 calc(100% / 5);
+  }
+}
+@media (min-width: 1200px){
+  .logo-list_list li{
+    flex: 0 0 calc(100% / 7);
+  }
+/* 
+  .logo-list_list li.--small-height{
+    flex: 0 0 calc(100% / 7);
+  }
+
+  .logo-list_list li.--medium-height{
+    flex: 0 0 calc(100% / 7);
+  }
+
+  .logo-list_list li.--large-height{
+    flex: 0 0 calc(100% / 7);
+  } */
+}

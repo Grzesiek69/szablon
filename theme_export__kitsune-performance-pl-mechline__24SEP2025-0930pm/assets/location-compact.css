@@ -1,0 +1,78 @@
+.store-locator.--compact-carousel .locator-row_image-wrap {
+  position: relative;
+}
+
+.store-locator.--compact-carousel .locator-row_heading {
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.store-locator.--compact-carousel .locator-row_description,
+.store-locator.--compact-carousel .locator-row_address,
+.store-locator.--compact-carousel .locator-row_address-location,
+.store-locator.--compact-carousel .locator-row_contact,
+.store-locator.--compact-carousel .locator-row_contact-details,
+.store-locator.--compact-carousel .locator-row_message,
+.store-locator.--compact-carousel .locator-row_store-hours,
+.store-locator.--compact-carousel .locator-row_store-time,
+.store-locator.--compact-carousel .locator-row_message-details {
+  font-size: 16px;
+}
+
+.store-locator.--compact-carousel .locator-row_address strong,
+.store-locator.--compact-carousel .locator-row_contact strong,
+.store-locator.--compact-carousel .locator-row_message strong,
+.store-locator.--compact-carousel .locator-row_store-hours strong {
+  font-weight: 400;
+}
+
+.store-locator.--compact-carousel .locator-row_description,
+.store-locator.--compact-carousel .locator-row_address-location,
+.store-locator.--compact-carousel .locator-row_contact-details,
+.store-locator.--compact-carousel .locator-row_store-time,
+.store-locator.--compact-carousel .locator-row_message-details {
+  font-weight: 300;
+}
+
+.store-locator.--compact-carousel .locator-row_row {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  background-color: var(--section-widget-background-color);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 0;
+}
+
+.store-locator.--compact-carousel .locator-row_col-media,
+.store-locator.--compact-carousel .locator-row_image-wrap,
+.store-locator.--compact-carousel .locator-row_row  {
+  height: 100%;
+}
+
+.store-locator.--compact-carousel .locator-row_address-location p,
+.store-locator.--compact-carousel .locator-row_contact-details p,
+.store-locator.--compact-carousel .locator-row_message-details p,
+.store-locator.--compact-carousel .locator-row_store-time p {
+  margin-top: 0;
+}
+
+.store-locator.--compact-carousel .splide__track {
+  overflow: visible;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.store-locator.--compact-carousel .locator-row_col-media {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .store-locator.--compact-carousel .locator-row_row {
+    flex-direction: row;
+  }
+
+  .store-locator.--compact-carousel .locator-row_col-media {
+    width: 50%;
+  }
+}

@@ -1,0 +1,40 @@
+{%- comment -%}
+  renders product saving text badge
+  usage
+    {%- render 'product-saving-badge', product: product, use_variant: true -%}
+{%- endcomment -%}
+{%- liquid
+  assign target = product
+  if use_variant
+    assign target = product.selected_or_first_available_variant
+  endif
+
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+
+  assign onsale = false
+  if compare_at_price > price
+    assign onsale = true
+  endif
+
+  assign money_price = price | money
+  if settings.show_currency_code
+    assign money_price = price | money_with_currency
+  endif
+
+  if target == product and product.price_varies
+    assign money_price = money_price | prepend: 'From '
+  endif
+
+  assign dicount_amount = compare_at_price | minus: price
+
+  # Fallbacks when data is missing (like in a placeholder)
+  if dicount_amount <= 0 or dicount_amount == blank
+    assign dicount_amount = 99
+    assign onsale = true
+  endif
+-%}
+
+<strong role="heading" aria-level="2" class="product-saving-badge --word-break {% unless onsale %}hidden{% endunless %}">
+  Save {{ dicount_amount | money }}
+</strong>

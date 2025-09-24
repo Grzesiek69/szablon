@@ -1,0 +1,55 @@
+{
+  "sections": {
+    "collection_products": {
+      "type": "collection-products-grid",
+      "settings": {
+        "section_heading_size": "heading_small",
+        "show_breadcrumb": true,
+        "show_top_bdr": false,
+        "show_bottom_bdr": true,
+        "breadcrumb_color_scheme": "",
+        "number_of_columns_on_desktop": 4,
+        "number_of_rows_on_desktop": 4,
+        "number_of_columns_on_mobile": "2",
+        "mob_cols_query": 576,
+        "section_media_size": "adapt",
+        "variants_position": true,
+        "title_top": true,
+        "show_rating": true,
+        "bt_btns_layout": "enable_atc_guick_view",
+        "show_discount": true,
+        "show_vendor": true,
+        "show_compare": false,
+        "show_stock": false,
+        "show_sec_image": true,
+        "btn_overlay": false,
+        "enable_border": true,
+        "remove_radius": false,
+        "thumbnails_layout": "media_gallery",
+        "show_availables_only": true,
+        "number_of_thumbs": 3,
+        "card_text_alignment": "left",
+        "quick_media_size": "square",
+        "show_navigation": true,
+        "show_variation": true,
+        "show_sku": true,
+        "enable_share": true,
+        "show_subtotals": true,
+        "show_whatsapp": false,
+        "whatsapp_number": "",
+        "custom_message": "Hi! I'm interested in learning more about the ||product_url||. Could you please provide more details or assist me with the purchase? Looking forward to your response! Thank you!",
+        "show_featured_image": true,
+        "enable_filtering": true,
+        "enable_sorting": true,
+        "filter_button_position": "center",
+        "paging_type": "pagination",
+        "section_color_scheme": "",
+        "section_top_padding": 50,
+        "section_bottom_padding": 50
+      }
+    }
+  },
+  "order": [
+    "collection_products"
+  ]
+}

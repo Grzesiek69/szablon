@@ -1,0 +1,163 @@
+{%- comment -%}
+  renders mega menu collections on main navigation dropdown item
+  usage
+    {%- render 'mega-menu-collections', block: block, link: link, link_title: link_title, index: forloop.index, dropdown_link_title: dropdown_link_title, link_handle: link_handle -%}
+{%- endcomment -%}
+<li class="main-navigation_item --has-dropdown --has-mega-menu" {{ block.shopify_attributes }}>
+  <strong id="{{- link_handle -}}-{{- index -}}-mega-collections-heading-1st-level" class="visually-hidden">{{- dropdown_link_title -}}</strong>
+  <dropdown-component data-dropdown-level="1">
+    <button
+      type="button"
+      class="dropdown-component_opener main-navigation_link main-navigation_link--opener --hover-underline"
+      aria-expanded="false"
+      aria-controls="{{- link_handle -}}-{{- index -}}-mega-collections-1st-level"
+      aria-describedby="{{- link_handle -}}-{{- index -}}-mega-collections-heading-1st-level"
+    >
+      {{- link_title -}}
+      {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'chevron-arrow' -%}
+    </button>
+    <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level1 main-navigation_dropdown-wrapper--mega-collections main-navigation_dropdown--inner-wrapper" id="{{- link_handle -}}-{{- index -}}-mega-collections-1st-level">
+      <div class="mega-menu_collections-wrapper">
+        <div class="mega-menu_collections-col mega-menu_collections--col-list">
+          <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--simple">
+            {%- for childlink in link.links -%}
+              <li class="main-navigation_dropdown-item {% unless childlink.links == blank %}--has-dropdown{% endunless %}">
+                {%- if childlink.links == blank -%}
+                  <a class="main-navigation_dropdown-link main-navigation_dropdown-link--level1 main-navigation_no-dropdown-link {% if link.current %}main-navigation_link--active{% endif %}" href="{{- childlink.url -}}" {% if link.current %}aria-current="{{- 'navigation.current_page_label' | t -}}"{% endif %}>
+                    {{- childlink.title | escape -}}
+                  </a>
+                  {%- else -%}
+                    {%- liquid
+                      assign link_title = childlink.title | escape
+                      assign dropdown_link_title = 'navigation.dropdown_link' | t: link: childlink.title | escape
+                      assign link_handle = childlink.title | handle
+                    -%}
+                    <strong id="{{- link_handle -}}-{{- forloop.index -}}-heading-2nd-level" class="visually-hidden">{{- dropdown_link_title -}}</strong>
+                    <dropdown-component data-dropdown-level="2">
+                      <button
+                        type="button"
+                        class="dropdown-component_opener main-navigation_dropdown-link--level1 main-navigation_dropdown-link main-navigation_dropdown-link--opener"
+                        aria-expanded="false"
+                        aria-controls="{{- link_handle -}}-{{- forloop.index -}}-2nd-level"
+                        aria-describedby="{{- link_handle -}}-{{- forloop.index -}}-heading-2nd-level"
+                      >
+                        {{- link_title -}}
+                        <i class="dropdown-component_opener-icn dropdown-component_opener--icn-open">
+                          {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'plus' -%}
+                        </i>
+                        <i class="dropdown-component_opener-icn dropdown-component_opener--icn-close">
+                          {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
+                        </i>
+                      </button>
+                      <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level2 main-navigation_dropdown--inner-wrapper" id="{{- link_handle -}}-{{- forloop.index -}}-2nd-level">
+                        <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--inner">
+                          {%- for grandchildlink in childlink.links -%}
+                            <li class="main-navigation_dropdown-item">
+                              <a class="main-navigation_dropdown-link main-navigation_dropdown-link--level2 {% if link.current %}main-navigation_link--active{% endif %}" href="{{- grandchildlink.url -}}" {% if link.current %}aria-current="{{- 'navigation.current_page_label' | t -}}"{% endif %}>
+                                {{- grandchildlink.title | escape -}}
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      </div>
+                    </dropdown-component>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+        <div class="mega-menu_collections-col mega-menu_collections--col-collections">
+          {%- if block.settings.mega_collections != blank -%}
+            {%- assign column_count = 4 -%}
+            {%- for card in block.settings.mega_collections -%}
+              {%- liquid
+                assign link_title = card.title
+                assign dropdown_link_title = 'navigation.dropdown_link' | t: link: card.title | escape
+                assign link_handle = card.title | replace: ' ', '' | downcase
+              -%}
+              <div class="mega-menu_collection-card">
+                <strong id="{{- link_handle -}}-{{- forloop.index -}}-heading-2nd-level" class="visually-hidden">{{- dropdown_link_title -}}</strong>
+                <dropdown-component
+                  data-dropdown-level="2"
+                  data-desktop-hidden="wide"
+                >
+                  <button
+                    type="button"
+                    class="dropdown-component_opener main-navigation_dropdown-link--level1 main-navigation_dropdown-link main-navigation_dropdown-link--opener --hidden-desktop"
+                    aria-expanded="false"
+                    aria-controls="{{- link_handle -}}-{{- forloop.index -}}-2nd-level"
+                    aria-describedby="{{- link_handle -}}-{{- forloop.index -}}-heading-2nd-level"
+                  >
+                    {{- link_title -}}
+                    <i class="dropdown-component_opener-icn dropdown-component_opener--icn-open">
+                      {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'plus' -%}
+                    </i>
+                    <i class="dropdown-component_opener-icn dropdown-component_opener--icn-close">
+                      {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
+                    </i>
+                  </button>
+                  <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level2 main-navigation_dropdown--inner-wrapper" id="{{- link_handle -}}-{{- forloop.index -}}-2nd-level">
+                    <div class="top-wrap">
+                      <a href="{{- card.url -}}" class="mega-menu_collection-card-image --media-size-square">
+                        {%- if card.featured_image != blank -%}
+                          {{- card.featured_image | image_url: width: 687 | image_tag: alt: card.title, class: 'object-fit object-fit--absolute', loading: 'lazy', widths: '458, 687', sizes: '(max-width: 767px) 50vw, 100vw' -}}
+                          {%- else -%}
+                            {{- 'collection-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                        {%- endif -%}
+                        <span class="visually-hidden">
+                          {{- card.title -}}
+                        </span>
+                      </a>
+                      <strong class="mega-menu_collection-card-title">
+                        <a href="{{- card.url -}}" class="--hover-underline">
+                          {{- card.title -}}
+                        </a>
+                      </strong>
+                      {%- liquid
+                        capture mega_cat_handle
+                          echo card.handle
+                        endcapture
+                        assign mega_cat = collections[mega_cat_handle]
+                      -%}
+                      {%- if mega_cat.products.size > 0 -%}
+                        <ul class="list-unstyled mega-menu_inner-list">
+                          {%- for item in mega_cat.products limit: 4 -%}
+                            <li class="mega-menu_inner-list-item">
+                              <a href="{{- item.url -}}" class="mega-menu_inner-list-link">
+                                {{- item.title -}}
+                              </a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      {%- endif -%}
+                    </div>
+                    <div class="mega-menu_details-button bottom-wrap">
+                      <a href="{{- mega_cat.url -}}" class="mega-menu_details-link --hover-underline">
+                        {%- liquid
+                          echo 'mega_menu.link_more' | t
+                          render 'icons-data', width: 13, height: 13, use_icon: true, icon_reference: 'arrow-pointer'
+                        -%}
+                      </a>
+                    </div>
+                  </div>
+                </dropdown-component>
+              </div>
+              {%- assign column_count = column_count | minus: 1 -%}
+            {%- endfor -%}
+            {%- liquid
+              for card in (1..column_count)
+                render 'mega-collection-card-placeholder', index: forloop.index
+              endfor
+            -%}
+            {%- else -%}
+              {%- liquid
+                for card in (1..4)
+                  render 'mega-collection-card-placeholder', index: forloop.index
+                endfor
+              -%}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </dropdown-component>
+</li>

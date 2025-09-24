@@ -1,0 +1,172 @@
+{%- comment -%}
+  renders line item compact of cart items compact view, mostly usage into cart drawer
+  usage
+    {% render 'line-item-compact', item: item, loading_attr: 'lazy' %}
+{%- endcomment -%}
+
+<div class="line-item-compact --v-align-start" data-line-compact-row="{{- item.id -}}">
+  <div class="line-item-compact_image">
+    {%- if item.image != blank -%}
+      {{- item.image | image_url: width: 240 | image_tag: class: 'object-fit object-fit--absolute', loading: loading_attr, widths: '240, 480', sizes: '(max-width: 767px) 10vw', alt: item.product.title -}}
+      {%- else -%}
+        {{- 'product-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+    {%- endif -%}
+  </div>
+  <div class="line-item-compact_descr-wrap">
+    {%- if settings.enable_cart_drawer_vendor -%}
+      <strong class="line-item-compact_text-heading --word-break">
+        {{- item.product.vendor -}}
+      </strong>
+    {%- endif -%}
+    <strong class="line-item-compact_heading text-size--medium --word-break mty">
+      {%- if item.variant.url != blank -%}
+        <a href="{{- item.variant.url -}}" class="--hover-underline">
+          {{- item.product.title -}}
+        </a>
+        {%- else -%}
+          {{- item.product.title -}}
+      {%- endif -%}
+    </strong>
+    <strong class="line-item-compact_total-price text-size--medium --word-break" data-render-self-price="">
+      {{- item.final_line_price | money -}}
+      {%- if item.variant.available and item.unit_price_measurement -%}
+        <small class="line-item-compact_unit-price">
+          <span class="visually-hidden">
+            {{- 'product.price_from.unit_price' | t -}}
+          </span>
+          {{- item.variant.unit_price | money -}}
+          <span aria-hidden="true">/</span>
+          <span class="visually-hidden"
+            >&nbsp;{{- 'product.price_from.unit_price_separator' | t -}}&nbsp;
+          </span>
+          {%- if item.variant.unit_price_measurement.reference_value != 1 -%}
+            {{- item.variant.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+          {{- item.variant.unit_price_measurement.reference_unit -}}
+        </small>
+      {%- endif -%}
+    </strong>
+    <div data-render-self-others="">
+      {%- if item.product.has_only_default_variant == false or item.properties.size != 0 -%}
+        {%- if item.product.has_only_default_variant == false -%}
+          <ul class="list-unstyled line-item-compact_variant-list text-size--small">
+            {%- for option in item.options_with_values -%}
+              <li class="line-item-compact_variant-item">
+                <strong class="line-item-compact_variant-title --word-break">
+                  {{- option.name -}}:
+                </strong>
+                <strong class="line-item-compact_variant-value --word-break">
+                  {{- option.value -}}
+                </strong>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+        {%- for property in item.properties -%}
+          {%- assign property_first_char = property.first | slice: 0 -%}
+          {%- if property.last != blank and property_first_char != '_' -%}
+            <dl class="list-unstyled line-item-compact_property-list --word-break">
+              <dt class="line-item-compact_property-title">
+                {{- property.first -}}:
+              </dt>
+              <dd class="line-item-compact_property-text">
+                {%- if property.last contains '/uploads/' -%}
+                  <a href="{{- property.last -}}" class="line-item-compact_property-text-link" target="_blank">
+                    {{- property.last | split: '/' | last -}}
+                  </a>
+                {%- else -%}
+                  {{- property.last -}}
+                {%- endif -%}
+              </dd>
+            </dl>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+      {%- if item.discounts.size > 0 -%}
+        <ul class="list-unstyled line-item-compact_discounts-list --word-break">
+          {%- for discount in item.discounts -%}
+            <li class="line-item-compact_discounts-item">
+              {%- liquid
+                render 'icons-data', width: 11, height: 11, use_icon: true, icon_reference: 'discount'
+                echo discount.title
+              -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {%- if item.selling_plan_allocation != null -%}
+        <div class="line-item-compact_plan-wrap">
+          <strong class="line-item-compact_plan-item --word-break">
+            {{- item.selling_plan_allocation.selling_plan.name -}}
+          </strong>
+        </div>
+      {%- endif -%}
+    </div>
+    <div class="line-item-compact_field-wrap --v-align-middle" data-render-fields="">
+      <quantity-input
+        class="quantity-input"
+        data-init-value="{{- item.quantity -}}"
+        data-line-id="{{- item.index | plus: 1 -}}"
+        data-row-id="{{- item.id -}}"
+        data-row-selector="[data-line-compact-row='{{- item.id -}}']"
+      >
+        <label for="Quantity-{{ item.index | plus: 1 }}-{{ section.id }}" class="visually-hidden">
+          {{- 'quantity.label' | t -}}
+        </label>
+        <button class="quantity-input_button btn-icn-ixi quantity-input_button-minus {% if item.quantity < 2 %} disabled {% endif %}" name="minus" type="button" {% if item.quantity < 2 %} disabled="disabled" {% endif %}>
+          <span class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'minus' -%}
+            <span class="visually-hidden" style="background-color: var(--section-background-color); color: var(--section-foreground-color);">
+              {{- 'quantity.decrease' | t: product: item.title | escape -}}
+            </span>
+          </span>
+        </button>
+        <input
+          type="number"
+          name="updates[]"
+          value="{{- item.quantity -}}"
+          {% # theme-check-disable %}
+          min="{{- item.variant.quantity_rule.min -}}"
+          {% if item.variant.quantity_rule.max != null %}
+            max="{{- item.variant.quantity_rule.max -}}"
+          {% endif %}
+          step="{{- item.variant.quantity_rule.increment -}}"
+          {% # theme-check-enable %}
+          aria-label="{{- 'quantity.input_label' | t: product: item.title | escape -}}"
+          id="Quantity-{{ item.index | plus: 1 }}-{{ section.id }}"
+        >
+        <button class="quantity-input_button btn-icn-ixi quantity-input_button-plus" name="plus" type="button">
+          <span class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'plus' -%}
+            <span class="visually-hidden" style="background-color: var(--section-background-color); color: var(--section-foreground-color);">
+              {{- 'quantity.increase' | t: product: item.title | escape -}}
+            </span>
+          </span>
+        </button>
+      </quantity-input>
+      <line-item-remove
+        data-line-id="{{- item.index | plus: 1 -}}"
+        data-row-id="{{- item.id -}}"
+        data-row-selector="[data-line-compact-row='{{- item.id -}}']"
+      >
+        <button class="btn-icn-ixi line-item-compact_remover">
+          <span class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 24, height: 24, use_icon: true, icon_reference: 'trash' -%}
+            <span class="visually-hidden">
+              {{- 'cart.remove' | t: product: item.product.title -}}
+            </span>
+          </span>
+        </button>
+      </line-item-remove>
+    </div>
+    <div class="line-item-compact_error-wrap --word-break hidden" data-render-error="">
+      {% comment %} errors rendering here {% endcomment %}
+    </div>
+  </div>
+  <span class="loader line-item-compact_loader --v-align-middle hidden --justify-center" data-loader="">
+    {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'loader' -%}
+    <span class="visually-hidden">
+      {{- 'accessibility.loader.label' | t -}}
+    </span>
+  </span>
+</div>

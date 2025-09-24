@@ -1,0 +1,96 @@
+{%- comment -%}
+  renders variants checkbox option on product templates
+  usage
+    {%- render 'product-variant-options', option: option, product_form_id: id, product: product, disable_combine: false -%}
+{%- endcomment -%}
+{%- liquid
+  assign variants_available_arr = product.variants | map: 'available'
+  assign variants_option1_arr = product.variants | map: 'option1'
+  assign variants_option2_arr = product.variants | map: 'option2'
+  assign variants_option3_arr = product.variants | map: 'option3'
+
+  capture is_color_option
+    if option.name == 'Color' or option.name == 'color' or option.name == 'Colour' or option.name == 'colour'
+      echo 'true'
+      else
+        echo 'false'
+    endif
+  endcapture
+-%}
+{%- for value in option.values -%}
+  {%- liquid
+    assign option_disabled = true
+    for option1_name in variants_option1_arr
+      case option.position
+        when 1
+          if variants_option1_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+            assign option_disabled = false
+          endif
+        when 2
+          if option1_name == product.selected_or_first_available_variant.option1 and variants_option2_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+            assign option_disabled = false
+          endif
+        when 3
+          if option1_name == product.selected_or_first_available_variant.option1 and variants_option2_arr[forloop.index0] == product.selected_or_first_available_variant.option2 and variants_option3_arr[forloop.index0] == value and variants_available_arr[forloop.index0]
+            assign option_disabled = false
+          endif
+      endcase
+    endfor
+
+    if is_color_option == 'true'
+      assign color_code = value | downcase | replace: ' ', ''
+    endif
+  -%}
+  <div class="product-variant-option">
+    <input
+      type="radio"
+      id="{{ section.id }}-{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}"
+      name="{{ section.id }}-{{ product.id }}-{{ option.name }}"
+      value="{{ value | escape }}"
+      form="{{ product_form_id }}"
+      title="{{ value }}"
+      {% if option.selected_value == value %}
+        checked
+      {% endif %}
+      {% if option_disabled %}
+        class="disabled"
+      {% endif %}
+      {% unless disable_combine %}
+        data-available="{{ value.variant.available }}"
+        data-product-url="{{ value.product_url }}"
+        data-option-value-id="{{ value.id }}"
+      {% endunless %}
+    >
+    <label
+      class="product-variant-option_label --word-break {% if is_color_option == 'true' %}{% if settings.enable_variant_swatches == 'colors' %}product-variant-option_label--color-swatch{% elsif settings.enable_variant_swatches == 'images' %}product-variant-option_label--image-swatch{% endif %}{% endif %}"
+      for="{{ section.id }}-{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}"
+      {% unless settings.enable_variant_swatches == 'none' %}
+        style="--swatch-color: {{ color_code }}"
+      {% endunless %}
+    >
+      {%- unless settings.enable_variant_swatches == 'none' -%}
+        {%- if is_color_option == 'true' -%}
+          <span class="visually-hidden" style="background-color: #fff; color: #000;">
+            {{- value -}}
+          </span>
+          <span class="product-variant-option_label-icn btn-icn-ixi" aria-hidden="true">
+            <span class="btn-icn-ixi_wrapper">
+              {%- render 'icons-data', width: 14, height: 14, use_icon: true, icon_reference: 'disabled' -%}
+            </span>
+          </span>
+          {%- else -%}
+            <span class="product-variant-option_text">
+              {{- value -}}
+            </span>
+        {%- endif -%}
+        {%- else -%}
+          <span class="product-variant-option_text">
+            {{- value -}}
+          </span>
+      {%- endunless -%}
+      <span style="color: #000; background-color: #fff;" class="{% if option_disabled %}visually-hidden{% else %}hidden{% endif %}" data-status-text="">
+        {{- 'product.sold_or_unavailable' | t -}}
+      </span>
+    </label>
+  </div>
+{%- endfor -%}

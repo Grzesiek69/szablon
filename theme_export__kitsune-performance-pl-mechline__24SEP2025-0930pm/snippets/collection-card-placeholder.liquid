@@ -1,0 +1,30 @@
+{%- comment -%}
+  renders collection card placeholder purpose
+  usage
+    {%- render 'collection-card-placeholder', prefix_class: 'section_prefix_class', index: forloop.index -%}
+{%- endcomment -%}
+{%- liquid
+  capture placeholder_image
+    if index > 4
+      echo 'collection-apparel-1'
+      else
+        echo 'collection-apparel-' | append: index
+    endif
+  endcapture
+-%}
+
+<div class="collection-card collection-card--placeholder --align-{{ section.settings.card_text_alignment }}">
+  <div class="collection-card_image {% if section.settings.remove_radius %}remove-radius{% endif %} {% if section.settings.enable_border %}enable-border{% endif %} widget--styles --media-size-{{ section.settings.card_media_size }}" style="--media-ratio: 1;">
+    {{- placeholder_image | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+    {%- if section.settings.show_product_count -%}
+      <div class="collection-card_count-wrap">
+        <strong class="collection-card_count-caption">
+          {{- 'main_collections.count_tag_label' | t: count: 0 -}}
+        </strong>
+      </div>
+    {%- endif -%}
+  </div>
+  <div class="collection-card_description">
+    <h3 class="mty collection-card_heading text-size--{{ section.settings.card_text_size }}">{{- 'collection.title' | t -}}</h3>
+  </div>
+</div>

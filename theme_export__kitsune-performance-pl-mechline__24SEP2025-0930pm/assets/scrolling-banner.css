@@ -1,0 +1,91 @@
+.scrolling-banner{
+  --section-padding-top: 0;
+  --section-padding-bottom: 0;
+  border: solid var(--section-border-color);
+  border-width: 1px 0;
+}
+
+.scrolling-banner .marquee-component_col{
+  padding: 16px 30px;
+}
+
+.scrolling-banner .marquee-component_col + .marquee-component_col{
+  box-shadow: -1px 0 0 var(--section-border-color);
+  display: flex;
+}
+
+.scrolling-banner .marquee-component_col:nth-child(2n) .scrolling-banner_column{
+  border-radius: var(--section-radius-large);
+}
+
+.scrolling-banner .marquee-component_col:nth-child(2n) .scrolling-banner_image-wrap{
+  border-radius: var(--section-radius-large);
+}
+
+.scrolling-banner_column{
+  width: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 11px 35px;
+  border-radius: var(--section-radius-small);
+}
+
+.scrolling-banner_column.--custom-radius,
+.scrolling-banner_column.--custom-radius .scrolling-banner_image-wrap,
+.scrolling-banner .marquee-component_col:nth-child(2n) .scrolling-banner_column.--custom-radius,
+.scrolling-banner .marquee-component_col:nth-child(2n) .scrolling-banner_column.--custom-radius .scrolling-banner_image-wrap{
+  border-radius: var(--custom-radius);
+}
+
+.scrolling-banner .container-fluid{
+  --cp-spacer-left: 0;
+  --cp-spacer-right: 0;
+}
+
+.scrolling-banner_image-wrap{
+  width: 46px;
+  height: 46px;
+  border-radius: calc(var(--section-radius-small) / 2);
+  position: relative;
+  overflow: hidden;
+  margin-left: -22px;
+}
+
+.scrolling-banner_image-wrap img{
+  border-radius: inherit;
+}
+
+.scrolling-banner_text-wrap{
+  flex-grow: 1;
+}
+
+.scrolling-banner_heading,
+.scrolling-banner_subheading{
+  display: block;
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 2.1rem;
+}
+
+a.scrolling-banner_column{
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.scrolling-banner .marquee-component--seperator .marquee-component_col{
+  padding: 16px 6px;
+}
+
+.scrolling-banner .marquee-component--seperator .marquee-component_col + .marquee-component_col{
+  box-shadow: none;
+}
+
+@media (min-width: 768px){
+  .scrolling-banner_image-wrap{
+    width: 56px;
+    height: 56px;
+  }
+}

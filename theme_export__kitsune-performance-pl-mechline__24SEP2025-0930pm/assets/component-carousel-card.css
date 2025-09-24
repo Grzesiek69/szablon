@@ -1,0 +1,122 @@
+.carousel-card{
+  --q-align-value: var(--mobile-q-align);
+  --q-justify-value: var(--mobile-justify-align);
+}
+
+.carousel-card_wrapper{
+  box-shadow: 0 4px 34px var(--section-hotspot-glow-rgba-full);
+  border-radius: var(--section-radius);
+  padding: 50px 30px;
+}
+
+.carousel-card--no-box{
+  background-color: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.carousel-card_description{
+  --mt-top: 20px;
+}
+
+.carousel-card_btn{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  --mt-top: 30px;
+}
+
+.carousel-card_bg-wrapper{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.carousel-card .align-holder_wrapper{
+  max-width: var(--max-content, 100%);
+}
+
+.carousel-card .align-holder_wrapper{
+  padding-bottom: 60px;
+}
+
+.carousel-card_btn--wrap{
+  max-width: 461px;
+  gap: 6px;
+}
+
+.carousel-card_caption{
+  display: block;
+  margin-bottom: 25px;
+}
+
+.carousel-card_btn--wrap .button{
+  --button-radius: 0;
+  width: 100%;
+}
+
+.carousel-card_btn--wrap.mobile-left{
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.carousel-card_btn--wrap.mobile-right{
+  margin-right: 0;
+  margin-left: auto;
+}
+
+.carousel-card_btn--wrap.mobile-center{
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 768px){
+  .carousel-card{
+    --q-align-value: var(--desktop-q-align);
+    --q-justify-value: var(--desktop-justify-align);
+  }
+
+  .carousel-card_btn--wrap.desktop-left{
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  .carousel-card_btn--wrap.desktop-right{
+    margin-right: 0;
+    margin-left: auto;
+  }
+
+  .carousel-card_btn--wrap.desktop-center{
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .carousel-height{
+    --height-factor: 0.85;
+  }
+
+  .carousel-card .container-spaces{
+    --cp-spacer-left: 80px;
+    --cp-spacer-right: 80px;
+  }
+}
+
+@media (min-width: 992px){
+  .carousel-height{
+    --height-factor: 1;
+  }
+
+  .carousel-card .align-holder_wrapper--no-padding{
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+
+  .carousel-card .container-spaces{
+    --cp-spacer-left: 123px;
+    --cp-spacer-right: 123px;
+  }
+}

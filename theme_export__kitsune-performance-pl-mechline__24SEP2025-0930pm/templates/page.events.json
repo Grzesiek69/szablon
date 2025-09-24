@@ -1,0 +1,50 @@
+{
+  "sections": {
+    "main_page": {
+      "type": "main-page",
+      "settings": {
+        "section_top_padding": 50,
+        "section_bottom_padding": 0
+      }
+    },
+    "events_list": {
+      "type": "events-list",
+      "settings": {
+        "heading": "",
+        "section_description": ""
+      },
+      "blocks": {
+        "event_1": {
+          "type": "event",
+          "settings": {
+          }
+        },
+        "event_2": {
+          "type": "event",
+          "settings": {
+          }
+        },
+        "event_3": {
+          "type": "event",
+          "settings": {
+          }
+        },
+        "event_4": {
+          "type": "event",
+          "settings": {
+          }
+        }
+      },
+      "block_order": [
+        "event_1",
+        "event_2",
+        "event_3",
+        "event_4"
+      ]
+    }
+  },
+  "order": [
+    "main_page",
+    "events_list"
+  ]
+}

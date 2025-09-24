@@ -1,0 +1,69 @@
+.price-range{
+  display: block;
+  position: relative;
+}
+
+.price-range::before{
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 100%;
+  height: 5px;
+  border-radius: 99px;
+  background-color: currentcolor;
+  opacity: 0.2;
+  content: '';
+  margin-top: -12px;
+}
+
+.price-range input[type="range"]{
+  position: absolute;
+  height: 0;
+  width: 100%;
+}
+
+.price-range input[type="range"]:focus-visible{
+  --focus-outline-offset: 0;
+}
+
+.price-range input[type='range']::-webkit-slider-thumb {
+  position: relative;
+  height: 15px;
+  width: 15px;
+  margin-top: -7px;
+  background: currentColor;
+  border: 1px solid currentColor;
+  border-radius: calc(var(--input-corner-radius) * 99);
+  z-index: 1;
+}
+
+.price-range_infos-wrapper{
+  display: flex;
+  column-gap: 21px;
+  padding-top: 30px;
+}
+
+.price-range_text--max,
+.price-range_text--min{
+  flex-grow: 1;
+  text-align: center;
+  background: var(--section-widget-background-color);
+  color: var(--section-widget-foreground-color);
+  padding: 5px 10px;
+  display: flex;
+  flex-basis: 0;
+  height: 50px;
+  border-radius: var(--input-corner-radius);
+  font-weight: 500;
+}
+
+.price-range_text--sep{
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+@-moz-document url-prefix() {
+  .price-range::before{
+    margin-top: -8px;
+  }
+}

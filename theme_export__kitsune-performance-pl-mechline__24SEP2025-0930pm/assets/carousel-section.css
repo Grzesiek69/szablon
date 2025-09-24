@@ -1,0 +1,44 @@
+.carousel_wrapper{
+  position: relative;
+}
+
+.carousel .arrows-control{
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+}
+
+.carousel .splide__pagination{
+  border-radius: calc(var(--section-radius) * 99);
+  background-color: var(--section-hotspot-bg-rgba);
+}
+
+@media (min-width: 992px){
+  .carousel .splide__arrow,
+  .carousel .splide__pagination{
+    position: absolute;
+  }
+
+  .carousel .splide__arrow{
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .carousel .splide__arrow--prev{
+    left: 20px;
+  }
+  
+  .carousel .splide__arrow--next{
+    right: 20px;
+  }
+
+  .carousel .arrows-control{
+    margin: 0;
+    min-height: unset;
+    position: static;
+  }
+
+  .carousel .splide__pagination{
+    bottom: 20px;
+  }
+}

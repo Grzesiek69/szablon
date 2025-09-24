@@ -1,0 +1,33 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collections",
+      "settings": {
+        "heading": "Collections",
+        "section_heading_size": "heading_x_large",
+        "section_description": "Display product collections with images, customizable for seasonal highlights or promotions.",
+        "section_text_size": "large",
+        "max_header_size": 60,
+        "show_breadcrumb": true,
+        "show_top_bdr": false,
+        "show_bottom_bdr": true,
+        "breadcrumb_color_scheme": "",
+        "sort": "alphabetical",
+        "number_of_columns_on_desktop": 4,
+        "number_of_columns_on_mobile": "1",
+        "card_media_size": "square",
+        "show_products_count": true,
+        "card_text_alignment": "center",
+        "remove_radius": false,
+        "enable_border": true,
+        "section_text_alignment": "center",
+        "section_color_scheme": "",
+        "section_top_padding": 50,
+        "section_bottom_padding": 50
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

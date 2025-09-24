@@ -1,0 +1,54 @@
+{%- comment -%}
+  renders featured product card placeholder purpose
+  usage
+    {%- render 'product-featured-card-placeholder', index: forloop.index -%}
+{%- endcomment -%}
+{%- liquid
+  assign index_modulo = index | modulo: 2
+  
+  capture placeholder_image
+    if index > 4
+      echo 'product-apparel-1'
+      else
+        echo 'product-apparel-' | append: index
+    endif
+  endcapture
+
+  capture money_price
+    if settings.show_currency_code
+      echo 1999 | money_with_currency
+      else
+        echo 1999 | money
+    endif
+  endcapture
+
+  capture card_type
+    if index_modulo == 0
+      echo 'primary'
+      else
+        echo 'secondary'
+    endif
+  endcapture
+-%}
+
+<div class="product-featured-card product-featured-card--placeholder product-featured-card--{{ card_type }} --align-center">
+  <div class="product-featured-card_align">
+    <a aria-disabled="true" class="product-featured-card_image">
+      {{- placeholder_image | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+      <span class="visually-hidden">
+        {{- 'product.title' | t -}}
+      </span>
+    </a>
+    <h3 class="mty product-featured-card_heading text-size--{{ section.settings.card_text_size }}">
+      <a aria-disabled="true" class="--hover-underline">
+        {{- 'product.title' | t -}}
+      </a>
+    </h3>
+    {%- if section.settings.card_show_price -%}
+      <h4 class="mty product-featured-card_price text-size--small">
+        {{- 'product.price' | t }}: {{ money_price -}}
+      </h4>
+    {%- endif -%}
+    <a aria-disabled="true" class="button button--{{ card_type }} product-featured-card_btn">{{- 'product.featured_button_label' | t -}}</a>
+  </div>
+</div>

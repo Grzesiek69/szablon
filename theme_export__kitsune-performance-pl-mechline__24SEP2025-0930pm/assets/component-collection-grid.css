@@ -1,0 +1,29 @@
+.component-collection-grid .grid_col{
+  display: flex;
+}
+
+.grid_col--empty{
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+}
+
+.collection-products_empty-heading{
+  display: block;
+  --mt-top: 7px;
+  --mt-bottom: 7px;
+}
+
+.collection-products_empty-content{
+  width: 100%;
+}
+
+.collection-products_empty-content .facets-remove-all.button--link{
+  --button-font-size: inherit;
+  --button-line-height: inherit;
+  --button-font-weight: inherit;
+  --button-padding-y: 0;
+  --button-padding-x: 0;
+  --button-border: 0;
+  top: auto;
+}

@@ -1,0 +1,14 @@
+.shopify-policy__container{
+  --sec-pt-top: 40px;
+  --sec-pt-bottom: 40px;
+  max-width: calc(1200 * 1px) !important;
+  padding-top: calc(var(--sec-pt-top) / 1.6) !important;
+  padding-bottom: calc(var(--sec-pt-bottom) / 1.6) !important;
+}
+
+@media (min-width: 768px) {
+  .shopify-policy__container {
+    padding-top: var(--sec-pt-top) !important;
+    padding-bottom: var(--sec-pt-bottom) !important;
+  }
+}

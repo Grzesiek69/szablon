@@ -1,0 +1,15 @@
+{%- comment -%}
+  renders page card for search page template
+  usage
+    {%- render 'page-card', prefix_class: 'section_prefix_class', page: page -%}
+{%- endcomment -%}
+<article class="page-card">
+  <a class="page-card_link--absolute" href="{{- page.url -}}">
+    <h2 class="mt h4 {{ prefix_class }}_page-heading page-card_heading">
+      {{- page.title -}}
+    </h2>
+    <span class="search-page_tag">
+      {{- 'accessibility.page_tag' | t -}}
+    </span>
+  </a>
+</article>

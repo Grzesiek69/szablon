@@ -1,0 +1,104 @@
+{%- comment -%}
+  renders search bar on page templates
+  usage
+    {%- render 'search-bar', predictive: true, prefix_class: 'section_scheme_class' -%}
+{%- endcomment -%}
+<div class="search-bar search-container-{{- section.id -}}">
+  <form action="{{- routes.search_url -}}" method="get" role="search">
+    <div class="search-bar_form-group">
+      <label for="search-bar-input-{{ section.id }}" class="visually-hidden">
+        {{- 'header.search.label' | t -}}
+      </label>
+      <input
+        type="search"
+        name="q"
+        title="{{- 'header.search.label' | t -}}"
+        autocomplete="off"
+        id="search-bar-input-{{ section.id }}"
+        value="{%- if search_value != blank -%}{{- search_value -}}{%- endif -%}"
+        placeholder="{{- 'header.search.placeholder' | t -}}"
+      >
+      {%- if predictive -%}
+        <predictive-button data-query="query,product,collection,page,article" data-parent=".search-container-{{- section.id -}}" data-predict-container=".predictive-container--{{ section.id }}">
+      {%- endif -%}
+        <button class="btn-icn-ixi search-bar_label">
+          <i class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 16, height: 16, use_icon: true, icon_reference: 'search' -%}
+            <span class="visually-hidden">
+              {{- 'header.search.label' | t -}}
+            </span>
+          </i>
+        </button>
+      {%- if predictive -%}
+        </predictive-button>
+        <span class="loader search-bar_loader hidden" data-loader="">
+          {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'loader' -%}
+          <span class="visually-hidden">
+            {{- 'accessibility.loader.label' | t -}}
+          </span>
+        </span>
+      {%- endif -%}
+      {%- if reset_btn != false -%}
+        <reset-input-button data-component=".top_search-component" {% if predictive %}data-predict-container=".predictive-container--{{ section.id }}"{% endif %}>
+          <button type="button" class="btn-icn-ixi search-bar_reset-btn">
+            <i class="btn-icn-ixi_wrapper">
+              {%- render 'icons-data', width: 13, height: 13, use_icon: true, icon_reference: 'cross' -%}
+              <span class="visually-hidden">
+                {{- 'header.search.reset' | t -}}
+              </span>
+            </i>
+          </button>
+        </reset-input-button>
+      {%- endif -%}
+    </div>
+    {%- if predictive -%}
+      <div class="predictive-container hidden predictive-container--{{ section.id }}">
+        <div class="predictive-container_wrapper">
+          <div class="predictive-container_col predictive-container_col--results" data-render-predict-results="">
+            <div class="predictive-container_empty-content --align-left">
+              <i class="predictive-container_icn">
+                {%- render 'icons-data', width: 38, height: 38, use_icon: true, icon_reference: 'empty-box' -%}
+              </i>
+              <div class="predictive-container_empty-descr text-size--large mty">
+                <p>{{- 'predictive_search.no_results' | t -}}</p>
+              </div>
+            </div>
+          </div>
+          {%- if section.settings.search_banner_one != blank or section.settings.search_banner_two != blank -%}
+            <div class="predictive-container_col predictive-container_col--banners --v-align-start">
+              {%- if section.settings.search_banner_one != blank -%}
+                {%- assign banner_alt = 'predictive_search.banners.alt' | t: index: 1 -%}
+                {%- if section.settings.search_banner_one_url != blank -%}
+                  <a class="predictive-container_banner" href="{{- section.settings.search_banner_one_url -}}" {% if section.settings.search_banner_one_window %}target="_blank"{% endif %}>
+                  {%- else -%}
+                    <div class="predictive-container_banner">
+                {%- endif -%}
+                  {{- section.settings.search_banner_one | image_url: width: 840 | image_tag: class: 'object-fit object-fit--absolute', loading: 'lazy', widths: '560, 840', sizes: '(max-width: 767px) 50vw, 100vw', alt: banner_alt -}}
+                {%- if section.settings.search_banner_one_url != blank -%}
+                  </a>
+                  {%- else -%}
+                    </div>
+                {%- endif -%}
+              {%- endif -%}
+              {%- if section.settings.search_banner_two != blank -%}
+                {%- assign banner_alt = 'predictive_search.banners.alt' | t: index: 1 -%}
+                {%- if section.settings.search_banner_two_url != blank -%}
+                  <a class="predictive-container_banner" href="{{- section.settings.search_banner_two_url -}}" {% if section.settings.search_banner_two_window %}target="_blank"{% endif %}>
+                  {%- else -%}
+                    <div class="predictive-container_banner">
+                {%- endif -%}
+                  {{- section.settings.search_banner_two | image_url: width: 840 | image_tag: class: 'object-fit object-fit--absolute', loading: 'lazy', widths: '560, 840', sizes: '(max-width: 767px) 50vw, 100vw', alt: banner_alt -}}
+                {%- if section.settings.search_banner_two_url != blank -%}
+                  </a>
+                  {%- else -%}
+                    </div>
+                {%- endif -%}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- endif -%}
+    <input type="hidden" name="options[prefix]" value="last">
+  </form>
+</div>

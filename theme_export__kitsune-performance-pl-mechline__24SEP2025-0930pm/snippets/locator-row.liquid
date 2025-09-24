@@ -1,0 +1,153 @@
+{%- comment -%}
+  renders line item of cart
+  usage
+    {% render 'locator-row', row: block, index: forloop.index %}
+{%- endcomment -%}
+
+{%- liquid
+  capture section_media_size
+    if section.settings.section_media_size == 'adapt'
+      echo row.settings.image.aspect_ratio | default: '1'
+      else
+        echo '1'
+    endif
+  endcapture
+
+  capture cols_order_class
+  if row.settings.section_media_order == 'row_reverse'
+    echo '--row-reverse'
+  endif
+  endcapture
+
+  capture placeholder_image
+    if index > 3
+      echo 'hero-apparel-1'
+      else
+        echo 'hero-apparel-' | append: index
+    endif
+  endcapture
+
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+
+  
+
+  capture section_heading_size
+    case section.settings.section_heading_size
+      when 'heading_xx_large'
+        echo 'h1'
+      when 'heading_x_large'
+        echo 'h2'
+      when 'heading_large'
+        echo 'h3'
+      when 'heading_medium'
+        echo 'h4'
+      else
+        echo 'h'
+    endcase
+  endcapture
+-%}
+{%- style -%}
+  .locator-row-{{ section.id }}-{{ row.id }}{
+    --mobile-q-align: {{ row.settings.section_mobile_text_alignment }};
+    --desktop-q-align: {{ row.settings.section_text_alignment }};
+  }
+{%- endstyle -%}
+<article class="locator-row_row locator-row-{{ section.id }}-{{ row.id }} {{ cols_order_class }} --v-align-{{ row.settings.content_alignment }} --q-align" {{ row.shopify_attributes }}>
+  <div class="locator-row_col locator-row_col-media">
+    <div
+      class="locator-row_image-wrap {% unless section.settings.enable_slideshow %}--media-size-{{ section.settings.section_media_size }}{% endunless %}"
+      {% unless section.settings.enable_slideshow %}
+        style="--media-ratio: {{ section_media_size }};"
+      {% endunless %}>
+      {%- if row.settings.image != blank -%}
+        {{- row.settings.image | image_url: width: 3840 | image_tag: class: 'object-fit object-fit--absolute', loading: loading_attr, widths: '992, 1200, 1350, 1920, 3840', sizes: '(max-width: 767px) 992vw, (min-width: 992px) 1200vw, (max-width: 1349px) 1920vw, 3840vw', alt: 'image' -}}
+      {%- else -%}
+          {{- placeholder_image | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+      {%- endif -%}
+    </div>
+  </div>
+  <div class="locator-row_col locator-row_col-description">
+    {%- if row.settings.heading != blank -%}
+      <header class="heading-head">
+        <h2 class="locator-row_heading {{ section_heading_size }} --h-anchor-none mty">
+          {{- row.settings.heading -}}
+        </h2>
+      </header>
+    {%- endif -%}
+    {%- if row.settings.section_description != blank -%}
+      <div class="locator-row_description --word-break text-size--{{ section.settings. section_text_size }} mty">
+        {{- row.settings.section_description -}}
+      </div>
+    {%- endif -%}
+    {%- if row.settings.address_description != blank -%}
+      <div class="locator-row_address-section">
+        <div class="locator-row_address --word-break mty">
+          <strong>
+            {{- 'store_locator.address.title' | t -}}
+          </strong>
+        </div>
+        <div class="locator-row_address-location --word-break">
+          {{- row.settings.address_description -}}
+        </div>
+      </div>
+    {%- endif -%}
+    {%- if row.settings.contact_description != blank -%}
+      <div class="locator-row_contact-section">
+        <div class="locator-row_contact --word-break mty">
+          <strong>
+            {{- 'store_locator.contact.title' | t -}}
+          </strong>
+        </div>
+        <div class="locator-row_contact-details --word-break">
+          {{- row.settings.contact_description -}}
+        </div>
+      </div>
+    {%- endif -%}
+    {%- if row.settings.message_description != blank -%}
+      <div class="locator-row_message-section">
+        <div class="locator-row_message --word-break mty">
+          <strong>
+            {{- 'store_locator.message.title' | t -}}
+          </strong>
+        </div>
+        <div class="locator-row_message-details --word-break">
+          {{- row.settings.message_description -}}
+        </div>
+      </div>
+    {%- endif -%}
+    {%- if row.settings.store_hour_description != blank -%}
+      <div class="locator-row_store-hours-section">
+        <div class="locator-row_store-hours --word-break mty">
+          <strong>
+            {{- 'store_locator.hours.title' | t -}}
+          </strong>
+        </div>
+        <div class="locator-row_store-time --word-break">
+          {{- row.settings.store_hour_description -}}
+        </div>
+      </div>
+    {%- endif -%}
+    {%- if row.settings.view_more_label != blank -%}
+      <footer class="locator-row_foot">
+        <a
+          class="button button--{{ row.settings.view_more_type }}"
+          {% if row.settings.view_more_link != blank -%}
+            href="{{ row.settings.view_more_link }}"
+          {% else %}
+            aria-disabled="true"
+          {% endif %}
+          {% if row.settings.open_new_window %}
+            target="_blank"
+          {% endif %}>
+          {{- row.settings.view_more_label -}}
+        </a>
+      </footer>
+    {%- endif -%}
+  </div>
+</article>

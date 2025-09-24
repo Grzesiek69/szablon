@@ -1,0 +1,57 @@
+{%- comment -%}
+  renders product price range
+  usage
+    {%- render 'product-price-range', product: product, prefix_class: section_prefix_class -%}
+{%- endcomment -%}
+{%- liquid
+  capture money_price
+    if settings.show_currency_code
+      echo 1999 | money_with_currency
+      else
+        echo 1999 | money
+    endif
+  endcapture
+  assign lowest_price = nil
+  assign highest_price = nil
+  for variant in product.variants
+    if lowest_price == nil or variant.price < lowest_price
+      assign lowest_price = variant.price
+    endif
+    if highest_price == nil or variant.price > highest_price
+      assign highest_price = variant.price
+    endif
+  endfor
+
+  capture lowest_price_money
+    if settings.show_currency_code
+      echo lowest_price | money_with_currency
+      else
+        echo lowest_price | money
+    endif
+  endcapture
+
+  capture highest_price_money
+    if settings.show_currency_code
+      echo highest_price | money_with_currency
+      else
+        echo highest_price | money
+    endif
+  endcapture
+-%}
+{%- if product == null -%}
+  {{- money_price -}}
+  {%- else -%}
+    {%- if lowest_price != highest_price -%}
+      <strong class="price-tag {{ prefix_class }}_price-tag --word-break">
+        {{- lowest_price_money -}}
+      </strong>
+      <span class="price-tag_sep">-</span>
+      <strong class="price-tag">
+        {{- highest_price_money -}}
+      </strong>
+      {%- else -%}
+        <strong class="price-tag">
+          {{- lowest_price_money -}}
+        </strong>
+    {%- endif -%}
+{%- endif -%}

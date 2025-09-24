@@ -1,0 +1,97 @@
+{%- comment -%}
+  renders product saving text badge
+  usage
+    {%- render 'product-gallery-static', product: product -%}
+{%- endcomment -%}
+
+{% liquid
+  assign modulus = 0
+  assign static_image_count = 0
+  
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+%}
+{%- for media in product.media -%}
+  {% liquid
+    if variant_images contains media.preview_image.src or variant_images contains media.id
+      assign variant_image = true
+    else
+      assign variant_image = false
+    endif
+  %}
+  {% if modulus != 0 %}
+    {% if media.media_type == 'image' and static_image_count != 1 %}
+      <div class="product_gallery-item" {% if media.aspect_ratio != blank %}style="--aspect-ratio: {{ media.aspect_ratio }}"{% endif %} data-media-id="{{ media.id }}">
+        <a href="{{ product.url }}">
+          {{-
+            media.preview_image.src |
+            image_url: width: 840 |
+            image_tag: class: 'image-class', alt: '', widths: '540, 840', sizes: '(max-width: 767px) 540vw, 840vw', loading: loading_attr |
+            escape
+          -}}
+          <span class="visually-hidden">{{- product.title -}}</span>
+        </a>
+      </div>
+      {% assign static_image_count = 1 %}
+    {% endif %}
+    {% else %}
+      {% if static_image_count != 1 %}
+        <div class="product_gallery-item" {% if media.aspect_ratio != blank %}style="--aspect-ratio: {{ media.aspect_ratio }}"{% endif %} data-media-id="{{ media.id }}">
+          <a href="{{ product.url }}">
+            {{-
+              media.preview_image.src |
+              image_url: width: 840 |
+              image_tag: class: 'image-class', alt: '', widths: '540, 840', sizes: '(max-width: 767px) 540vw, 840vw', loading: loading_attr |
+              escape
+            -}}
+            <span class="visually-hidden">{{- product.title -}}</span>
+          </a>
+        </div>
+        {% assign static_image_count = 1 %}
+      {%- endif -%}
+      {%- if media.id == product.selected_or_first_available_variant.featured_media.id -%}
+        <div class="product_gallery-item {% if variant_image %} product_gallery-item--variant{% endif %}" {% if media.aspect_ratio != blank %}style="--aspect-ratio: {{ media.aspect_ratio }}"{% endif %} data-media-id="{{ media.id }}">
+          <a href="{{ product.url }}">
+            {{-
+              media.preview_image.src |
+              image_url: width: 840 |
+              image_tag: class: 'image-class', alt: '', widths: '540, 840', sizes: '(max-width: 767px) 540vw, 840vw', loading: loading_attr |
+              escape
+            -}}
+            <span class="visually-hidden">{{- product.title -}}</span>
+          </a>
+        </div>
+      {%- endif -%}
+  {% endif %}
+  {%- if media.id == product.selected_or_first_available_variant.featured_media.id -%}
+    <div class="product_gallery-item {% if variant_image %} product_gallery-item--variant{% endif %}" {% if media.aspect_ratio != blank %}style="--aspect-ratio: {{ media.aspect_ratio }}"{% endif %} data-media-id="{{ media.id }}">
+      <a href="{{ product.url }}">
+        {{-
+          media.preview_image.src |
+          image_url: width: 840 |
+          image_tag: class: 'image-class', alt: '', widths: '540, 840', sizes: '(max-width: 767px) 540vw, 840vw', loading: loading_attr |
+          escape
+        -}}
+        <span class="visually-hidden">{{- product.title -}}</span>
+      </a>
+    </div>
+  {%- endif -%}
+  {%- if media.id != product.selected_or_first_available_variant.featured_media.id -%}
+    <div class="product_gallery-item product_gallery-item--variant" {% if media.aspect_ratio != blank %}style="--aspect-ratio: {{ media.aspect_ratio }}"{% endif %} data-media-id="{{ media.id }}">
+      <a href="{{ product.url }}">
+        {{-
+          media.preview_image.src |
+          image_url: width: 840 |
+          image_tag: class: 'image-class', alt: '', widths: '540, 840', sizes: '(max-width: 767px) 540vw, 840vw', loading: loading_attr |
+          escape
+        -}}
+        <span class="visually-hidden">{{- product.title -}}</span>
+      </a>
+    </div>
+  {%- endif -%}
+{%- endfor -%}

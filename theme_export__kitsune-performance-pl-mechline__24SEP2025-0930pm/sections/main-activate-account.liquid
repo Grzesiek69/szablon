@@ -1,0 +1,196 @@
+{{- 'component-breadcrumb.css' | asset_url | stylesheet_tag -}}
+{{- 'main-activate-account.css' | asset_url | stylesheet_tag -}}
+{%- liquid
+  assign section_prefix_class = 'activate-account'
+  assign section_scheme_class = section.settings.section_color_scheme | prepend: 'scheme scheme--'
+
+  capture section_heading_size
+    case section.settings.section_heading_size
+      when 'heading_x_large'
+        echo 'h2'
+      when 'heading_large'
+        echo 'h3'
+      when 'heading_medium'
+        echo 'h4'
+      else
+        echo 'h'
+    endcase
+  endcapture
+-%}
+{%- liquid
+  if section.settings.show_breadcrumb
+    render 'breadcrumb', prefix_class: section_prefix_class, scheme: section.settings.breadcrumb_color_scheme
+  endif
+-%}
+<div class="global-block {{ section_prefix_class }} {{ section_prefix_class }}-{{ section.id }} {{ section_scheme_class }}">
+  <div class="container-fluid">
+    <div class="{{ section_prefix_class }}_column {{ section_prefix_class }}_column--form align-holder align-holder--mcenter">
+      <div class="{{ section_prefix_class }}_form-align align-holder_wrapper">
+        <header class="{{ section_prefix_class }}_heading-head --align-center">
+          <h1 class= "activate-account_heading {{ section_heading_size }} mty">
+            {{- 'activate_account.title' | t -}}
+          </h1>
+          <div class= "activate-account_description text-size--medium mty">
+            <p>
+              {{- 'activate_account.subtext' | t -}}
+            </p>
+          </div>
+        </header>
+        <div class="{{ section_prefix_class }}_wrapper">
+          {%- form 'activate_customer_password' -%}
+            {%- if form.errors -%}
+              <strong class="form__message mty" role="alert" tabindex="-1" autofocus>
+                {%- render 'icons-data', width: 22, height: 22, use_icon: true, icon_reference: 'error' -%}
+                {{- 'contact_form.error.heading' | t -}}
+              </strong>
+              <ul class="list-unstyled errors-list">
+                {%- for field in form.errors -%}
+                  <li>
+                    {%- if field == 'form' -%}
+                      *{{- form.errors.messages[field] -}}
+                    {%- else -%}
+                      <smooth-anchor data-offset=".sticky-header-wrapper">
+                        <a href="#{{ field }}" class="errors-list_link">
+                          *{{- form.errors.translated_fields[field] | capitalize }}
+                          {{ form.errors.messages[field] -}}
+                        </a>
+                      </smooth-anchor>
+                    {%- endif -%}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+            <div class="{{ section_prefix_class }}_form-group">
+              <div class="{{ section_prefix_class }}_form-group">
+                <label for="password">
+                  {{ 'activate_account.password' | t }}
+                </label>
+                <input
+                  type="password"
+                  name="customer[password]"
+                  id="password"
+                  autocomplete="new-password"
+                  placeholder="{{ 'activate_account.password' | t }}"
+                  {% if form.errors contains 'password' %}
+                    aria-invalid="true"
+                    aria-describedby="password-error"
+                  {% endif %}
+                >
+              </div>
+              {%- if form.errors contains 'password' -%}
+                <small id="password-error" class="form__message error-email">
+                  {%- render 'icons-data', width: 22, height: 22, use_icon: true, icon_reference: 'error' -%}
+                  {{- form.errors.translated_fields.password | capitalize }}
+                  {{ form.errors.messages.password -}}
+                </small>
+              {%- endif -%}
+            </div>
+            <div class="{{ section_prefix_class }}_form-group">
+              <label for="password_confirmation">
+                {{- 'activate_account.password_confirm' | t -}}
+              </label>
+              <input
+                type="password"
+                name="customer[password_confirmation]"
+                id="password_confirmation"
+                autocomplete="new-password"
+                placeholder="{{ 'activate_account.password_confirm' | t }}"
+                {% if form.errors contains 'password' %}
+                  aria-invalid="true"
+                  aria-describedby="password_confirmation-error"
+                {% endif %}
+              >
+              {%- if form.errors contains 'password_confirmation' -%}
+                <small id="password_confirmation-error" class="form__message error-email">
+                  {%- render 'icons-data', width: 22, height: 22, use_icon: true, icon_reference: 'error' -%}
+                  {{- form.errors.translated_fields.password_confirmation | capitalize }}
+                  {{ form.errors.messages.password_confirmation -}}
+                </small>
+              {%- endif -%}
+            </div>
+            <div class="{{ section_prefix_class }}_foot-wrapper {{ section_prefix_class }}_foot-wrapper-btns text-size--large mty --align-center --justify-self">
+              <button class="button button--primary">
+                {{- 'activate_account.submit' | t -}}
+              </button>
+              <button name="decline" class="button button--secondary">
+                {{- 'activate_account.cancel' | t -}}
+              </button>
+            </div>
+          {%- endform -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "t:sections.main_activate_account.name",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_heading_size",
+      "label": "t:sections.common.heading.size.label",
+      "options": [
+        {
+          "value": "heading_x_large",
+          "label": "t:sections.common.heading.size.options.opt_2.label"
+        },
+        {
+          "value": "heading_large",
+          "label": "t:sections.common.heading.size.options.opt_3.label"
+        },
+        {
+          "value": "heading_medium",
+          "label": "t:sections.common.heading.size.options.opt_4.label"
+        }
+      ],
+      "default": "heading_x_large"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.breadcrumb.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumb",
+      "label": "t:sections.common.breadcrumb.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_top_bdr",
+      "label": "t:sections.common.breadcrumb.top_bdr.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bottom_bdr",
+      "label": "t:sections.common.breadcrumb.bottom_bdr.label",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "breadcrumb_color_scheme",
+      "default": "scheme2",
+      "label": "t:sections.common.clr_scheme.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.layout.content"
+    },
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "default": "scheme1",
+      "label": "t:sections.common.clr_scheme.label"
+    }
+  ]
+}
+{% endschema %}

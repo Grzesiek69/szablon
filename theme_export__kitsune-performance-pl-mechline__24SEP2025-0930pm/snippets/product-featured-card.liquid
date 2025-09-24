@@ -1,0 +1,90 @@
+{%- comment -%}
+  renders featured product card
+  usage
+    {%- render 'product-featured-card', product: product, index: forloop.index -%}
+{%- endcomment -%}
+{%- liquid
+  assign index_modulo = index | modulo: 2
+  capture card_type
+    if index_modulo == 0
+      echo 'primary'
+      else
+        echo 'secondary'
+    endif
+  endcapture
+
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+
+  if product.selected_or_first_available_variant.featured_media != null
+    assign media = product.selected_or_first_available_variant.featured_media
+    else
+      for media in product.media
+        assign media = media
+        break
+      endfor
+  endif
+
+  if media != blank
+    capture image_alt
+      echo media.preview_image.alt | default: product.title
+    endcapture
+  endif
+
+  assign second_media = null
+  if show_sec_image
+    if product.media.size > 1
+      assign second_media = product.media[1]
+    endif
+  endif
+-%}
+
+<div class="product-featured-card product-featured-card--{{ card_type }} --align-center {% if media == blank %}--no-image{% endif %}">
+  <div class="product-featured-card_align">
+    <a href="{{- product.url -}}" class="product-featured-card_image {% if product.media.size > 1 and show_sec_image %}product_media--show-sec{% endif %}">
+      {%- if media != blank -%}
+        {{- media.preview_image | image_url: width: 840 | image_tag: class: 'object-fit object-fit--cover object-fit--absolute', alt: image_alt, loading: loading_attr, widths: '540, 840', sizes: '(max-width: 767px) 540vw, 840vw' -}}
+        {% unless second_media == null %}
+          <img
+            srcset="{%- if second_media.preview_image.width >= 190 -%}{{ second_media.preview_image | image_url: width: 190 }} 190w,{%- endif -%}
+                    {%- if second_media.preview_image.width >= 240 -%}{{ second_media.preview_image | image_url: width: 240 }} 240w,{%- endif -%}
+                    {%- if second_media.preview_image.width >= 299 -%}{{ second_media.preview_image | image_url: width: 299 }} 299w,{%- endif -%}
+                    {%- if second_media.preview_image.width >= 368 -%}{{ second_media.preview_image | image_url: width: 368 }} 368w,{%- endif -%}
+                    {%- if second_media.preview_image.width >= 400 -%}{{ second_media.preview_image | image_url: width: 400 }} 400w,{%- endif -%}
+                      {{ second_media.preview_image | image_url: width: second_media.preview_image.width }} {{ second_media.preview_image.width }}w"
+            sizes="{{- sizes_attr -}}"
+            src="{{- second_media.preview_image | image_url: width: 190 -}}"
+            alt="{{- product.title | escape -}}"
+            loading="lazy"
+            width= "190"
+            height="{{- 190 | divided_by: second_media.preview_image.aspect_ratio | round -}}"
+            class="image--second"
+          >
+        {%- endunless -%}
+        {%- else -%}
+          {{- 'image' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+      {%- endif -%}
+      <span class="visually-hidden">
+        {{- image_alt -}}
+      </span>
+    </a>
+    <h3 class="mty product-featured-card_heading text-size--{{ section.settings.card_text_size }}">
+      <a href="{{- product.url -}}" class="--hover-underline">
+        {{- product.title -}}
+      </a>
+    </h3>
+    {%- if section.settings.card_show_price -%}
+      <h4 class="mty product-featured-card_price text-size--small">
+        {%- render 'product-price', product: product, use_variant: false -%}
+      </h4>
+    {%- endif -%}
+    <a href="{{- product.url -}}" class="button button--{{ card_type }} product-featured-card_btn">
+      {{- 'product.featured_button_label' | t -}}
+    </a>
+  </div>
+</div>

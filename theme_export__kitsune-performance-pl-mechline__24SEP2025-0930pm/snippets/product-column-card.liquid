@@ -1,0 +1,1032 @@
+{%- comment -%}
+  renders product card
+  usage
+    {%- render 'product-column-card', product: product, prefix_class: section_prefix_class -%}
+{%- endcomment -%}
+{%- liquid
+  if product.selected_or_first_available_variant.featured_media != null
+  assign first_image = product.selected_or_first_available_variant.featured_media
+  else
+    for media in product.media
+      assign first_image = media
+      break
+    endfor
+  endif
+
+  capture enable_thumbnails
+    unless section.settings.thumbnails_layout == 'none'
+      echo 'true'
+    endunless
+  endcapture
+
+  capture first_media_size
+    if section.settings.section_media_size == 'adapt'
+        echo first_image.preview_image.aspect_ratio | default: '1'
+    else 
+      echo '1'
+    endif
+  endcapture
+
+  capture card_media_size
+    if section.settings.section_media_size == 'adapt'
+        echo media.preview_image.aspect_ratio | default: '1'
+    else 
+        echo '1'
+    endif
+  endcapture
+
+  assign productJsonId = 'ProductJson-' | append: product.id | append: '-' | append: section.id
+  assign product_form_id = 'ProductAtcForm-' | append: product.id | append: '-' | append: section.id
+
+  capture product_clean_url
+    if product.url contains '?'
+      assign parts = product.url | split: '?'
+      echo parts[0]
+      else
+        echo product.url
+    endif
+  endcapture
+
+  assign second_media = null
+  if show_sec_image
+    if product.media.size > 1
+      assign second_media = product.media[1]
+    endif
+  endif
+-%}
+<article class="product-column-card {{ prefix_class }}_product-column-card {% if section.settings.enable_border %}enable-border{% endif %}" data-product-parent="{{- section.id -}}-{{- product.id -}}">
+  <div class="product-column-card_top-wrap --align-{{ section.settings.card_text_alignment }} {% unless section.settings.show_discount %}space-remove{% endunless %}">
+    <div class="product-column-card_media-wrapper">
+      <div class="product-column-card_media" data-container-ref="{{ section.id }}-{{ product.id }}_media-container">
+        {%- if first_image != blank -%}
+          <a href="{{- product_clean_url -}}" class="--media-size-{{ section.settings.section_media_size }} --featured-image {% if product.media.size > 1 and show_sec_image %}product_media--show-sec{% endif %}" style="--media-ratio: {{ first_media_size }};">
+            {{- first_image.preview_image | image_url: width: 969 | image_tag: alt: product.title, class: 'object-fit object-fit--absolute', loading: loading, widths: '646, 969', sizes: '(max-width: 767px) 646vw, 969vw' -}}
+            {% unless second_media == null %}
+              <img
+                srcset="{%- if second_media.preview_image.width >= 190 -%}{{ second_media.preview_image | image_url: width: 190 }} 190w,{%- endif -%}
+                        {%- if second_media.preview_image.width >= 240 -%}{{ second_media.preview_image | image_url: width: 240 }} 240w,{%- endif -%}
+                        {%- if second_media.preview_image.width >= 299 -%}{{ second_media.preview_image | image_url: width: 299 }} 299w,{%- endif -%}
+                        {%- if second_media.preview_image.width >= 368 -%}{{ second_media.preview_image | image_url: width: 368 }} 368w,{%- endif -%}
+                        {%- if second_media.preview_image.width >= 400 -%}{{ second_media.preview_image | image_url: width: 400 }} 400w,{%- endif -%}
+                          {{ second_media.preview_image | image_url: width: second_media.preview_image.width }} {{ second_media.preview_image.width }}w"
+                sizes="{{- sizes_attr -}}"
+                src="{{- second_media.preview_image | image_url: width: 190 -}}"
+                alt="{{- product.title | escape -}}"
+                loading="lazy"
+                width= "190"
+                height="{{- 190 | divided_by: second_media.preview_image.aspect_ratio | round -}}"
+                class="image--second"
+              >
+            {%- endunless -%}
+          </a>
+          {%- else -%}
+            <a href="{{- product_clean_url -}}" class="--media-size-{{ section.settings.section_media_size }} --featured-image --placeholder-image" data-media-id="null" style="--media-ratio: 1;">
+              {{- 'product-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+              <span class="visually-hidden">
+                {{- product.title -}}
+              </span>
+            </a>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.btn_overlay -%}
+        {%- liquid
+          assign selected_layout = section.settings.bt_btns_layout
+          assign selected_gallery = section.settings.thumbnails_layout
+          assign check_against_inventory = true
+          if product.selected_or_first_available_variant.inventory_management != 'shopify' or  product.selected_or_first_available_variant.inventory_policy == 'continue'
+            assign check_against_inventory = false
+          endif
+          if product.selected_or_first_available_variant.quantity_rule.min > product.selected_or_first_available_variant.inventory_quantity and check_against_inventory
+            assign quantity_rule_soldout = true
+          endif
+          capture atc_button_label
+            if product.selected_or_first_available_variant.available == false or quantity_rule_soldout
+              echo 'product.atc_buttons.sold_out' | t
+              else
+                echo 'product.atc_buttons.label' | t
+            endif
+          endcapture
+        -%}
+        {%- unless selected_layout == 'none' -%}
+          <div class="product-column-card_btns-overlay">
+            <div class="product-column-card_btns">
+              {%- case selected_layout -%}
+                {%- when 'enable_atc_guick_view' -%}
+                  <atc-submit-form
+                    data-columns="true"
+                    data-error-selector="[data-update-error='{{ section.id }}-{{ product.id }}']"
+                  >
+                    {%- form 'product', product, data-productid: product.id, id: product_form_id, class: '', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+                      <input
+                        type="hidden"
+                        name="id"
+                        value="{{- product.selected_or_first_available_variant.id -}}"
+                      >
+                      <input
+                        type="hidden"
+                        name="quantity"
+                        value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                      >
+                      <button
+                        type="submit"
+                        class="button button--primary product-column-card_atc-btn"
+                        {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
+                          disabled
+                        {% endif %}
+                      >
+                        {{- atc_button_label -}}
+                      </button>
+                      <span class="loader product-column-card_loader hidden" data-loader="">
+                        {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'loader' -%}
+                        <span class="visually-hidden">
+                          {{- 'accessibility.loader.label' | t -}}
+                        </span>
+                      </span>
+                      <div class="product-column-card_error-container hidden" data-update-error="{{ section.id }}-{{ product.id }}">
+                        <span></span>
+                      </div>
+                    {%- endform -%}
+                  </atc-submit-form>
+                  <modal-component-toggler>
+                    <button
+                      data-expanded="false"
+                      data-modal-ref="modal-quick-view-{{ section.id }}-{{ product.id }}"
+                      aria-haspopup="dialog"
+                      aria-controls="modal-quick-view-{{ section.id }}-{{ product.id }}"
+                      class="btn-icn-ixi product-column-card_qv-btn"
+                    >
+                      <span class="btn-icn-ixi_wrapper">
+                        {%- render 'icons-data', width: 42, height: 42, use_icon: true, icon_reference: 'eye' -%}
+                        <span class="visually-hidden">
+                          {{- 'product.atc_buttons.quick_view' | t -}}
+                        </span>
+                      </span>
+                    </button>
+                  </modal-component-toggler>
+                {%- when 'enable_atc' -%}
+                  <atc-submit-form
+                    data-columns="true"
+                    data-qty-selector-ref="[data-product-parent]"
+                    data-error-selector="[data-update-error='{{ section.id }}-{{ product.id }}']"
+                  >
+                    {%- form 'product', product, data-productid: product.id, id: product_form_id, class: '', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+                      <input
+                        type="hidden"
+                        name="id"
+                        value="{{- product.selected_or_first_available_variant.id -}}"
+                      >
+                      <input
+                        type="hidden"
+                        name="quantity"
+                        value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                      >
+                      <button
+                        type="submit"
+                        class="button button--primary product-column-card_atc-btn"
+                        {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
+                          disabled
+                        {% endif %}
+                      >
+                        {{- atc_button_label -}}
+                      </button>
+                      <span class="loader product-column-card_loader hidden" data-loader="">
+                        {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'loader' -%}
+                        <span class="visually-hidden">
+                          {{- 'accessibility.loader.label' | t -}}
+                        </span>
+                      </span>
+                      <div class="product-column-card_error-container hidden" data-update-error="{{ section.id }}-{{ product.id }}">
+                        <span></span>
+                      </div>
+                    {%- endform -%}
+                  </atc-submit-form>
+                {%- when 'enable_quick_view' -%}
+                  <modal-component-toggler class="product-column-card_toggler">
+                    <button
+                      data-expanded="false"
+                      data-modal-ref="modal-quick-view-{{ section.id }}-{{ product.id }}"
+                      aria-haspopup="dialog"
+                      aria-controls="modal-quick-view-{{ section.id }}-{{ product.id }}"
+                      class="button button--primary product-column-card_btn--full"
+                    >
+                      {{- 'product.atc_buttons.quick_view' | t -}}
+                    </button>
+                  </modal-component-toggler>
+                {%- else -%}
+                  <a href="{{- product_clean_url -}}" class="button button--primary product-column-card_btn--details product-column-card_btn--full">
+                    {{- 'product_column_card.view_details_label' | t -}}
+                  </a>
+                  <atc-submit-form
+                    data-columns="true"
+                    class="visually-hidden"
+                    data-error-selector="[data-update-error='{{ section.id }}-{{ product.id }}']"
+                  >
+                    {%- form 'product', product, data-productid: product.id, id: product_form_id, class: '', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+                      <input
+                        type="hidden"
+                        name="id"
+                        value="{{- product.selected_or_first_available_variant.id -}}"
+                      >
+                      <input
+                        type="hidden"
+                        name="quantity"
+                        value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                      >
+                      <button
+                        type="submit"
+                        {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
+                          disabled
+                        {% endif %}
+                      >
+                        {{- atc_button_label -}}
+                      </button>
+                      <span class="loader product-column-card_loader hidden" data-loader="">
+                        {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'loader' -%}
+                        <span class="visually-hidden">
+                          {{- 'accessibility.loader.label' | t -}}
+                        </span>
+                      </span>
+                      <div class="product-column-card_error-container hidden" data-update-error="{{ section.id }}-{{ product.id }}">
+                        <span></span>
+                      </div>
+                    {%- endform -%}
+                  </atc-submit-form>
+              {%- endcase -%}
+            </div>
+          </div>
+        {%- endunless -%}
+      {%- endif -%}
+      {%- if section.settings.show_stock  -%}
+        <strong class="product-column-card_bage" {% if section.settings.thumbnails_layout == 'variant_gallery' and enable_thumbnails == 'true' %}data-render-stock=""{% endif %}>
+          {%- render 'product-stock', product: product -%}
+        </strong>
+      {%- endif -%}
+      {%- if section.settings.show_compare and settings.enable_compare -%}
+        <compare-togller-button
+          data-handle="{{- product.handle -}}"
+        >
+          <button type="button" class="compare-toggler btn-icn-ixi" data-tooltip="{{- 'product_column_card.compare_label' | t -}}">
+            <span class="btn-icn-ixi_wrapper">
+              <span class="visually-hidden">
+                {{- 'product_column_card.add_to_compare' | t: product_title: product.title -}}
+              </span>
+              {%- render 'icons-data', width: 14, height: 14, use_icon: true, icon_reference: 'compare' -%}
+            </span>
+          </button>
+        </compare-togller-button>
+      {%- endif -%}
+    </div>
+    {%- if section.settings.variants_position -%}
+      {%- liquid
+        assign selected_layout = section.settings.bt_btns_layout
+        assign selected_gallery = section.settings.thumbnails_layout
+        assign check_against_inventory = true
+        if product.selected_or_first_available_variant.inventory_management != 'shopify' or  product.selected_or_first_available_variant.inventory_policy == 'continue'
+          assign check_against_inventory = false
+        endif
+        if product.selected_or_first_available_variant.quantity_rule.min > product.selected_or_first_available_variant.inventory_quantity and check_against_inventory
+          assign quantity_rule_soldout = true
+        endif
+        capture atc_button_label
+          if product.selected_or_first_available_variant.available == false or quantity_rule_soldout
+            echo 'product.atc_buttons.sold_out' | t
+            else
+              echo 'product.atc_buttons.label' | t
+          endif
+        endcapture
+      -%}
+      {%- if selected_gallery == 'variant_gallery' -%}
+        {%- unless product.has_only_default_variant -%}
+          <div class="product-column-card_scroll-wrap">
+            <fieldset class="product-column-card_fieldset-list">
+              <legend class="visually-hidden">
+                {{- 'product.media_gallery.choose_variant_label' | t: product_title: product.title -}}
+              </legend>
+              <ul class="list-unstyled product-column-card_image-list {% if section.settings.variants_position %}product-column-card_scroll-wrap--top{% endif %}" data-switchers-siblings-container="{{ section.id }}-product-column-{{ product.id }}">
+                {%- assign thumbs_count = 0 -%}
+                {%- for variant in product.variants -%}
+                  {%- liquid
+                    capture image_alt
+                      echo variant.title | prepend: product.title 
+                    endcapture
+                  -%}
+                  {%- if section.settings.show_availables_only -%}
+                    {%- if variant.available -%}
+                      {%- assign thumbs_count = thumbs_count | plus: 1 -%}
+                      <li class="product-column-card_image-item">
+                        <gallery-switcher-button
+                          data-json-id="{{- productJsonId -}}"
+                          data-section-id="{{- section.id -}}"
+                          data-siblings-ref="{{- section.id }}-product-column-{{ product.id -}}"
+                          data-product-id="{{- product.id -}}"
+                          data-varaint-id="{{- variant.id -}}"
+                          data-template-ref="{{- section.id }}-product-column-{{ product.id -}}"
+                          data-form-id="{{- product_form_id -}}"
+                          data-media-id="{{ section.id }}-{{ product.id }}-{{ variant.featured_media.id }}"
+                          data-product-url="{{- product_clean_url -}}"
+                          data-parent-id="{{- section.id -}}-{{- product.id -}}"
+                          {{ switcher_func_attr }}
+                        >
+                          <input {% if product.selected_or_first_available_variant.id == variant.id  %}checked{% endif %} id="{{ section.id }}-{{ product.id }}-{{ variant.id }}" type="radio" name="{{ section.id }}-{{ product.id }}-variants" value="{{- variant.id -}}">
+                          <label class="product-column-card_image-btn" data-button="" data-selected="false" for="{{ section.id }}-{{ product.id }}-{{ variant.id }}">
+                            {%- unless variant.featured_image == blank -%}
+                              {{- variant.featured_image.src | image_url: width: 132 | image_tag: alt: image_alt, class: 'object-fit object-fit--absolute', loading: loading, widths: '88, 132', sizes: '(max-width: 767px) 88vw, 132vw' -}}
+                              {%- else -%}
+                                {{- 'image' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                            {%- endunless -%}
+                            <span class="visually-hidden" style="background-color: var(--section-background-color); color: var(--section-foreground-color)">{{- product.title }} {{ variant.title -}}</span>
+                          </label>
+                        </gallery-switcher-button>
+                      </li>
+                      {%- liquid
+                        if thumbs_count == section.settings.number_of_thumbs
+                          break
+                        endif
+                      -%}
+                    {%- endif -%}
+                    {%- else -%}
+                      {%- assign thumbs_count = thumbs_count | plus: 1 -%}
+                      <li class="product-column-card_image-item">
+                        <gallery-switcher-button
+                          data-json-id="{{- productJsonId -}}"
+                          data-section-id="{{- section.id -}}"
+                          data-siblings-ref="{{- section.id }}-product-column-{{ product.id -}}"
+                          data-product-id="{{- product.id -}}"
+                          data-varaint-id="{{- variant.id -}}"
+                          data-template-ref="{{- section.id }}-product-column-{{ product.id -}}"
+                          data-form-id="{{- product_form_id -}}"
+                          data-media-id="{{ section.id }}-{{ product.id }}-{{ variant.featured_media.id }}"
+                          data-product-url="{{- product_clean_url -}}"
+                          data-parent-id="{{- section.id -}}-{{- product.id -}}"
+                          {{ switcher_func_attr }}
+                        >
+                          <input {% if product.selected_or_first_available_variant.id == variant.id  %}checked{% endif %} id="{{ section.id }}-{{ product.id }}-{{ variant.id }}" type="radio" name="{{ section.id }}-{{ product.id }}-variants" value="{{- variant.id -}}">
+                          <label class="product-column-card_image-btn" data-button="" data-selected="false" for="{{ section.id }}-{{ product.id }}-{{ variant.id }}">
+                            {%- unless variant.featured_image == blank -%}
+                              {{- variant.featured_image.src | image_url: width: 132 | image_tag: alt: image_alt, class: 'object-fit object-fit--absolute', loading: loading, widths: '88, 132', sizes: '(max-width: 767px) 88vw, 132vw' -}}
+                              {%- else -%}
+                                {{- 'image' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                            {%- endunless -%}
+                            <span class="visually-hidden" style="background-color: var(--section-background-color); color: var(--section-foreground-color)">{{- product.title }} {{ variant.title -}}</span>
+                          </label>
+                        </gallery-switcher-button>
+                      </li>
+                      {%- liquid
+                        if thumbs_count == section.settings.number_of_thumbs
+                          break
+                        endif
+                      -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- if product.variants.size > section.settings.number_of_thumbs and thumbs_count != 0 -%}
+                  <li class="product-column-card_image-item">
+                    <strong class="product-column-card_variant-counter">
+                      {%- liquid
+                        render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'plus'
+                        echo product.variants.size | minus: section.settings.number_of_thumbs
+                      -%}
+                    </strong>
+                  </li>
+                {%- endif -%}
+              </ul>
+            </fieldset>
+          </div>
+        {%- endunless -%}
+        {%- else -%}
+          {%- if product.media.size > 0 -%}
+            <ul class="list-unstyled product-column-card_image-list {% if section.settings.variants_position %}product-column-card_scroll-wrap--top{% endif %}" data-switchers-siblings-container="{{ section.id }}-product-column-{{ product.id }}">
+              {%- assign thumbs_media_count = 0 -%}
+              {%- if first_image != blank -%}
+                {%- liquid
+                  assign featured_label = 'product.list_images.featured_label' | t
+                  assign thumbs_media_count = thumbs_media_count | plus: 1
+                  capture enable_loop
+                    if section.settings.number_of_thumbs > thumbs_media_count
+                      echo 'true'
+                    endif
+                  endcapture
+                -%}
+                <li class="product-column-card_image-item">
+                  <gallery-switcher-button
+                    data-section-id="{{- section.id -}}"
+                    data-siblings-ref="{{ section.id }}-product-column-{{ product.id }}"
+                    data-product-id="{{- product.id -}}"
+                    data-template-ref="{{ section.id }}-product-column-{{ product.id }}"
+                    data-media-id="{{ section.id }}-{{ product.id }}-{{- first_image.id -}}"
+                    {{ switcher_func_attr }}
+                  >
+                    <button
+                      type="button"
+                      data-selected="true"
+                      class="product-column-card_image-btn"
+                      data-button=""
+                    >
+                      {{- first_image.preview_image | image_url: width: 132 | image_tag: alt: featured_label, class: 'object-fit object-fit--absolute', loading: loading, widths: '88, 132', sizes: '(max-width: 767px) 88vw, 132vw' -}}
+                      <span class="visually-hidden" style="background-color: var(--section-background-color); color: var(--section-foreground-color)">{{- 'product.list_images.switcher_text' | t: index: featured_label -}}</span>
+                    </button>
+                  </gallery-switcher-button>
+                </li>
+                {%- if enable_loop == 'true' -%}
+                  {%- for media in product.media -%}
+                    {%- if media.id != first_image.id -%}
+                      {%- liquid
+                        capture image_alt_set
+                          echo media.preview_image.alt | default: product.title | append: ' ' | append: forloop.index
+                        endcapture
+                        assign image_alt = 'product.list_images.switcher_text' | t: index: image_alt_set
+                        assign thumbs_media_count = thumbs_media_count | plus: 1
+                      -%}
+                      <li class="product-column-card_image-item">
+                        <gallery-switcher-button
+                          data-section-id="{{- section.id -}}"
+                          data-product-id="{{- product.id -}}"
+                          data-siblings-ref="{{ section.id }}-product-column-{{ product.id }}"
+                          data-template-ref="{{ section.id }}-product-column-{{ product.id }}"
+                          data-media-id="{{ section.id }}-{{ product.id }}-{{- media.id -}}"
+                          {{ switcher_func_attr }}
+                        >
+                          <button
+                            type="button"
+                            data-selected="false"
+                            class="product-column-card_image-btn"
+                            data-button=""
+                          >
+                            {{- media.preview_image | image_url: width: 132 | image_tag: alt: image_alt, class: 'object-fit object-fit--absolute', loading: loading, widths: '88, 132', sizes: '(max-width: 767px) 88vw, 132vw' -}}
+                            <span class="visually-hidden" style="background-color: var(--section-background-color); color: var(--section-foreground-color)">{{- image_alt -}}</span>
+                          </button>
+                        </gallery-switcher-button>
+                      </li>
+                      {%- liquid
+                        if thumbs_media_count == section.settings.number_of_thumbs
+                          break
+                        endif
+                      -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                {%- endif -%}
+                {%- if product.media.size > section.settings.number_of_thumbs and thumbs_media_count != 0 -%}
+                  <li class="product-column-card_image-item">
+                    <strong class="product-column-card_variant-counter">
+                      {%- liquid
+                        render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'plus'
+                        echo product.media.size | minus: section.settings.number_of_thumbs
+                      -%}
+                    </strong>
+                  </li>
+                {%- endif -%}
+              {%- endif -%}
+            </ul>
+          {%- endif -%}
+      {%- endif -%}
+    {%- endif -%}
+    {%- if section.settings.title_top -%}
+      <h2 class="product-column-card_heading text-size--large mty">
+        <a class="product-column-card_link --hover-underline" href="{{- product_clean_url -}}">
+          {{- product.title -}}
+        </a>
+      </h2>
+    {%- endif -%}
+    <header class="product-column-card_stats-bar">
+      {%- if section.settings.show_vendor -%}
+        <strong role="heading" aria-level="2" class="product-column-card_text product-column-card_text--vendor --word-break">
+          {{- product.vendor -}}
+        </strong>
+      {%- endif -%}
+      {%- if section.settings.show_discount or section.settings.show_rating -%}
+        <div class="product-column-card_others {% unless section.settings.show_vendor %}other--full{% endunless %}">
+          {%- if section.settings.show_discount -%}
+            <div class="product-column-card_saving-badge" data-render-sale-badge="">
+              {%- render 'product-saving-badge', product: product, use_variant: true -%}
+            </div>
+          {%- endif -%}
+          {%- liquid
+            if section.settings.show_rating
+              render 'product-rating', product: product
+            endif
+          -%}
+        </div>
+      {%- endif -%}
+    </header>
+    {%- unless section.settings.title_top -%}
+      <h2 class="product-column-card_heading text-size--large mty">
+        <a class="product-column-card_link --hover-underline" href="{{- product_clean_url -}}">
+          {{- product.title -}}
+        </a>
+      </h2>
+    {%- endunless -%}
+    {%- if section.settings.thumbnails_layout == 'variant_gallery' and enable_thumbnails == 'true' -%}
+      <div class="product-column-card_pricing text-size--large" role="heading" aria-level="3" data-render-price="">
+        {%- render 'product-price', product: product, use_variant: true, show_unit_price: true -%}
+      </div>
+      {%- else -%}
+        <div class="product-column-card_pricing text-size--large" role="heading" aria-level="3" data-render-price-from="">
+          {%- render 'product-price', product: product, use_variant: false, show_unit_price: true -%}
+        </div>
+    {%- endif -%}
+  </div>
+  {%- liquid
+    assign selected_layout = section.settings.bt_btns_layout
+    assign selected_gallery = section.settings.thumbnails_layout
+    assign check_against_inventory = true
+    if product.selected_or_first_available_variant.inventory_management != 'shopify' or  product.selected_or_first_available_variant.inventory_policy == 'continue'
+      assign check_against_inventory = false
+    endif
+    if product.selected_or_first_available_variant.quantity_rule.min > product.selected_or_first_available_variant.inventory_quantity and check_against_inventory
+      assign quantity_rule_soldout = true
+    endif
+    capture atc_button_label
+      if product.selected_or_first_available_variant.available == false or quantity_rule_soldout
+        echo 'product.atc_buttons.sold_out' | t
+        else
+          echo 'product.atc_buttons.label' | t
+      endif
+    endcapture
+  -%}
+  {%- if selected_layout != 'none' or selected_gallery != 'none' -%}
+    <div class="product-column-card_bottom-wrap">
+      {%- unless selected_gallery == 'none' -%}
+        {%- liquid
+          capture switcher_func_attr
+            if selected_gallery == 'variant_gallery'
+              echo 'data-behavior="variant"'
+              else
+                echo 'data-behavior="gallery"'
+            endif
+          endcapture
+        -%}
+        {%- unless section.settings.variants_position -%}
+          {%- if selected_gallery == 'variant_gallery' -%}
+            {%- unless product.has_only_default_variant -%}
+              <div class="product-column-card_scroll-wrap">
+                <fieldset class="product-column-card_fieldset-list">
+                  <legend class="visually-hidden">
+                    {{- 'product.media_gallery.choose_variant_label' | t: product_title: product.title -}}
+                  </legend>
+                  <ul class="list-unstyled product-column-card_image-list" data-switchers-siblings-container="{{ section.id }}-product-column-{{ product.id }}">
+                    {%- assign thumbs_count = 0 -%}
+                    {%- for variant in product.variants -%}
+                      {%- liquid
+                        capture image_alt
+                          echo variant.title | prepend: product.title 
+                        endcapture
+                      -%}
+                      {%- if section.settings.show_availables_only -%}
+                        {%- if variant.available -%}
+                          {%- assign thumbs_count = thumbs_count | plus: 1 -%}
+                          <li class="product-column-card_image-item">
+                            <gallery-switcher-button
+                              data-json-id="{{- productJsonId -}}"
+                              data-section-id="{{- section.id -}}"
+                              data-siblings-ref="{{- section.id }}-product-column-{{ product.id -}}"
+                              data-product-id="{{- product.id -}}"
+                              data-varaint-id="{{- variant.id -}}"
+                              data-template-ref="{{- section.id }}-product-column-{{ product.id -}}"
+                              data-form-id="{{- product_form_id -}}"
+                              data-media-id="{{ section.id }}-{{ product.id }}-{{ variant.featured_media.id }}"
+                              data-product-url="{{- product_clean_url -}}"
+                              data-parent-id="{{- section.id -}}-{{- product.id -}}"
+                              {{ switcher_func_attr }}
+                            >
+                              <input {% if product.selected_or_first_available_variant.id == variant.id  %}checked{% endif %} id="{{ section.id }}-{{ product.id }}-{{ variant.id }}" type="radio" name="{{ section.id }}-{{ product.id }}-variants" value="{{- variant.id -}}">
+                              <label class="product-column-card_image-btn" data-button="" data-selected="false" for="{{ section.id }}-{{ product.id }}-{{ variant.id }}">
+                                {%- unless variant.featured_image == blank -%}
+                                  {{- variant.featured_image.src | image_url: width: 132 | image_tag: alt: image_alt, class: 'object-fit object-fit--absolute', loading: loading, widths: '88, 132', sizes: '(max-width: 767px) 88vw, 132vw' -}}
+                                  {%- else -%}
+                                    {{- 'image' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                                {%- endunless -%}
+                                <span class="visually-hidden" style="background-color: var(--section-background-color); color: var(--section-foreground-color)">{{- product.title }} {{ variant.title -}}</span>
+                              </label>
+                            </gallery-switcher-button>
+                          </li>
+                          {%- liquid
+                            if thumbs_count == section.settings.number_of_thumbs
+                              break
+                            endif
+                          -%}
+                        {%- endif -%}
+                        {%- else -%}
+                          {%- assign thumbs_count = thumbs_count | plus: 1 -%}
+                          <li class="product-column-card_image-item">
+                            <gallery-switcher-button
+                              data-json-id="{{- productJsonId -}}"
+                              data-section-id="{{- section.id -}}"
+                              data-siblings-ref="{{- section.id }}-product-column-{{ product.id -}}"
+                              data-product-id="{{- product.id -}}"
+                              data-varaint-id="{{- variant.id -}}"
+                              data-template-ref="{{- section.id }}-product-column-{{ product.id -}}"
+                              data-form-id="{{- product_form_id -}}"
+                              data-media-id="{{ section.id }}-{{ product.id }}-{{ variant.featured_media.id }}"
+                              data-product-url="{{- product_clean_url -}}"
+                              data-parent-id="{{- section.id -}}-{{- product.id -}}"
+                              {{ switcher_func_attr }}
+                            >
+                              <input {% if product.selected_or_first_available_variant.id == variant.id  %}checked{% endif %} id="{{ section.id }}-{{ product.id }}-{{ variant.id }}" type="radio" name="{{ section.id }}-{{ product.id }}-variants" value="{{- variant.id -}}">
+                              <label class="product-column-card_image-btn" data-button="" data-selected="false" for="{{ section.id }}-{{ product.id }}-{{ variant.id }}">
+                                {%- unless variant.featured_image == blank -%}
+                                  {{- variant.featured_image.src | image_url: width: 132 | image_tag: alt: image_alt, class: 'object-fit object-fit--absolute', loading: loading, widths: '88, 132', sizes: '(max-width: 767px) 88vw, 132vw' -}}
+                                  {%- else -%}
+                                    {{- 'image' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                                {%- endunless -%}
+                                <span class="visually-hidden" style="background-color: var(--section-background-color); color: var(--section-foreground-color)">{{- product.title }} {{ variant.title -}}</span>
+                              </label>
+                            </gallery-switcher-button>
+                          </li>
+                          {%- liquid
+                            if thumbs_count == section.settings.number_of_thumbs
+                              break
+                            endif
+                          -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                    {%- if product.variants.size > section.settings.number_of_thumbs and thumbs_count != 0 -%}
+                      <li class="product-column-card_image-item">
+                        <strong class="product-column-card_variant-counter">
+                          {%- liquid
+                            render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'plus'
+                            echo product.variants.size | minus: section.settings.number_of_thumbs
+                          -%}
+                        </strong>
+                      </li>
+                    {%- endif -%}
+                  </ul>
+                </fieldset>
+              </div>
+            {%- endunless -%}
+            {%- else -%}
+              {%- if product.media.size > 0 -%}
+                <ul class="list-unstyled product-column-card_image-list" data-switchers-siblings-container="{{ section.id }}-product-column-{{ product.id }}">
+                  {%- assign thumbs_media_count = 0 -%}
+                  {%- if first_image != blank -%}
+                    {%- liquid
+                      assign featured_label = 'product.list_images.featured_label' | t
+                      assign thumbs_media_count = thumbs_media_count | plus: 1
+                      capture enable_loop
+                        if section.settings.number_of_thumbs > thumbs_media_count
+                          echo 'true'
+                        endif
+                      endcapture
+                    -%}
+                    <li class="product-column-card_image-item">
+                      <gallery-switcher-button
+                        data-section-id="{{- section.id -}}"
+                        data-siblings-ref="{{ section.id }}-product-column-{{ product.id }}"
+                        data-product-id="{{- product.id -}}"
+                        data-template-ref="{{ section.id }}-product-column-{{ product.id }}"
+                        data-media-id="{{ section.id }}-{{ product.id }}-{{- first_image.id -}}"
+                        {{ switcher_func_attr }}
+                      >
+                        <button
+                          type="button"
+                          data-selected="true"
+                          class="product-column-card_image-btn"
+                          data-button=""
+                        >
+                          {{- first_image.preview_image | image_url: width: 132 | image_tag: alt: featured_label, class: 'object-fit object-fit--absolute', loading: loading, widths: '88, 132', sizes: '(max-width: 767px) 88vw, 132vw' -}}
+                          <span class="visually-hidden" style="background-color: var(--section-background-color); color: var(--section-foreground-color)">{{- 'product.list_images.switcher_text' | t: index: featured_label -}}</span>
+                        </button>
+                      </gallery-switcher-button>
+                    </li>
+                    {%- if enable_loop == 'true' -%}
+                      {%- for media in product.media -%}
+                        {%- if media.id != first_image.id -%}
+                          {%- liquid
+                            capture image_alt_set
+                              echo media.preview_image.alt | default: product.title | append: ' ' | append: forloop.index
+                            endcapture
+                            assign image_alt = 'product.list_images.switcher_text' | t: index: image_alt_set
+                            assign thumbs_media_count = thumbs_media_count | plus: 1
+                          -%}
+                          <li class="product-column-card_image-item">
+                            <gallery-switcher-button
+                              data-section-id="{{- section.id -}}"
+                              data-product-id="{{- product.id -}}"
+                              data-siblings-ref="{{ section.id }}-product-column-{{ product.id }}"
+                              data-template-ref="{{ section.id }}-product-column-{{ product.id }}"
+                              data-media-id="{{ section.id }}-{{ product.id }}-{{- media.id -}}"
+                              {{ switcher_func_attr }}
+                            >
+                              <button
+                                type="button"
+                                data-selected="false"
+                                class="product-column-card_image-btn"
+                                data-button=""
+                              >
+                                {{- media.preview_image | image_url: width: 132 | image_tag: alt: image_alt, class: 'object-fit object-fit--absolute', loading: loading, widths: '88, 132', sizes: '(max-width: 767px) 88vw, 132vw' -}}
+                                <span class="visually-hidden" style="background-color: var(--section-background-color); color: var(--section-foreground-color)">{{- image_alt -}}</span>
+                              </button>
+                            </gallery-switcher-button>
+                          </li>
+                          {%- liquid
+                            if thumbs_media_count == section.settings.number_of_thumbs
+                              break
+                            endif
+                          -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                    {%- endif -%}
+                    {%- if product.media.size > section.settings.number_of_thumbs and thumbs_media_count != 0 -%}
+                      <li class="product-column-card_image-item">
+                        <strong class="product-column-card_variant-counter">
+                          {%- liquid
+                            render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'plus'
+                            echo product.media.size | minus: section.settings.number_of_thumbs
+                          -%}
+                        </strong>
+                      </li>
+                    {%- endif -%}
+                  {%- endif -%}
+                </ul>
+              {%- endif -%}
+          {%- endif -%}
+        {%- endunless -%}
+        {%- if selected_layout == 'enable_atc' -%}
+          <div class="{% unless block.settings.show_subtotals %}--hide-subtotal{% endunless %} hidden">
+            <quantity-input
+              class="quantity-input show-main_quantity-input --v-align-middle"
+              data-init-value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+              data-variant-price="{{- product.selected_or_first_available_variant.price | money_without_currency | replace: ',', '' | times: 100 -}}"
+              data-ref-input="[data-product-parent]"
+            >
+              <label for="Quantity-product-column-card-{{ product.id }}" class="quantity-input_label text-size--medium">
+                {{- 'quantity.title' | t -}}
+              </label>
+              <div class="quantity-input_fielder-wrap">
+                <button class="quantity-input_button btn-icn-ixi quantity-input_button-minus disabled" disabled name="minus" type="button">
+                  <span class="btn-icn-ixi_wrapper">
+                    {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'minus' -%}
+                    <span class="visually-hidden">
+                      {{- 'quantity.decrease' | t: product: product.title | escape -}}
+                    </span>
+                  </span>
+                </button>
+                <input
+                  type="number"
+                  name="quantity"
+                  data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                  min="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                  {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
+                    data-max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+                    max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+                  {% endif %}
+                  step="{{- product.selected_or_first_available_variant.quantity_rule.increment -}}"
+                  value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                  aria-label="{{- 'quantity.input_label' | t: product: product.title | escape -}}"
+                  id="Quantity-product-column-card-{{ product.id }}"
+                >
+                <button class="quantity-input_button btn-icn-ixi quantity-input_button-plus" name="plus" type="button">
+                  <span class="btn-icn-ixi_wrapper">
+                    {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'plus' -%}
+                    <span class="visually-hidden">
+                      {{- 'quantity.increase' | t: product: product.title | escape -}}
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </quantity-input>
+          </div>
+        {%- endif -%}
+        {%- if selected_layout == 'none' or selected_layout == 'enable_quick_view' -%}
+          <atc-submit-form
+            data-columns="true"
+            class="visually-hidden"
+            data-error-selector="[data-update-error='{{ section.id }}-{{ product.id }}']"
+          >
+            {%- form 'product', product, data-productid: product.id, id: product_form_id, class: '', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+              <input
+                type="hidden"
+                name="id"
+                value="{{- product.selected_or_first_available_variant.id -}}"
+              >
+              <input
+                type="hidden"
+                name="quantity"
+                value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+              >
+              <button
+                type="submit"
+                {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
+                  disabled
+                {% endif %}
+              >
+                {{- atc_button_label -}}
+              </button>
+              <span class="loader product-column-card_loader hidden" data-loader="">
+                {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'loader' -%}
+                <span class="visually-hidden">
+                  {{- 'accessibility.loader.label' | t -}}
+                </span>
+              </span>
+              <div class="product-column-card_error-container hidden" data-update-error="{{ section.id }}-{{ product.id }}">
+                <span></span>
+              </div>
+            {%- endform -%}
+          </atc-submit-form>
+        {%- endif -%}
+      {%- endunless -%}
+      {% unless section.settings.btn_overlay %}
+        {%- unless selected_layout == 'none' -%}
+          <div class="product-column-card_btns">
+            {%- case selected_layout -%}
+              {%- when 'enable_atc_guick_view' -%}
+                <atc-submit-form
+                  data-columns="true"
+                  data-error-selector="[data-update-error='{{ section.id }}-{{ product.id }}']"
+                >
+                  {%- form 'product', product, data-productid: product.id, id: product_form_id, class: '', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+                    <input
+                      type="hidden"
+                      name="id"
+                      value="{{- product.selected_or_first_available_variant.id -}}"
+                    >
+                    <input
+                      type="hidden"
+                      name="quantity"
+                      value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                    >
+                    <button
+                      type="submit"
+                      class="button button--primary product-column-card_atc-btn"
+                      {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
+                        disabled
+                      {% endif %}
+                    >
+                      {{- atc_button_label -}}
+                    </button>
+                    <span class="loader product-column-card_loader hidden" data-loader="">
+                      {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'loader' -%}
+                      <span class="visually-hidden">
+                        {{- 'accessibility.loader.label' | t -}}
+                      </span>
+                    </span>
+                    <div class="product-column-card_error-container hidden" data-update-error="{{ section.id }}-{{ product.id }}">
+                      <span></span>
+                    </div>
+                  {%- endform -%}
+                </atc-submit-form>
+                <modal-component-toggler>
+                  <button
+                    data-expanded="false"
+                    data-modal-ref="modal-quick-view-{{ section.id }}-{{ product.id }}"
+                    aria-haspopup="dialog"
+                    aria-controls="modal-quick-view-{{ section.id }}-{{ product.id }}"
+                    class="btn-icn-ixi product-column-card_qv-btn"
+                  >
+                    <span class="btn-icn-ixi_wrapper">
+                      {%- render 'icons-data', width: 42, height: 42, use_icon: true, icon_reference: 'eye' -%}
+                      <span class="visually-hidden">
+                        {{- 'product.atc_buttons.quick_view' | t -}}
+                      </span>
+                    </span>
+                  </button>
+                </modal-component-toggler>
+              {%- when 'enable_atc' -%}
+                <atc-submit-form
+                  data-columns="true"
+                  data-qty-selector-ref="[data-product-parent]"
+                  data-error-selector="[data-update-error='{{ section.id }}-{{ product.id }}']"
+                >
+                  {%- form 'product', product, data-productid: product.id, id: product_form_id, class: '', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+                    <input
+                      type="hidden"
+                      name="id"
+                      value="{{- product.selected_or_first_available_variant.id -}}"
+                    >
+                    <input
+                      type="hidden"
+                      name="quantity"
+                      value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                    >
+                    <button
+                      type="submit"
+                      class="button button--primary product-column-card_atc-btn"
+                      {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
+                        disabled
+                      {% endif %}
+                    >
+                      {{- atc_button_label -}}
+                    </button>
+                    <span class="loader product-column-card_loader hidden" data-loader="">
+                      {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'loader' -%}
+                      <span class="visually-hidden">
+                        {{- 'accessibility.loader.label' | t -}}
+                      </span>
+                    </span>
+                    <div class="product-column-card_error-container hidden" data-update-error="{{ section.id }}-{{ product.id }}">
+                      <span></span>
+                    </div>
+                  {%- endform -%}
+                </atc-submit-form>
+              {%- when 'enable_quick_view' -%}
+                <modal-component-toggler class="product-column-card_toggler">
+                  <button
+                    data-expanded="false"
+                    data-modal-ref="modal-quick-view-{{ section.id }}-{{ product.id }}"
+                    aria-haspopup="dialog"
+                    aria-controls="modal-quick-view-{{ section.id }}-{{ product.id }}"
+                    class="button button--primary product-column-card_btn--full"
+                  >
+                    {{- 'product.atc_buttons.quick_view' | t -}}
+                  </button>
+                </modal-component-toggler>
+              {%- else -%}
+                <a href="{{- product_clean_url -}}" class="button button--primary product-column-card_btn--details product-column-card_btn--full">
+                  {{- 'product_column_card.view_details_label' | t -}}
+                </a>
+                <atc-submit-form
+                  data-columns="true"
+                  class="visually-hidden"
+                  data-error-selector="[data-update-error='{{ section.id }}-{{ product.id }}']"
+                >
+                  {%- form 'product', product, data-productid: product.id, id: product_form_id, class: '', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+                    <input
+                      type="hidden"
+                      name="id"
+                      value="{{- product.selected_or_first_available_variant.id -}}"
+                    >
+                    <input
+                      type="hidden"
+                      name="quantity"
+                      value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                    >
+                    <button
+                      type="submit"
+                      {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
+                        disabled
+                      {% endif %}
+                    >
+                      {{- atc_button_label -}}
+                    </button>
+                    <span class="loader product-column-card_loader hidden" data-loader="">
+                      {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'loader' -%}
+                      <span class="visually-hidden">
+                        {{- 'accessibility.loader.label' | t -}}
+                      </span>
+                    </span>
+                    <div class="product-column-card_error-container hidden" data-update-error="{{ section.id }}-{{ product.id }}">
+                      <span></span>
+                    </div>
+                  {%- endform -%}
+                </atc-submit-form>
+            {%- endcase -%}
+          </div>
+        {%- endunless -%}
+      {% endunless %}
+    </div>
+  {%- endif -%}
+  {%- unless selected_gallery == 'none' -%}
+    {%- if selected_gallery == 'variant_gallery' -%}
+      {%- unless product.has_only_default_variant -%}
+        <template id="{{ section.id }}-product-column-{{ product.id }}">
+          {%- if first_image != blank -%}
+            <a href="{{- product_clean_url -}}" class="--media-size-{{ section.settings.section_media_size }} --template-image" style="--media-ratio: {{ first_media_size }};" data-media-id="{{ section.id }}-{{ product.id }}-{{- first_image.id -}}">
+              {{- first_image.preview_image | image_url: width: 969 | image_tag: alt: product.title, class: 'object-fit object-fit--absolute', loading: loading, widths: '646, 969', sizes: '(max-width: 767px) 646vw, 969vw' -}}
+            </a>
+          {%- endif -%}
+          {%- for variant in product.variants -%}
+            {%- liquid
+              capture image_alt
+                echo variant.title | prepend: product.title 
+              endcapture
+
+              capture variant_media_size
+              if section.settings.section_media_size == 'adapt'
+                  echo variant.featured_image.aspect_ratio | default: '1'
+              else 
+                 echo '1'
+              endif
+            endcapture
+            -%}
+            <a href="{{- product_clean_url -}}" class="--media-size-{{ section.settings.section_media_size }} --template-image" style="--media-ratio: {{ variant_media_size }};"  data-media-id="{{ section.id }}-{{ product.id }}-{{ variant.featured_media.id }}">
+              {%- unless variant.featured_image == blank -%}
+                {{- variant.featured_image.src | image_url: width: 969 | image_tag: alt: image_alt, class: 'object-fit object-fit--absolute', loading: loading, widths: '646, 969', sizes: '(max-width: 767px) 646vw, 969vw' -}}
+                {%- else -%}
+                  {{- 'image' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                  <span class="visually-hidden">
+                    {{- image_alt -}}
+                  </span>
+              {%- endunless -%}
+            </a>
+          {%- endfor -%}
+        </template>
+      {%- endunless -%}
+      {%- else -%}
+        <template id="{{ section.id }}-product-column-{{ product.id }}">
+          {%- if first_image != blank -%}
+            <a href="{{- product_clean_url -}}" class="--media-size-{{ section.settings.section_media_size }} --template-image" style="--media-ratio: {{ first_media_size }};" data-media-id="{{ section.id }}-{{ product.id }}-{{- first_image.id -}}">
+              {{- first_image.preview_image | image_url: width: 969 | image_tag: alt: product.title, class: 'object-fit object-fit--absolute', loading: loading, widths: '646, 969', sizes: '(max-width: 767px) 646vw, 969vw' -}}
+            </a>
+          {%- endif -%}
+          {%- for media in product.media -%}
+            {%- if media.id != first_image.id -%}
+              <a href="{{- product_clean_url -}}" class="--media-size-{{ section.settings.section_media_size }} --template-image" style="--media-ratio: {{ card_media_size }};"  data-media-id="{{ section.id }}-{{ product.id }}-{{- media.id -}}">
+                {{- media.preview_image | image_url: width: 969 | image_tag: alt: product.title, class: 'object-fit object-fit--absolute', loading: loading, widths: '646, 969', sizes: '(max-width: 767px) 646vw, 969vw' -}}
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </template>
+    {%- endif -%}
+  {%- endunless -%}
+  <script id="{{- productJsonId -}}" type="application/json">
+    {{- product | json -}}
+  </script>
+</article>

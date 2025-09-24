@@ -1,0 +1,426 @@
+{{- 'component-locator-row.css' | asset_url | stylesheet_tag -}}
+{{- 'store-locator.css' | asset_url | stylesheet_tag -}}
+{{- 'location-compact.css' | asset_url | stylesheet_tag -}}
+{%- liquid
+  assign section_prefix_class = 'store-locator'
+  assign section_scheme_class = section.settings.section_color_scheme | prepend: 'scheme scheme--'
+
+  capture section_main_heading_size
+    case section.settings.section_main_heading_size
+      when 'heading_xx_large'
+        echo 'h1'
+      when 'heading_x_large'
+        echo 'h2'
+      when 'heading_large'
+        echo 'h3'
+      when 'heading_medium'
+        echo 'h4'
+      else
+        echo 'h'
+    endcase
+  endcapture
+-%}
+{%- style -%}
+  .{{ section_prefix_class }}-{{ section.id }}{
+    --section-radius: 20px;
+    --section-slider-radius: 8px;
+    --section-padding-top: {{ section.settings.section_top_padding }}px;
+    --section-padding-bottom: {{ section.settings.section_bottom_padding }}px;
+  }
+{%- endstyle -%}
+<div class="global-block {{ section_prefix_class }} {{ section_prefix_class }}-{{ section.id }} {{ section_scheme_class }} {{ section_prefix_class }}--bdr-bottom {{ section_prefix_class }}--bdr-top {% if section.settings.enable_slideshow %}--compact-carousel{% endif %}">
+  <div class="container">
+    <header class="heading-head {{ section_prefix_class }}_heading-head --align-{{ section.settings.section_text_alignment }}">
+      {%- if section.settings.main_heading != blank -%}
+        <h2 class="{{ section_prefix_class }}_heading {{ section_main_heading_size }} --h-anchor-none mty">
+          {{- section.settings.main_heading -}}
+        </h2>
+      {%- endif -%}
+    </header>
+    <div class="{{ section_prefix_class }}_wrapper">
+      {% if section.settings.enable_slideshow %}
+        <splide-slider
+          data-drag='true'
+          data-autoplay='{{- section.settings.auto_play -}}'
+          data-rewind="true"
+          data-gap='15px'
+          data-per-move="1"
+          data-arrows='{{- section.settings.show_navigation -}}'
+          data-pagination='{{ section.settings.show_pagination }}'
+          data-per-page='1'
+          data-interval="{{- section.settings.change_slides_every | times: 1000 -}}"
+          data-breakpoints='{"responsive": {"414": {"perPage": 2},"768": {"perPage": 2},"992": {"perPage": 2, "gap": "30px"},"1200": {"perPage": 2}, "1440": {"padding": "300px"}}}'
+          {% if request.design_mode == false %}
+            data-type="loop"
+            {% else %}
+              data-type="slide"
+          {% endif %}
+        >
+          <div class="splide {{ section_prefix_class }}_slider">
+            <div class="splide__track">
+              <div class="splide__list">
+                {%- for block in section.blocks -%}
+                  <div class="splide__slide" {{ block.shopify_attributes }}>
+                    {%- render 'location-compact', compact: block, index: forloop.index -%}
+                  </div>
+                {%- endfor -%}
+              </div>
+            </div>
+            {%- if section.settings.show_navigation or section.settings.show_pagination -%}
+              <div class="splide-controls --justify-center">
+                {%- if section.settings.show_navigation -%}
+                  <button class="splide__arrow splide__arrow--prev btn-icn-ixi">
+                    <span class="btn-icn-ixi_wrapper">
+                      <span class="visually-hidden">{{- 'accessibility.slider.previous' | t -}}</span>
+                      {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'left-arrow' -%}
+                    </span>
+                  </button>
+                {%- endif -%}
+                <ul class="splide__pagination" role="tablist" aria-label="{{- 'accessibility.slider.pagination_label' | t -}}"></ul>
+                {%- if section.settings.show_navigation -%}
+                  <button class="splide__arrow splide__arrow--next btn-icn-ixi">
+                    <span class="btn-icn-ixi_wrapper">
+                      <span class="visually-hidden">{{- 'accessibility.slider.next' | t -}}</span>
+                      {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'right-arrow' -%}
+                    </span>
+                  </button>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        </splide-slider>
+      {% else %}
+        {%- liquid
+          for block in section.blocks
+            render 'locator-row', row: block, index: forloop.index
+          endfor
+        -%}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.store_locator.name",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "main_heading",
+      "label": "t:sections.common.heading.label",
+      "default": "Store Locations"
+    },
+    {
+      "type": "select",
+      "id": "section_main_heading_size",
+      "label": "t:sections.common.heading.size.label",
+      "options": [
+        {
+          "value": "heading_xx_large",
+          "label": "t:sections.common.heading.size.options.opt_1.label"
+        },
+        {
+          "value": "heading_x_large",
+          "label": "t:sections.common.heading.size.options.opt_2.label"
+        },
+        {
+          "value": "heading_large",
+          "label": "t:sections.common.heading.size.options.opt_3.label"
+        },
+        {
+          "value": "heading_medium",
+          "label": "t:sections.common.heading.size.options.opt_4.label"
+        }
+      ],
+      "default": "heading_x_large"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.locations.content"
+    },
+    {
+      "type": "select",
+      "id": "section_heading_size",
+      "label": "t:sections.common.heading.size.label",
+      "options": [
+        {
+          "value": "heading_xx_large",
+          "label": "t:sections.common.heading.size.options.opt_1.label"
+        },
+        {
+          "value": "heading_x_large",
+          "label": "t:sections.common.heading.size.options.opt_2.label"
+        },
+        {
+          "value": "heading_large",
+          "label": "t:sections.common.heading.size.options.opt_3.label"
+        },
+        {
+          "value": "heading_medium",
+          "label": "t:sections.common.heading.size.options.opt_4.label"
+        }
+      ],
+      "default": "heading_large"
+    },
+    {
+      "type": "select",
+      "id": "section_text_size",
+      "label": "t:sections.common.text.settings.fz_sizes.label",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_1.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_2.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_3.label"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.layout.content"
+    },
+    {
+      "type": "text_alignment",
+      "id": "section_text_alignment",
+      "label": "t:sections.common.text.settings.alignment.label",
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "section_media_size",
+      "label": "t:sections.common.media_size.settings.label",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.common.media_size.settings.options.opt_1.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.common.media_size.settings.options.opt_2.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.common.media_size.settings.options.opt_3.label"
+        },
+        {
+          "value": "landscape",
+          "label": "t:sections.common.media_size.settings.options.opt_4.label"
+        }
+      ],
+      "default": "adapt",
+      "visible_if": "{{ section.settings.enable_slideshow == false }}"
+    },
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "default": "scheme1",
+      "label": "t:sections.common.clr_scheme.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.slideshow.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slideshow",
+      "label": "t:sections.store_locator.settings.enable_slideshow.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation",
+      "label": "t:sections.common.slideshow.show_arrows.label",
+      "default": true,
+      "visible_if": "{{ section.settings.enable_slideshow == true }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pagination",
+      "label": "t:sections.common.slideshow.show_nav.label",
+      "default": true,
+      "visible_if": "{{ section.settings.enable_slideshow == true }}"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.spacing.content"
+    },
+    {
+      "type": "range",
+      "id": "section_top_padding",
+      "label": "t:sections.common.spacing.settings.top.label",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 50,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_bottom_padding",
+      "label": "t:sections.common.spacing.settings.bottom.label",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 50,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "t:sections.store_locator.blocks.location.name",
+      "type": "location",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.common.image.label",
+          "info": "t:sections.store_locator.blocks.image.settings.info"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "t:sections.common.heading.label",
+          "default": "Store Locator"
+        },
+        {
+          "type": "richtext",
+          "id": "section_description",
+          "label": "t:sections.common.description.label",
+          "default": "<p>Locate our physical store and discover our latest collections. Visit us today for a personalized shopping experience!</p>"
+        },
+        {
+          "type": "select",
+          "id": "section_media_order",
+          "label": "t:sections.store_locator.blocks.media_order.label",
+          "options": [
+            {
+              "value": "row",
+              "label": "t:sections.store_locator.blocks.media_order.options.opt_1.label"
+            },
+            {
+              "value": "row_reverse",
+              "label": "t:sections.store_locator.blocks.media_order.options.opt_2.label"
+            }
+          ],
+          "default": "row"
+        },
+        {
+          "type": "select",
+          "id": "content_alignment",
+          "label": "t:sections.store_locator.blocks.alignment.label",
+          "options": [
+            {
+              "value": "top",
+              "label": "t:sections.common.v_alignment.settings.alignment.options.top.label"
+            },
+            {
+              "value": "middle",
+              "label": "t:sections.common.v_alignment.settings.alignment.options.middle.label"
+            },
+            {
+              "value": "bottom",
+              "label": "t:sections.common.v_alignment.settings.alignment.options.bottom.label"
+            }
+          ],
+          "default": "middle"
+        },
+        {
+          "type": "text_alignment",
+          "id": "section_text_alignment",
+          "label": "t:sections.store_locator.blocks.text_alignment.desktop.label",
+          "default": "left"
+        },
+        {
+          "type": "text_alignment",
+          "id": "section_mobile_text_alignment",
+          "label": "t:sections.store_locator.blocks.text_alignment.mobile.label",
+          "default": "center"
+        },
+        {
+          "type": "richtext",
+          "id": "address_description",
+          "label": "t:sections.store_locator.blocks.location.address.name",
+          "default": "<p>123 Main Street Dearing KS 67340 United States</p>"
+        },
+        {
+          "type": "richtext",
+          "id": "contact_description",
+          "label": "t:sections.store_locator.blocks.location.contact.name",
+          "default": "<p>Contact us at <a>contact@company.com</a> or Call (+1)-644-333-0101</p>"
+        },
+        {
+          "type": "richtext",
+          "id": "message_description",
+          "label": "t:sections.store_locator.blocks.location.message.name",
+          "default": "<p></p>"
+        },
+        {
+          "type": "richtext",
+          "id": "store_hour_description",
+          "label": "t:sections.store_locator.blocks.location.store_hours.name",
+          "default": "<p>Mon - Fri : 10:00am - 4:00pm</p> <p>Sat - Sun : 10:00am - 5:00pm</p>"
+        },
+        {
+          "type": "text",
+          "id": "view_more_label",
+          "label": "t:sections.store_locator.settings.view_more_button.label",
+          "default": "GET DIRECTION"
+        },
+        {
+          "type": "select",
+          "id": "view_more_type",
+          "label": "t:sections.store_locator.settings.view_more_button.type.label",
+          "options": [
+            {
+              "value": "primary",
+              "label": "t:sections.common.button.settings.options.opt_1.label"
+            },
+            {
+              "value": "secondary",
+              "label": "t:sections.common.button.settings.options.opt_2.label"
+            }
+          ],
+          "default": "primary"
+        },
+        {
+          "type": "url",
+          "id": "view_more_link",
+          "label": "t:sections.media_with_text.settings.view_more_button.link.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_new_window",
+          "label": "t:sections.common.target_blank.label",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.store_locator.name",
+      "blocks": [
+        {
+          "type": "location",
+          "settings": {}
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

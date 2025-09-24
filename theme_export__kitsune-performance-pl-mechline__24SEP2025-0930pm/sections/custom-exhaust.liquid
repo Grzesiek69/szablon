@@ -1,0 +1,294 @@
+{%- comment -%}
+  -----------------------------------------------------------------------------
+  Formularz wyceny układu wydechowego – wersja „działa wszędzie”
+  • Shopify po wysłaniu przekierowuje na {{ back_url }}
+    (= ta sama strona + ?contact_posted=true#wyslane)
+  • ?contact_posted=true  →  form.posted_successfully? = true  →  baner OK
+  • #wyslane  →  każda przeglądarka przewinie do komunikatu
+  -----------------------------------------------------------------------------
+{%- endcomment -%}
+{%- liquid
+assign back_url = page.url | append: '?contact_posted=true#wyslane'
+-%}
+<style> :root{ --form-bg:#fff;--input-bg:#f7f7f7;--input-border:#ddd; --text:#333;--muted:#666;--placeholder:#999; --primary:#e74c3c;--primary-hover:#c0392b;--success:#2ecc71; --danger:#FC0404; } .custom-form-wrapper{background:var(--form-bg);color:var(--text);padding:28px 18px; border-radius:10px;max-width:860px;margin:32px auto;box-shadow:0 4px 15px rgba(0,0,0,.08); border:1px solid #e9e9e9} @media(min-width:750px){.custom-form-wrapper{padding:40px 48px}} .page-title{text-align:center;margin:0 0 6px} .page-subtitle{color:var(--muted);text-align:center;margin:0 0 22px;font-size:15px} .benefits{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:0 0 24px;padding:0} .benefits li{list-style:none;background:#fafafa;border:1px solid #eee;border-radius:6px; padding:8px 10px;font-size:13px;color:#444} .progress{display:flex;align-items:center;gap:10px;margin:8px 0 18px} .progress-bar{height:6px;background:#eee;border-radius:999px;flex:1;overflow:hidden} .progress-bar span{display:block;height:100%;width:0;background:var(--primary);transition:width .25s ease} .progress-label{font-size:13px;color:#444;min-width:64px;text-align:right} .step{display:none} .step.active{display:block} .form-grid{display:grid;grid-template-columns:1fr;gap:16px} @media(min-width:750px){.form-grid.two{grid-template-columns:1fr 1fr}} .form-field{display:flex;flex-direction:column} .form-field label{margin-bottom:6px;font-size:14px;font-weight:600} .req-star{color:var(--danger);margin-left:4px;font-weight:700} .hint{font-size:12px;color:#777;margin-top:4px} input,select,textarea{ background:var(--input-bg);border:1px solid var(--input-border);border-radius:6px; padding:12px 14px;color:var(--text);font-size:16px;transition:border-color .2s,box-shadow .2s; width:100%;box-sizing:border-box} input:focus,select:focus,textarea:focus{ outline:none;border-color:var(--primary);box-shadow:0 0 0 2px rgba(231,76,60,.2)} textarea{resize:vertical;min-height:120px} .row-actions{display:flex;gap:10px;margin-top:8px} .btn{background:#f0f0f0;border:1px solid #ddd;border-radius:6px;padding:12px 16px; font-weight:700;cursor:pointer} .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff} .btn-primary:hover{background:var(--primary-hover)} .submit-button{width:100%} .form-success{background:rgba(46,204,113,.1);border:1px solid var(--success);color:#27ae60; padding:14px;border-radius:6px;text-align:center;margin-bottom:16px} .errors ul{list-style:none;margin:0 0 16px;padding:0} .errors li{color:#e74c3c;background:rgba(231,76,60,.1);border:1px solid #e74c3c; padding:12px;border-radius:6px;text-align:center} .optional{font-weight:400;color:#888} .file-name{font-size:12px;color:#555;margin-top:6px;word-break:break-all} </style> <div class="custom-form-wrapper"> <h1 class="page-title">Wycena układu wydechowego do Twojego auta</h1> <p class="page-subtitle">Wypełnij krótki formularz (60–90 s). W 24h odeślemy wycenę i rekomendacje. Montaż w naszym warsztacie w Toruniu.</p> <ul class="benefits"> <li>Opcje pod dźwięk, osiągi i wygląd</li> <li>Normy emisji – doradzimy odpowiednie rozwiązania</li> <li>Darmowa konsultacja 15 min po wycenie</li> </ul> <div class="progress"> <div class="progress-bar"><span id="kp-progress-fill" style="width:0%"></span></div> <div class="progress-label"><span id="kp-progress-label">Krok 1/4</span></div> </div>
+{%- form 'contact', id: 'CustomContactForm', return_to: back_url -%}
+{%- if form.posted_successfully? -%}
+<div id="wyslane" class="form-success">Dziękujemy! Wycena trafi do Ciebie w 24h (dni robocze). Jeśli chcesz przyspieszyć, podaj telefon lub WhatsApp.</div>
+{%- endif -%}
+{{ form.errors | default_errors }}
+
+{%- unless form.posted_successfully? -%}
+
+  <!-- KROK 1: Auto -->
+  <div class="step active" data-step="1">
+    <div class="form-grid two">
+      <div class="form-field">
+        <label for="ContactForm-CarMake">Marka<span class="req-star">*</span></label>
+        <input id="ContactForm-CarMake" type="text" name="contact[Marka]" placeholder="np. Audi" required>
+      </div>
+      <div class="form-field">
+        <label for="ContactForm-CarModel">Model<span class="req-star">*</span></label>
+        <input id="ContactForm-CarModel" type="text" name="contact[Model]" placeholder="np. RS3 8Y" required>
+      </div>
+      <div class="form-field">
+        <label for="ContactForm-Year">Rocznik/Generacja<span class="req-star">*</span></label>
+        <input id="ContactForm-Year" type="text" name="contact[Rocznik/Generacja]" placeholder="np. 2023 / 8Y" required>
+      </div>
+      <div class="form-field">
+        <label for="ContactForm-Engine">Silnik / kod <span class="optional">(opcjonalne)</span></label>
+        <input id="ContactForm-Engine" type="text" name="contact[Silnik/Kod]" placeholder="np. 2.5 TFSI / DNWA">
+        <div class="hint">Nie znasz kodu? Zostaw puste.</div>
+      </div>
+    </div>
+    <div class="row-actions">
+      <button type="button" class="btn btn-primary" data-next>Krok 2</button>
+    </div>
+  </div>
+
+  <!-- KROK 2: Preferencje (same selecty) -->
+  <div class="step" data-step="2">
+    <div class="form-grid">
+      <div class="form-field">
+        <label for="ContactForm-Purpose">Co jest dla Ciebie najważniejsze?<span class="req-star">*</span></label>
+        <select id="ContactForm-Purpose" name="contact[Priorytet]" required>
+          <option value="" selected>Wybierz</option>
+          <option>Dźwięk</option>
+          <option>Osiągi</option>
+          <option>Wygląd</option>
+        </select>
+        <div class="hint">Wybierz główny priorytet – resztę dopasujemy w wycenie.</div>
+      </div>
+
+      <div class="form-field">
+        <label for="ContactForm-SystemType">Rodzaj układu<span class="req-star">*</span></label>
+        <select id="ContactForm-SystemType" name="contact[Rodzaj układu]" required>
+          <option value="" selected>Wybierz</option>
+          <option>Cat‑back</option>
+          <option>Axle‑back</option>
+          <option>Downpipe</option>
+          <option>Inne / custom</option>
+          <option>Nie wiem – doradźcie</option>
+        </select>
+        <div class="hint">Cat‑back: duża zmiana dźwięku • Axle‑back: budżetowo • Downpipe: osiągi.</div>
+      </div>
+
+      <div class="form-field">
+        <label for="ContactForm-Valves">Klapy wydechu<span class="req-star">*</span></label>
+        <select id="ContactForm-Valves" name="contact[Klapy wydechu]" required>
+          <option value="" selected>Wybierz</option>
+          <option>Aktywny (z klapami)</option>
+          <option>Pasywny (bez klap)</option>
+          <option>Nie wiem – doradźcie</option>
+        </select>
+        <div class="hint">Aktywny: regulacja głośności klapami; Pasywny: stała charakterystyka.</div>
+      </div>
+
+      <div class="form-field">
+        <label for="ContactForm-Emissions">Normy emisji spalin <span class="optional">(opcjonalne)</span></label>
+        <select id="ContactForm-Emissions" name="contact[Normy emisji spalin]">
+          <option value="" selected>Wybierz (opcjonalne)</option>
+          <option>Euro 6/6d</option>
+          <option>Euro 5</option>
+          <option>Euro 4 lub starsze</option>
+          <option>Nie wiem</option>
+        </select>
+        <div class="hint">Jeśli znasz normę – ułatwi to dobór komponentów.</div>
+      </div>
+    </div>
+    <div class="row-actions">
+      <button type="button" class="btn" data-prev>Wstecz</button>
+      <div style="flex:1"></div>
+      <button type="button" class="btn btn-primary" data-next>Krok 3</button>
+    </div>
+  </div>
+
+  <!-- KROK 3: Budżet i termin -->
+  <div class="step" data-step="3">
+    <div class="form-grid two">
+      <div class="form-field">
+        <label for="ContactForm-Budget">Budżet (widełki)</label>
+        <select id="ContactForm-Budget" name="contact[Budżet]">
+          <option selected>Wolę nie podawać</option>
+          <option>3–5 tys. zł</option>
+          <option>5–8 tys. zł</option>
+          <option>8–12 tys. zł</option>
+          <option>12 tys. zł+</option>
+        </select>
+        <div class="hint">Podaj widełki, jeśli chcesz szybszą i dokładniejszą wycenę.</div>
+      </div>
+      <div class="form-field">
+        <label for="ContactForm-Date">Termin realizacji</label>
+        <select id="ContactForm-Date" name="contact[Termin]">
+          <option selected>Jak najszybciej</option>
+          <option>W ciągu 30 dni</option>
+          <option>1–3 miesiące</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="ContactForm-Location">Lokalizacja</label>
+        <select id="ContactForm-Location" name="contact[Lokalizacja]">
+          <option selected>Na miejscu w Toruniu</option>
+          <option>Mogę dojechać</option>
+          <option>Tylko wysyłka</option>
+        </select>
+      </div>
+    </div>
+    <div class="row-actions">
+      <button type="button" class="btn" data-prev>Wstecz</button>
+      <div style="flex:1"></div>
+      <button type="button" class="btn btn-primary" data-next>Krok 4</button>
+    </div>
+  </div>
+
+  <!-- KROK 4: Kontakt i dodatki -->
+  <div class="step" data-step="4">
+    <div class="form-grid two">
+      <div class="form-field">
+        <label for="ContactForm-Name">Imię<span class="req-star">*</span></label>
+        <input id="ContactForm-Name" type="text" name="contact[Imię]" placeholder="np. Jan" required>
+      </div>
+      <div class="form-field">
+        <label for="ContactForm-Email">Adres e‑mail<span class="req-star">*</span></label>
+        <input id="ContactForm-Email" type="email" name="contact[email]" placeholder="jan@przyklad.pl" required>
+      </div>
+      <div class="form-field">
+        <label for="ContactForm-Phone">Telefon <span class="optional">(opcjonalne)</span></label>
+        <input id="ContactForm-Phone" type="tel" name="contact[Telefon]" placeholder="+48 600 000 000">
+        <div class="hint">Podaj, jeśli chcesz szybki telefon/WhatsApp.</div>
+      </div>
+      <div class="form-field">
+        <label for="ContactForm-Prefer">Preferowany kontakt</label>
+        <select id="ContactForm-Prefer" name="contact[Preferowany kontakt]">
+          <option selected>E‑mail</option>
+          <option>Telefon</option>
+          <option>WhatsApp</option>
+        </select>
+      </div>
+
+      <div class="form-field" style="grid-column:1/-1">
+        <label for="ContactForm-Notes">Dodatkowe informacje <span class="optional">(opcjonalne)</span></label>
+        <textarea id="ContactForm-Notes" name="contact[Dodatkowe informacje]" placeholder="Np. zawory, końcówki, materiał (stal/tytan), link do zdjęć (Google Drive/WeTransfer)…"></textarea>
+        <div class="hint">Jeśli masz zdjęcia, wklej link (np. Google Drive). To najszybszy sposób.</div>
+      </div>
+
+      <div class="form-field" style="grid-column:1/-1">
+        <label for="ContactForm-Files">Załącz plik/zdjęcie (opcjonalne)</label>
+        <input id="ContactForm-Files" type="file" name="contact[Załącznik]" multiple>
+        <div id="ContactForm-FilesName" class="file-name"></div>
+        <div class="hint">Uwaga: przesłane pliki nie są dołączane do maila. Zapisujemy nazwę. Najlepiej wklej link do zdjęć w polu powyżej.</div>
+      </div>
+
+      <div class="form-field" style="grid-column:1/-1">
+        <label><input type="checkbox" name="contact[RODO]" required> Zgadzam się na kontakt w sprawie przygotowania wyceny.</label>
+        <div class="hint">Użyjemy danych wyłącznie do przygotowania wyceny i kontaktu. Szczegóły: <a href="/polityka-prywatnosci" target="_blank" rel="noopener">polityka prywatności</a>.</div>
+      </div>
+    </div>
+
+    <div class="row-actions">
+      <button type="button" class="btn" data-prev>Wstecz</button>
+    </div>
+
+    <div class="form-field" style="margin-top:8px">
+      <input type="submit" class="btn btn-primary submit-button" value="Odbierz wycenę w 24h">
+    </div>
+  </div>
+
+{%- endunless -%}
+{%- endform -%}
+</div> <script> (function(){ var form = document.getElementById('CustomContactForm'); if(!form) return; var steps = Array.prototype.slice.call(form.querySelectorAll('.step')); var current = 0; var fill = document.getElementById('kp-progress-fill'); var label = document.getElementBy function updateProgress(){
+var pct = Math.round(((current+1)/steps.length)*100);
+if(fill) fill.style.width = pct + '%';
+if(label) label.textContent = 'Krok ' + (current+1) + '/' + steps.length;
+}
+function showStep(i){
+steps.forEach(function(s,idx){ s.classList.toggle('active', idx===i); });
+current = i;
+updateProgress();
+try{ window.scrollTo({top: form.offsetTop - 20, behavior: 'smooth'}); }catch(e){}
+}
+// Nawigacja między krokami + szybka walidacja wymaganych pól w bieżącym kroku
+form.addEventListener('click', function(e){
+var next = e.target.closest('[data-next]');
+var prev = e.target.closest('[data-prev]');
+if(next){
+var required = steps[current].querySelectorAll('[required]');
+for(var i=0;i<required.length;i++){
+var el = required[i];
+if(!el.value){
+el.focus();
+el.setCustomValidity('To pole jest wymagane');
+el.reportValidity();
+setTimeout(function(){ try{ el.setCustomValidity(''); }catch(_e){} }, 1500);
+return;
+}
+}
+showStep(Math.min(current+1, steps.length-1));
+return;
+}
+if(prev){
+showStep(Math.max(current-1, 0));
+return;
+}
+});
+// LocalStorage – klucze do zapisu
+var saveKeys = [
+'contact[Marka]','contact[Model]','contact[Rocznik/Generacja]','contact[Silnik/Kod]',
+'contact[Priorytet]','contact[Rodzaj układu]','contact[Klapy wydechu]','contact[Normy emisji spalin]',
+'contact[Budżet]','contact[Termin]','contact[Lokalizacja]',
+'contact[Imię]','contact[email]','contact[Telefon]','contact[Preferowany kontakt]',
+'contact[Dodatkowe informacje]','contact[Załącznik]'
+];
+function saveDraft(){
+saveKeys.forEach(function(name){
+var els = form.querySelectorAll('[name="'+name+'"]');
+if(!els.length) return;
+var el = els[0];
+if(el && (el.tagName === 'SELECT' || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')){
+var val = el.value || '';
+try{ localStorage.setItem('kp_'+name, val); }catch(e){}
+}
+});
+}
+function loadDraft(){
+saveKeys.forEach(function(name){
+var val = null;
+try{ val = localStorage.getItem('kp_'+name); }catch(e){}
+if(val == null) return;
+var el = form.querySelector('[name="'+name+'"]');
+if(el){
+el.value = val;
+}
+});
+}
+// Auto-save
+var debounce;
+form.addEventListener('input', function(){
+clearTimeout(debounce);
+debounce = setTimeout(saveDraft, 250);
+});
+form.addEventListener('change', saveDraft);
+// Po submit – czyścimy draft
+form.addEventListener('submit', function(){
+saveKeys.forEach(function(name){
+try{ localStorage.removeItem('kp_'+name); }catch(e){}
+});
+});
+// Nazwy plików – pokazuj obok pola
+var fileInput = document.getElementById('ContactForm-Files');
+var fileNameBox = document.getElementById('ContactForm-FilesName');
+if(fileInput && fileNameBox){
+fileInput.addEventListener('change', function(){
+if(!fileInput.files || !fileInput.files.length){ fileNameBox.textContent=''; return; }
+var names = [];
+for(var i=0;i<fileInput.files.length;i++){ names.push(fileInput.files[i].name); }
+fileNameBox.textContent = 'Załączono: ' + names.join(', ');
+// Zapisz nazwy do localStorage (dla śladów)
+try{ localStorage.setItem('kp_contact[Załącznik]', names.join(', ')); }catch(e){}
+});
+}
+// Inicjalizacja
+loadDraft();
+updateProgress();
+showStep(0); // start od 1. kroku
+})();
+</script>

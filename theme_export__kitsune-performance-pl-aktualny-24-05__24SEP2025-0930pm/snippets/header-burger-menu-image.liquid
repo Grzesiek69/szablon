@@ -1,0 +1,66 @@
+{%- comment -%}
+	------------------------------------------------------------------------------
+	Snippet: Header burger menu image
+	Render header burger menu image
+	- image: burger menu image;
+	- heading: burger menu heading;
+	- subheading: burger menu subheading;
+	- link: burger menu link.
+
+	Usage:
+	{%- render 'header-burger-menu-image' -%}
+	------------------------------------------------------------------------------
+{%- endcomment -%}
+
+{%- capture img_focal -%}
+	--img-desktop-pos: {{ image.presentation.focal_point }};
+{%- endcapture -%}
+
+{%- capture image_capture -%}
+	<picture>
+		<source
+			srcset="{{ image | img_url: '347x' }} 1x, {{ image | img_url: '694x' }} 2x"
+			media="(max-width: 1500px)"
+		/>
+
+		<img
+			class="header-burger-menu-image__image"
+			src="{{- image | img_url: "440" -}}"
+			srcset="{{- image | img_url: "440x" }} 1x, {{ image | img_url: "880x" }} 2x"
+			alt="{{- image.alt | escape -}}"
+			style="{{ img_focal }}"
+			loading="lazy"
+		>
+	</picture>
+
+	<div class="header-burger-menu-image__overlay"></div>
+
+	{%- if subheading != blank or heading != blank -%}
+		<div class="header-burger-menu-image__text-content">
+			{%- if heading != blank -%}
+				<div class="header-burger-menu-image__heading">
+					{{- heading -}}
+				</div>
+			{%- endif -%}
+
+			{%- if subheading != blank -%}
+				<p class="header-burger-menu-image__subheading">
+					{{- subheading -}}
+				</p>
+			{%- endif -%}
+		</div>
+	{%- endif -%}
+{%- endcapture -%}
+
+{%- if link != blank -%}
+	<a
+		href="{{- link -}}"
+	   class="header-burger-menu-image header-burger-menu-image--hover"
+	>
+		{{- image_capture -}}
+	</a>
+{%- else -%}
+	<div class="header-burger-menu-image">
+		{{- image_capture -}}
+	</div>
+{%- endif -%}

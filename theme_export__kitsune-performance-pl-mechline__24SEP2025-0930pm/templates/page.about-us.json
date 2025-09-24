@@ -1,0 +1,304 @@
+{
+  "sections": {
+    "main_page": {
+      "type": "main-page",
+      "settings": {
+        "section_heading_size": "heading_x_large",
+        "show_breadcrumb": true,
+        "show_top_bdr": false,
+        "show_bottom_bdr": true,
+        "breadcrumb_color_scheme": "",
+        "section_text_alignment": "center",
+        "section_mobile_text_alignment": "center",
+        "section_color_scheme": "",
+        "section_top_padding": 50,
+        "section_bottom_padding": 0
+      }
+    },
+    "promotion_banners_1": {
+      "type": "promotion-banner",
+      "blocks": {
+        "banner_1": {
+          "type": "banner",
+          "settings": {
+            "image": "",
+            "remove_container": false,
+            "heading": "",
+            "block_heading_size": "heading_large",
+            "description": "",
+            "block_text_size": "small",
+            "button_label": "",
+            "type": "primary",
+            "link": "",
+            "open_new_window": false,
+            "banner_clickable": true,
+            "content_position": "bottom_center",
+            "columns": 4,
+            "rows": 2,
+            "block_text_alignment": "left",
+            "block_scheme_class": ""
+          }
+        },
+        "banner_2": {
+          "type": "banner",
+          "settings": {
+            "image": "",
+            "remove_container": false,
+            "heading": "Unleash Performance, Define Style",
+            "block_heading_size": "heading_large",
+            "description": "Upgrade your ride with our premium forged alloy wheels designed for strength, style, and speed. Engineered for precision and durability, these wheels deliver the perfect balance of performance and elegance—turning every drive into a statement.",
+            "block_text_size": "small",
+            "button_label": "",
+            "type": "primary",
+            "link": "",
+            "open_new_window": false,
+            "banner_clickable": true,
+            "content_position": "bottom_center",
+            "columns": 2,
+            "rows": 2,
+            "block_text_alignment": "left",
+            "block_scheme_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "banner_1",
+        "banner_2"
+      ],
+      "settings": {
+        "desktop_row_height": 400,
+        "mobile_row_height": 150,
+        "section_full_width": false,
+        "enable_custom_spacing": true,
+        "custom_gap": 10,
+        "remove_radius": true,
+        "section_top_padding": 30,
+        "section_bottom_padding": 0
+      }
+    },
+    "rich_text": {
+      "type": "richtext",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Driven by Performance, Defined by Style",
+            "heading_size": "heading_large",
+            "block_spacing": 25
+          }
+        },
+        "description_1": {
+          "type": "description",
+          "settings": {
+            "heading": "<p>We’re passionate about transforming every drive into a statement. Our journey began with a simple idea — to create premium alloy wheels that don’t just perform, but inspire. Crafted with precision engineering and bold design, our wheels are built for those who demand both speed and style. Whether you're tearing up the track or cruising the city streets, our products reflect a commitment to quality, innovation, and unmatched aesthetics. Join us as we continue to push the limits of performance and redefine what it means to drive in style.</p>",
+            "text_size": "large",
+            "block_spacing": 0
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "description_1"
+      ],
+      "settings": {
+        "max_content_size": 100,
+        "section_text_alignment": "left",
+        "section_color_scheme": "",
+        "section_top_padding": 50,
+        "section_bottom_padding": 50
+      }
+    },
+    "promotion_banners_2": {
+      "type": "promotion-banner",
+      "blocks": {
+        "banner_1": {
+          "type": "banner",
+          "settings": {
+            "image": "",
+            "remove_container": false,
+            "heading": "",
+            "block_heading_size": "heading_large",
+            "description": "",
+            "block_text_size": "small",
+            "button_label": "",
+            "type": "primary",
+            "link": "",
+            "open_new_window": false,
+            "banner_clickable": true,
+            "content_position": "bottom_center",
+            "columns": 6,
+            "rows": 2,
+            "block_text_alignment": "left",
+            "block_scheme_class": ""
+          }
+        }
+      },
+      "block_order": [
+        "banner_1"
+      ],
+      "settings": {
+        "desktop_row_height": 215,
+        "mobile_row_height": 150,
+        "section_full_width": false,
+        "enable_custom_spacing": false,
+        "custom_gap": 12,
+        "remove_radius": true,
+        "section_top_padding": 0,
+        "section_bottom_padding": 0
+      }
+    },
+    "team": {
+      "type": "team",
+      "blocks": {
+        "member_1": {
+          "type": "member",
+          "settings": {
+            "image": "",
+            "heading": "Alex Carter",
+            "designation": "Founder & CEO",
+            "url": "",
+            "open_new_window": true,
+            "block_color_scheme": ""
+          }
+        },
+        "member_2": {
+          "type": "member",
+          "settings": {
+            "image": "",
+            "heading": "Maya Rodriguez",
+            "designation": "Head of Design",
+            "url": "",
+            "open_new_window": true,
+            "block_color_scheme": "scheme2"
+          }
+        },
+        "member_3": {
+          "type": "member",
+          "settings": {
+            "image": "",
+            "heading": "Jordan Kim",
+            "designation": "Chief Engineer",
+            "url": "",
+            "open_new_window": true,
+            "block_color_scheme": ""
+          }
+        },
+        "member_4": {
+          "type": "member",
+          "settings": {
+            "image": "",
+            "heading": "Liam Patel",
+            "designation": "Marketing Director",
+            "url": "",
+            "open_new_window": true,
+            "block_color_scheme": "scheme2"
+          }
+        }
+      },
+      "block_order": [
+        "member_1",
+        "member_2",
+        "member_3",
+        "member_4"
+      ],
+      "settings": {
+        "heading": "Team",
+        "section_heading_size": "heading_x_large",
+        "section_description": "",
+        "section_text_size": "medium",
+        "section_full_width": false,
+        "section_text_alignment": "center",
+        "section_color_scheme": "",
+        "enable_marquee": false,
+        "marquee_speed": 15,
+        "marquee_direction": "backward",
+        "marquee_on_hover": false,
+        "section_top_padding": 60,
+        "section_bottom_padding": 60
+      }
+    },
+    "banner": {
+      "type": "banner",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Precision in Motion",
+            "heading_size": "heading_x_large",
+            "block_spacing": 20
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "heading": "Shop Now",
+            "type": "primary",
+            "url": "",
+            "open_new_window": true,
+            "block_spacing": 0
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "button"
+      ],
+      "settings": {
+        "image": "",
+        "parallax_effect": true,
+        "section_height": "small",
+        "max_content_size": 65,
+        "content_alignment": "middle",
+        "section_text_alignment": "center",
+        "section_mobile_text_alignment": "center",
+        "bg_overlay": "linear-gradient(90deg, rgba(0, 0, 0, 0) 0.64%, rgba(0, 0, 0, 0.5) 99.34%)",
+        "increase_spacing": false,
+        "remove_btn_radius": false,
+        "section_full_width": false,
+        "content_position": "left",
+        "section_color_scheme": ""
+      }
+    },
+    "product_list": {
+      "type": "product-list",
+      "settings": {
+        "section_products": [
+        ],
+        "heading": "",
+        "section_heading_size": "heading_x_large",
+        "section_description": "",
+        "section_text_size": "large",
+        "max_header_size": 60,
+        "view_more_label": "",
+        "view_more_type": "secondary",
+        "view_more_link": "",
+        "open_new_window": false,
+        "card_media_size": "small",
+        "card_text_size": "medium",
+        "show_vendor": true,
+        "card_show_price": true,
+        "section_behavior_layout": "slideshow",
+        "section_text_alignment": "center",
+        "section_color_scheme": "",
+        "marquee_speed": 10,
+        "marquee_direction": "marquee_backward",
+        "marquee_on_hover": false,
+        "auto_play": false,
+        "show_navigation": false,
+        "show_pagination": false,
+        "change_slides_every": 5,
+        "section_top_padding": 50,
+        "section_bottom_padding": 50
+      }
+    }
+  },
+  "order": [
+    "main_page",
+    "promotion_banners_1",
+    "rich_text",
+    "promotion_banners_2",
+    "team",
+    "banner",
+    "product_list"
+  ]
+}

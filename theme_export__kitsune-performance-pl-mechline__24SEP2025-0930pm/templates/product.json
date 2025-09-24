@@ -1,0 +1,260 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "stats_bar": {
+          "type": "statistics_bar",
+          "settings": {
+            "show_stock": true,
+            "show_saving_badge": true,
+            "enable_share": true,
+            "enable_compare": true,
+            "block_spacing": 16
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "block_spacing": 29
+          }
+        },
+        "separator": {
+          "type": "separator",
+          "settings": {
+            "block_spacing": 29
+          }
+        },
+        "variation_sku": {
+          "type": "variation_sku",
+          "settings": {
+            "show_variation": true,
+            "show_sku": true,
+            "enable_question": false,
+            "enable_chart": false,
+            "block_spacing": 39
+          }
+        },
+        "qty": {
+          "type": "quantity_input",
+          "settings": {
+            "show_subtotals": true,
+            "block_spacing": 31
+          }
+        },
+        "buttons": {
+          "type": "buttons",
+          "settings": {
+            "show_dynamic_checkouts": true,
+            "show_gift_card_recipient": false,
+            "show_whatsapp": false,
+            "whatsapp_number": "",
+            "custom_message": "Hi! I'm interested in learning more about the ||product_url||. Could you please provide more details or assist me with the purchase? Looking forward to your response! Thank you!",
+            "block_spacing": 49
+          }
+        },
+        "pickup": {
+          "type": "pickup_availability",
+          "settings": {
+            "block_spacing": 49
+          }
+        },
+        "complementary": {
+          "type": "complementary",
+          "settings": {
+            "heading": "Frequently bought together",
+            "show_navigation": true,
+            "block_spacing": 24,
+            "make_bundle_section": false,
+            "bundle_heading": "Complementary Products",
+            "bundle_heading_size": "heading_large",
+            "bundle_description": "<p>Frequently bought together</p>",
+            "bundle_text_size": "small",
+            "bundle_text_alignment": "center",
+            "max_bundle_header_size": 60,
+            "show_variation": true,
+            "bundle_top_padding": 50,
+            "bundle_bottom_padding": 0
+          }
+        },
+        "message_box": {
+          "type": "message_box",
+          "settings": {
+            "heading": "Drive in Style & Save – Extra 10% Off on Every Spend!",
+            "text_size": "small",
+            "block_spacing": 19
+          }
+        },
+        "countdown_timer": {
+          "type": "countdown_timer",
+          "settings": {
+            "heading": "Limited Time Offer:",
+            "end_date": "2024/05/06",
+            "end_type": "hide",
+            "end_message": "",
+            "block_spacing": 16
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "heading_size": "heading_x_large",
+            "block_spacing": 22
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "heading": "{{ product.vendor }}",
+            "text_size": "medium",
+            "show_rating": true,
+            "block_spacing": 16
+          }
+        },
+        "content": {
+          "type": "content",
+          "settings": {
+            "block_spacing": 29
+          }
+        },
+        "specs": {
+          "type": "specifications",
+          "settings": {
+            "column_1_text_1": "Lightweight Strength",
+            "column_2_text_1": "Forged aluminum design provides exceptional durability while keeping the wheels lightweight for better handling.",
+            "column_1_text_2": "Corrosion Resistance",
+            "column_2_text_2": "Advanced coating protects against rust, scratches, and harsh weather conditions.",
+            "column_1_text_3": "Stylish Multi-Spoke Design",
+            "column_2_text_3": "Enhances the overall look of your car with a modern and sporty appearance.",
+            "column_1_text_4": "Precision Fitment",
+            "column_2_text_4": "Engineered to fit perfectly with multiple car models, ensuring smooth installation and compatibility.",
+            "column_1_text_5": "",
+            "column_2_text_5": "",
+            "column_1_text_6": "",
+            "column_2_text_6": "",
+            "column_1_text_7": "",
+            "column_2_text_7": "",
+            "column_1_text_8": "",
+            "column_2_text_8": "",
+            "column_1_text_9": "",
+            "column_2_text_9": "",
+            "column_1_text_10": "",
+            "column_2_text_10": "",
+            "block_spacing": 39
+          }
+        },
+        "shipping_collapsible": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Shipping Policy",
+            "description": "We process all orders within 1–2 business days after purchase. Shipping times may vary depending on your location, typically ranging from 5–10 business days. Tracking details will be provided as soon as your order is dispatched. All wheels are securely packaged to prevent damage during transit. We partner with reliable courier services to ensure safe and timely delivery. For urgent orders, express shipping options are available at checkout.",
+            "open_by_default": false,
+            "block_spacing": 0
+          }
+        },
+        "return_policy": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "Return Policy",
+            "description": "Your satisfaction is our top priority. If you are not completely happy with your purchase, you may return or exchange items within 30 days of delivery. Returned items must be unused and in their original packaging. Refunds will be processed once the product has been inspected by our team. Please note that customized orders may not be eligible for return. Contact our support team to initiate a hassle-free return process.",
+            "open_by_default": true,
+            "block_spacing": 44
+          }
+        },
+        "free_shipping": {
+          "type": "icon_description",
+          "settings": {
+            "image": "",
+            "heading": "Premium Quality",
+            "description": "<p>Built from high-strength forged aluminum for maximum durability.</p>",
+            "block_spacing": 15
+          }
+        },
+        "notice": {
+          "type": "icon_description",
+          "settings": {
+            "image": "",
+            "heading": "Secure Shopping",
+            "description": "<p>Safe payment options with full buyer protection guaranteed.</p>",
+            "block_spacing": 15
+          }
+        }
+      },
+      "block_order": [
+        "stats_bar",
+        "price",
+        "separator",
+        "variation_sku",
+        "qty",
+        "buttons",
+        "pickup",
+        "complementary",
+        "message_box",
+        "countdown_timer",
+        "title",
+        "text",
+        "content",
+        "specs",
+        "shipping_collapsible",
+        "return_policy",
+        "free_shipping",
+        "notice"
+      ],
+      "settings": {
+        "section_media_size": "adapt",
+        "show_breadcrumb": true,
+        "show_top_bdr": false,
+        "show_bottom_bdr": true,
+        "breadcrumb_color_scheme": "",
+        "section_color_scheme": "",
+        "show_slider_left_side": false,
+        "make_slider_full": true,
+        "show_navigation": true,
+        "enable_drag": true,
+        "section_top_padding": 50,
+        "section_bottom_padding": 50
+      }
+    },
+    "recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "You May Also Like",
+        "section_heading_size": "heading_x_large",
+        "section_description": "",
+        "section_text_size": "large",
+        "number_of_columns_on_desktop": 4,
+        "number_of_rows_on_desktop": 4,
+        "number_of_columns_on_mobile": "1",
+        "mob_cols_query": 576,
+        "section_media_size": "adapt",
+        "variants_position": true,
+        "title_top": true,
+        "show_rating": true,
+        "show_discount": false,
+        "show_vendor": true,
+        "show_compare": false,
+        "show_stock": false,
+        "show_sec_image": true,
+        "btn_overlay": false,
+        "enable_border": true,
+        "remove_radius": false,
+        "thumbnails_layout": "media_gallery",
+        "bt_btns_layout": "enable_atc",
+        "number_of_thumbs": 3,
+        "show_availables_only": true,
+        "card_text_alignment": "left",
+        "section_text_alignment": "center",
+        "section_color_scheme": "",
+        "enable_slideshow": true,
+        "show_navigation": false,
+        "show_pagination": false,
+        "section_top_padding": 50,
+        "section_bottom_padding": 50
+      }
+    }
+  },
+  "order": [
+    "main",
+    "recommendations"
+  ]
+}

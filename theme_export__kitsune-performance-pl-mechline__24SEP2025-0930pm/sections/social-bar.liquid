@@ -1,0 +1,87 @@
+{{- 'social-bar.css' | asset_url | stylesheet_tag -}}
+
+{%- liquid
+  assign section_prefix_class = 'social-bar'
+  assign section_scheme_class = section.settings.section_color_scheme | prepend: 'scheme scheme--'
+
+  capture enable_social_list
+    if settings.social_instagram_link != blank
+      echo 'true'
+      elsif settings.social_linkedin_link != blank
+        echo 'true'
+      elsif settings.social_facebook_link != blank
+        echo 'true'
+      elsif settings.social_youtube_link != blank
+        echo 'true'
+      elsif settings.social_twitter_link != blank
+        echo 'true'
+      elsif settings.social_snapchat_link != blank
+        echo 'true'
+      elsif settings.social_pinterest_link != blank
+        echo 'true'
+      elsif  settings.social_tiktok_link != blank
+        echo 'true'
+      elsif settings.social_tumblr_link != blank
+        echo 'true'
+      elsif settings.social_vimeo_link != blank
+        echo 'true'
+      else
+        echo 'false'
+    endif
+  endcapture
+-%}
+<div class="{{ section_prefix_class }} {{ section_prefix_class }}-{{ section.id }} {{ section_scheme_class }}">
+  <div class="{{ section_prefix_class }}_bottom-wrap {{ section_prefix_class }}--bdr-bottom">
+    <div class="container">
+      <div class="{{ section_prefix_class }}_cols-wrap">
+        {%- if enable_social_list == 'true' -%}
+          <div class="{{ section_prefix_class }}_col {{ section_prefix_class }}_align-wrap {{ section_prefix_class }}_align-wrap--socials">
+            {%- render 'social-icons' | prefix_class: section_prefix_class | social_icons_enable: section.settings.social_icons_enable -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.social_bar.name",
+  "tag": "section",
+  "class": "utility-bar-component",
+  "limit": 1,
+  "enabled_on": {
+    "groups": [
+      "header"
+    ]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.show_social_list.content",
+      "info": "t:sections.header.settings.show_social_list.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "social_icons_enable",
+      "label": "t:sections.email_signup.settings.additional.socials.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.layout.content"
+    },
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "default": "scheme1",
+      "label": "t:sections.common.clr_scheme.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.social_bar.name"
+    }
+  ]
+}
+{% endschema %}

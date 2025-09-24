@@ -1,0 +1,108 @@
+{
+  "sections": {
+    "main_page": {
+      "type": "main-page",
+      "settings": {
+        "section_heading_size": "heading_x_large",
+        "show_breadcrumb": true,
+        "show_top_bdr": false,
+        "show_bottom_bdr": true,
+        "breadcrumb_color_scheme": "",
+        "section_text_alignment": "center",
+        "section_mobile_text_alignment": "center",
+        "section_color_scheme": "",
+        "section_top_padding": 50,
+        "section_bottom_padding": 0
+      }
+    },
+    "store_locator": {
+      "type": "store-locator",
+      "blocks": {
+        "location_ykXpH9": {
+          "type": "location",
+          "settings": {
+            "image": "",
+            "heading": "Ballas Road",
+            "section_description": "",
+            "section_media_order": "row",
+            "content_alignment": "middle",
+            "section_text_alignment": "left",
+            "section_mobile_text_alignment": "center",
+            "address_description": "<p>456 North New Ballas Road,<br/>Creve Coeur, MO 63141,<br/>United States</p>",
+            "contact_description": "<p><strong>Email: </strong><a>support@mecline.com</a><br/><strong>Phone:</strong> (+1) 644-333-0101</p>",
+            "message_description": "",
+            "store_hour_description": "",
+            "view_more_label": "",
+            "view_more_type": "primary",
+            "view_more_link": "",
+            "open_new_window": false
+          }
+        },
+        "location_xg4GeN": {
+          "type": "location",
+          "settings": {
+            "image": "",
+            "heading": "Sunset Boulevard",
+            "section_description": "",
+            "section_media_order": "row",
+            "content_alignment": "middle",
+            "section_text_alignment": "left",
+            "section_mobile_text_alignment": "center",
+            "address_description": "<p>8801 Sunset Boulevard,<br/>West Hollywood, CA 90069,<br/>United States</p>",
+            "contact_description": "<p><strong>Email: </strong><a>sunset@mechline.com</a><br/><strong>Phone:</strong> (+1) 310-555-0192</p>",
+            "message_description": "",
+            "store_hour_description": "",
+            "view_more_label": "",
+            "view_more_type": "primary",
+            "view_more_link": "",
+            "open_new_window": false
+          }
+        },
+        "location_HChKWP": {
+          "type": "location",
+          "settings": {
+            "image": "",
+            "heading": "Michigan Avenue",
+            "section_description": "",
+            "section_media_order": "row",
+            "content_alignment": "middle",
+            "section_text_alignment": "left",
+            "section_mobile_text_alignment": "center",
+            "address_description": "<p>233 North Michigan Avenue,<br/>Chicago, IL 60601,<br/>United States</p>",
+            "contact_description": "<p><strong>Email: </strong><a>chicago@mechline.com</a><br/><strong>Phone:</strong> (+1) 312-555-0277</p>",
+            "message_description": "",
+            "store_hour_description": "",
+            "view_more_label": "",
+            "view_more_type": "primary",
+            "view_more_link": "",
+            "open_new_window": false
+          }
+        }
+      },
+      "block_order": [
+        "location_ykXpH9",
+        "location_xg4GeN",
+        "location_HChKWP"
+      ],
+      "name": "t:sections.store_locator.name",
+      "settings": {
+        "main_heading": "",
+        "section_main_heading_size": "heading_x_large",
+        "section_heading_size": "heading_large",
+        "section_text_size": "medium",
+        "section_text_alignment": "left",
+        "section_media_size": "adapt",
+        "section_color_scheme": "",
+        "enable_slideshow": true,
+        "show_navigation": false,
+        "show_pagination": false,
+        "section_top_padding": 0,
+        "section_bottom_padding": 54
+      }
+    }
+  },
+  "order": [
+    "main_page",
+    "store_locator"
+  ]
+}

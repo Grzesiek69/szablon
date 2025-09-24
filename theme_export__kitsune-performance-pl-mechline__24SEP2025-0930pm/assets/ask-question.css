@@ -1,0 +1,86 @@
+.modal-component--ask-question .modal-component_body{
+  border-radius: calc(var(--input-corner-radius) * 2);
+  z-index: 1;
+  max-width: 466px;
+}
+
+.modal-component--ask-question .form-wrapper .form-group{
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.modal-component--ask-question .form__message {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-weight: 400;
+}
+
+.ask-question_question-link.button.button--link {
+  display: flex;
+  padding: 0px;
+  margin-top: 10px;
+  gap: 5px;
+  text-decoration: none;
+}
+
+.modal-component--ask-question .form-wrapper_button{
+  width: 100%;
+}
+
+.modal-component--ask-question .error-email{
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 15px;
+}
+
+.modal-component--ask-question .modal-component_head{
+  padding-left: 30px;
+  padding-right: 30px;
+  margin-bottom: 14px;
+}
+
+.modal-component--ask-question .modal-component_heading{
+  margin-top: 0;
+  margin-bottom: 6px;
+  display: block;
+  font-weight: 600;
+}
+.ask-question_question-link.button--link{
+  --link-outline-color: var(--section-widget-focus-outline-color);
+  --link-color: var(--section-widget-links-color);
+  --link-hover-color: var(--section-widget-active-hover-color);
+}
+
+.ask-question_question-link.button--link:hover{
+  text-decoration: none;
+}
+
+.ask-question_question-link{
+  --button-padding-y: .25rem;
+  --button-padding-x: 0;
+  --button-font-weight: 500;
+  --button-text: var(--section-widget-links-color);
+  --button-hover-text: var(--section-widget-active-hover-color);
+  --button-radius: var(--input-corner-radius);
+  text-decoration: underline;
+  text-align: left;
+}
+
+.modal-component--ask-question .errors-list_link{
+--link-color: var(--section-error-color);
+  text-decoration: none;
+}
+
+.modal-component--ask-question .errors-list_item{
+  padding-left: 37px;
+  margin-bottom: 30px;
+}
+
+.ask-question_description{
+  color: var(--section-error-color);
+  display: block;
+  font-style: normal;
+}

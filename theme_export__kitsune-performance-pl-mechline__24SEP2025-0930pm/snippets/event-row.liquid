@@ -1,0 +1,109 @@
+{%- comment -%}
+  renders promotion banner on section templates
+  usage
+    {%- render 'event-row', row: block, prefix_class: section_prefix_class, index: forloop.index -%}
+{%- endcomment -%}
+{%- liquid
+  assign card_scheme_class = row.settings.block_color_scheme | prepend: 'scheme scheme--'
+
+  capture column_heading_size
+    case section.settings.column_heading_size
+      when 'heading_small'
+        echo 'h5'
+      when 'heading_x_small'
+        echo 'h6'
+      else
+        echo 'h'
+    endcase
+  endcapture
+
+  capture image_alt
+    if row.settings.heading != blank
+      echo row.settings.heading
+      else
+        echo 'accessibility.image.label' | t: index: index
+    endif
+  endcapture
+-%}
+<article class="event-row {{ prefix_class }}_event-row {{ card_scheme_class }} --align-left mty">
+  <div class="event-row_first-col event-row_image-col">
+    <div class="event-row_image {% if settings.enable_hover_anims %}anim--shine{% endif %}">
+      {%- if row.settings.image != blank -%}
+        {{- row.settings.image | image_url: width: 1920 | image_tag: alt: image_alt,
+        class: 'object-fit object-fit--absolute',  loading: loading_attr, widths: '1024, 1920', sizes: '(max-width: 767px) 1024vw, 1920vw' -}}
+        {% else %}
+          {{- 'hero-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+      {%- endif -%}
+      {%- if row.settings.view_more_label != blank -%}
+        <div class="event-row_buttons-wrap ">
+          <a {% if row.settings.link != blank %}href="{{ row.settings.link }}" {% if row.settings.open_new_window %}target="_blank"{% endif %}{% else %}aria-disabled="true"{% endif %} class="button button--secondary event-row_button-desktop">
+            {{- row.settings.view_more_label -}}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+  <div class="event-row_second-col mty">
+    <h2 class="mty event-row_heading --h-anchor-none {{ column_heading_size }}">
+      {{- row.settings.heading -}}
+    </h2>
+    <ul class="list-unstyled event-row_list">
+      {%- if row.settings.location != blank -%}
+        <li class="event-row_list-items">
+          <span class="event-row_list-title">
+            {{- 'events_list.field_label_1' | t -}}
+          </span>
+          <span class="event-row_list-description --align-right">
+            {{- row.settings.location -}}
+          </span>
+        </li>
+      {%- endif -%}
+      {%- if row.settings.start_date != blank -%}
+        <li class="event-row_list-items">
+          <span class="event-row_list-title">
+            {{- 'events_list.field_label_2' | t -}}
+          </span>
+          <span class="event-row_list-description --align-right">
+            {{- row.settings.start_date -}}</span>
+        </li>
+      {%- endif -%}
+      {%- if row.settings.end_date != blank -%}
+        <li class="event-row_list-items">
+          <span class="event-row_list-title">
+            {{- 'events_list.field_label_3' | t -}}
+          </span>
+          <span class="event-row_list-description --align-right">
+            {{- row.settings.end_date -}}</span>
+        </li>
+      {%- endif -%}
+      {%- if row.settings.organizer != blank -%}
+        <li class="event-row_list-items">
+          <span class="event-row_list-title">
+            {{- 'events_list.field_label_4' | t -}}
+          </span>
+          <span class="event-row_list-description --align-right">
+            {{- row.settings.organizer -}}</span>
+        </li>
+      {%- endif -%}
+      {%- if row.settings.details_link != blank -%}
+        <li class="event-row_list-items">
+          <span class="event-row_list-title">
+            {{- 'events_list.field_label_5' | t -}}
+          </span>
+          <span class="event-row_list-description --align-right">
+            <a target="_blank" href="{{- row.settings.details_link -}}">
+              {{- 'events_list.view_details' | t -}}
+            </a>
+          </span>
+        </li>
+      {%- endif -%}
+    </ul>
+    {%- if row.settings.view_more_label != blank -%}
+      <div class="event-row_button-wrap">
+        <a {% if row.settings.link != blank %}href="{{ row.settings.link }}" {% if row.settings.open_new_window %}target="_blank"{% endif %}{% else %}aria-disabled="true"{% endif %} class="button button--secondary event-row_button-mbl">
+          {{- row.settings.view_more_label -}}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</article>

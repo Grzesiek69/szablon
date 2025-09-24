@@ -1,0 +1,398 @@
+{%- comment -%}
+  renders quick view product modal on page templates
+  usage
+    {%- render 'product-quick-view', product: product -%}
+{%- endcomment -%}
+{%- liquid
+  assign first_3d_model = product.media | where: 'media_type', 'model' | first
+  
+  capture has_media
+    if product.media != null
+      echo 'true'
+    endif
+  endcapture
+
+  capture product_clean_url
+    if product.url contains '?'
+      assign parts = product.url | split: '?'
+      echo parts[0]
+      else
+        echo product.url
+    endif
+  endcapture
+-%}
+{%- if first_3d_model -%}
+  <link
+    id="ModelViewerStyle-{{ section.id }}-{{ product.id }}"
+    rel="stylesheet"
+    href="https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css"
+    media="print"
+    onload="this.media='all'"
+  >
+  <script type="application/json" id="ProductJSON-{{ product.id }}-{{ section.id }}">
+    {{- product.media | where: 'media_type', 'model' | json -}}
+  </script>
+  <script src="{{- 'product-model.js' | asset_url -}}" defer></script>
+{%- endif -%}
+<modal-component
+  data-modal="modal-quick-view-{{ section.id }}-{{ product.id }}"
+  data-includes="quick-view"
+  {% if section.settings.show_dynamic_checkouts %}
+    data-update="dynamic-buttons"
+  {% endif %}
+>
+  <div
+    class="modal modal-component modal-component--quick-view modal-component--centered scheme--{{ section.settings.section_color_scheme }}"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-quick-view-{{ section.id }}-{{ product.id }}-heading"
+    aria-describedby="modal-quick-view-{{ section.id }}-{{ product.id }}"
+    tabindex="-1"
+    data-trap="false"
+  >
+    <div class="modal-component_spacer">
+      <div class="modal-component_wrapper" id="modal-quick-view-{{ section.id }}-{{ product.id }}">
+        <div class="modal-component_body">
+          <div class="modal-component_head">
+            <modal-component-toggler>
+              <button
+                type="button"
+                data-expanded="true"
+                data-toggle-attribute="false"
+                data-modal-ref="modal-quick-view-{{ section.id }}-{{ product.id }}"
+                class="modal-component_btn-close btn-icn-ixi"
+              >
+                <span class="btn-icn-ixi_wrapper">
+                  {%- render 'icons-data', width: 14, height: 14, use_icon: true, icon_reference: 'cross' -%}
+                  <span class="visually-hidden">{{- 'accessibility.close' | t -}}</span>
+                </span>
+              </button>
+            </modal-component-toggler>
+            <strong id="modal-quick-view-{{ section.id }}-{{ product.id }}-heading" class="visually-hidden">
+              {{- 'product.quick_view_modal.heading' | t: product: product.title -}}
+            </strong>
+          </div>
+          <div class="modal-component_content">
+            <div class="quick-view_wrapper">
+              <div data-quickview-product="{{ section.id }}-{{ product.id }}">
+                {%- liquid
+                  capture quick_form_id
+                    echo 'quick-view-atc-form-' | append: section.id | append: product.id
+                  endcapture
+                -%}
+                {%- if has_media == 'true' -%}
+                  <div class="quick-view_gallery-area">
+                    {%- render 'product-gallery-slider', product: product, xr_button: true, zoom: false, media_size: section.settings.quick_media_size -%}
+                  </div>
+                {%- endif -%}
+                <strong class="quick-view_main-heading mty h2">
+                  <a href="{{- product_clean_url -}}" class="--hover-underline">
+                    {{- product.title -}}
+                  </a>
+                </strong>
+                {{- 'component-stats-bar.css' | asset_url | stylesheet_tag -}}
+                <div class="stats-bar">
+                  {%- if section.settings.show_stock -%}
+                    <div data-render-stock="">
+                      {%- render 'product-stock', product: product -%}
+                    </div>
+                  {%- endif -%}
+                  {%- if section.settings.show_discount -%}
+                    <div data-render-sale-badge="">
+                      {%- render 'product-saving-badge', product: product, use_variant: true -%}
+                    </div>
+                  {%- endif -%}
+                  {%- if section.settings.show_compare or block.settings.enable_share -%}
+                    <ul class="list-unstyled quick-view_actions-list">
+                      {%- if section.settings.enable_share -%}
+                        <li class="quick-view_action-item">
+                          {{- 'component-share-button.css' | asset_url | stylesheet_tag -}}
+                          <div class="share-button-wrap quick-view_share-button-wrap" data-render-share-button="">
+                            {%- liquid
+                              assign share_url = request.origin | append: product_clean_url | append: '?variant=' | append: product.selected_or_first_available_variant.id
+                              render 'share-button', share_link: share_url, share_title: product.title, btn_ixi: true, product: product
+                            -%}
+                          </div>
+                        </li>
+                      {%- endif -%}
+                      {%- if section.settings.show_compare and settings.enable_compare -%}
+                        <li class="quick-view_action-item">
+                          <compare-togller-button
+                            data-handle="{{- product.handle -}}"
+                          >
+                            <button type="button" class="compare-toggler compare-toggler--static btn-icn-ixi" data-tooltip="{{- 'product.compare_label' | t -}}">
+                              <span class="btn-icn-ixi_wrapper">
+                                <span class="visually-hidden">
+                                  {{- 'product.add_to_compare' | t: product_title: product.title -}}
+                                </span>
+                                {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'compare' -%}
+                              </span>
+                            </button>
+                          </compare-togller-button>
+                        </li>
+                      {%- endif -%}
+                    </ul>
+                  {%- endif -%}
+                </div>
+                <div class="quick-view_price-wrap --v-align-bottom text-size--medium">
+                  <div class="quick-view_price-col">
+                    <strong class="quick-view_diff-title">
+                      {{- 'product.price' | t -}}&nbsp;:
+                    </strong>
+                    <div data-render-price="quick-view">
+                      {%- render 'product-price', product: product, use_variant: true, show_unit_price: false -%}
+                      {%- unless product.selected_or_first_available_variant.unit_price_measurement == nil -%}
+                        <div class="quick-view_unit-wrap">
+                          <strong class="quick-view_diff-title">
+                            {{- 'product.unit_price_label' | t -}}&nbsp;:
+                          </strong>
+                          {%- render 'product-unit-price', product: product -%}
+                        </div>
+                      {%- endunless -%}
+                    </div>
+                  </div>
+                  {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
+                    <div class="quick-view_price-col">
+                      <strong class="quick-view_includes">
+                        {%- liquid
+                          if cart.taxes_included
+                            echo 'product.include_taxes' | t
+                          endif
+                          if shop.shipping_policy.body != blank
+                            echo 'product.shipping_policy_html' | t: link: shop.shipping_policy.url
+                          endif
+                        -%}
+                      </strong>
+                    </div>
+                  {%- endif -%}
+                </div>
+                <hr class="quick-view_separator">
+                <div class="quick-view_variation-wrap">
+                  {%- if section.settings.show_sku -%}
+                    <div data-render-sku="quick-view">
+                      {%- if product.selected_or_first_available_variant.sku.size != 0 or product.selected_or_first_available_variant.sku != blank -%}
+                        <div class="quick-view_title-col quick-view_title-col--sku">
+                          <span class="quick-view_diff-title">
+                            {{- 'product.sku_label' | t -}}&nbsp;:
+                          </span>
+                          <strong class="quick-view_diff-descr">
+                            {{- product.selected_or_first_available_variant.sku -}}
+                          </strong>
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                  {%- if section.settings.show_variation -%}
+                    {%- unless product.has_only_default_variant -%}
+                      <product-variants
+                        data-json-selector="#quick-view-json-{{ section.id }}-{{ product.id }}"
+                        data-parent-selector="[data-quickview-product='{{- section.id -}}-{{- product.id -}}']"
+                        data-thumbnails-selector="[data-thumbnails-container='{{- section.id -}}-{{ product.id }}']"
+                        data-form-id="{{- quick_form_id -}}"
+                        data-product-url="{{- product_clean_url -}}"
+                        data-columns="true"
+                        {% unless settings.enable_variant_swatches == 'none' %}
+                          {%- if settings.enable_variant_swatches == 'images' -%}
+                            data-swatch="image"
+                            {%- else -%}
+                              data-swatch="color"
+                          {%- endif -%}
+                        {% endunless %}
+                      >
+                        {%- for option in product.options_with_values -%}
+                          {%- liquid
+                            capture is_color_option
+                              if option.name == 'Color' or option.name == 'color' or option.name == 'Colour' or option.name == 'colour'
+                                echo 'true'
+                                else
+                                  echo 'false'
+                              endif
+                            endcapture
+                          -%}
+                          <fieldset>
+                            <legend class="product-variant_title text-size--medium">
+                              {{- 'product.variations.title' | t: option_name: option.name -}}
+                            </legend>
+                            <div class="product-variant_options-wrap {% unless settings.enable_variant_swatches == 'none' %}{% if is_color_option == 'true' %}product-variant_options-wrap--colors{% endif %}{% endunless %}">
+                              {%- render 'product-variant-options', option: option, product_form_id: quick_form_id, product: product, disable_combine: true -%}
+                            </div>
+                          </fieldset>
+                        {%- endfor -%}
+                      </product-variants>
+                    {%- endunless -%}
+                  {%- endif -%}
+                </div>
+                <div class="quick-view_qty-wrap">
+                  <div data-render-qty="quick-view" class="{% unless section.settings.show_subtotals %}--hide-subtotal{% endunless %}">
+                    <quantity-input
+                      class="quantity-input quic-view_quantity-input --v-align-middle"
+                      data-init-value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                      data-variant-price="{{- product.selected_or_first_available_variant.price | money_without_currency | replace: ',', '' | times: 100 -}}"
+                      data-component="modal"
+                    >
+                      <div class="quantity-input_fielder-wrap">
+                        <button class="quantity-input_button btn-icn-ixi quantity-input_button-minus disabled" disabled name="minus" type="button">
+                          <span class="btn-icn-ixi_wrapper">
+                            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'minus' -%}
+                            <span class="visually-hidden">
+                              {{- 'quantity.decrease' | t: product: product.title | escape -}}
+                            </span>
+                          </span>
+                        </button>
+                        <input
+                          type="number"
+                          name="quantity"
+                          data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                          min="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                          {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
+                            data-max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+                            max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+                          {% endif %}
+                          step="{{- product.selected_or_first_available_variant.quantity_rule.increment -}}"
+                          value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                          aria-label="{{- 'quantity.input_label' | t: product: product.title | escape -}}"
+                          title="Quantity-quick-view-{{ product.id }}"
+                        >
+                        <button class="quantity-input_button btn-icn-ixi quantity-input_button-plus" name="plus" type="button">
+                          <span class="btn-icn-ixi_wrapper">
+                            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'plus' -%}
+                            <span class="visually-hidden">
+                              {{- 'quantity.increase' | t: product: product.title | escape -}}
+                            </span>
+                          </span>
+                        </button>
+                      </div>
+                      <strong class="quantity-input_subtotal-wrap --word-break text-size--small">
+                        <span class="quantit-input_subtotal-title">
+                          {{- 'quantity.subtotal' | t -}}:
+                        </span>
+                        <span class="quantity-input_subtotal-price" data-qty-subtotal="">
+                          {{- product.selected_or_first_available_variant.price | money -}}
+                        </span>
+                      </strong>
+                    </quantity-input>
+                  </div>
+                </div>
+                <div class="quick-view_btns-wrap">
+                  {%- assign product_form_installment_id = 'quick-view-product-form-installment-' | append: section.id | append: product.id -%}
+                  {%- form 'product',
+                    product,
+                    data-productid: product.id,
+                    id: product_form_installment_id,
+                    class: 'product-atc-installment-form'
+                  -%}
+                    <input
+                      type="hidden"
+                      name="id"
+                      data-productid="{{- product.id -}}"
+                      value="{{- product.selected_or_first_available_variant.id -}}"
+                    >
+                    <input
+                      type="hidden"
+                      name="quantity"
+                      value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                    >
+                    {{- form | payment_terms -}}
+                  {%- endform -%}
+                  <atc-submit-form
+                    data-columns="true"
+                    data-qty-selector="modal-component.modal--active quantity-input"
+                    data-error-selector="[data-update-error='quick-{{ product.id }}-{{ section.id }}']"
+                  >
+                    <div class="quic-view_error-container hidden --word-break" data-update-error="quick-{{ product.id }}-{{ section.id }}">
+                      <span></span>
+                    </div>
+                    {%- form 'product',
+                      product,
+                      id: quick_form_id,
+                      class: 'quick-view_submit-from',
+                      novalidate: 'novalidate',
+                      data-type: 'add-to-cart-form'
+                    -%}
+                      {%- liquid
+                        assign check_against_inventory = true
+                        if product.selected_or_first_available_variant.inventory_management != 'shopify' or product.selected_or_first_available_variant.inventory_policy == 'continue'
+                          assign check_against_inventory = false
+                        endif
+                        if product.selected_or_first_available_variant.quantity_rule.min > product.selected_or_first_available_variant.inventory_quantity and check_against_inventory
+                          assign quantity_rule_soldout = true
+                        endif
+
+                        capture atc_button_label
+                          if product.selected_or_first_available_variant.available == false or quantity_rule_soldout
+                            echo 'product.atc_buttons.sold_out' | t
+                            else
+                              echo 'product.atc_buttons.label' | t
+                          endif
+                        endcapture
+                      -%}
+                      <input
+                        type="hidden"
+                        name="id"
+                        value="{{- product.selected_or_first_available_variant.id -}}"
+                      >
+                      <input
+                        type="hidden"
+                        name="quantity"
+                        value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+                      >
+                      <div class="quic-view_form-btns --v-align-start">
+                        <button
+                          type="submit"
+                          name="add"
+                          class="button button--primary quic-view_atc-btn"
+                          {% if product.selected_or_first_available_variant.available == false or quantity_rule_soldout %}
+                            disabled
+                          {% endif %}
+                        >
+                          {{- atc_button_label -}}
+                        </button>
+                        {%- if section.settings.show_dynamic_checkouts -%}
+                          <div class="quic-view_dynamic-btns --align-center">
+                            {{- form | payment_button -}}
+                          </div>
+                        {%- endif -%}
+                      </div>
+                    {%- endform -%}
+                    <span class="loader quic-view_loader hidden --v-align-middle --justify-center" data-loader="">
+                      {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'loader' -%}
+                      <span class="visually-hidden">
+                        {{- 'accessibility.loader.label' | t -}}
+                      </span>
+                    </span>
+                  </atc-submit-form>
+                  {%- if section.settings.show_whatsapp and section.settings.whatsapp_number != blank -%}
+                    {% liquid
+                      capture wasapp_message
+                        assign url_origin = product.selected_or_first_available_variant.url | prepend: request.origin
+                        if section.settings.custom_message != blank
+                          assign remove_spaces = section.settings.custom_message | replace: ' ', '&nbsp;'
+                          echo remove_spaces | replace: '||product_url||', url_origin
+                          else
+                            echo product.selected_or_first_available_variant.url
+                        endif
+                      endcapture
+                    %}
+                    <a
+                      href="https://wa.me/{{ section.settings.whatsapp_number }}?text={{ wasapp_message }}"
+                      target="_blank"
+                      class="button quick-view_btn-full button--whatsapp"
+                    >
+                      <i class="button_icn">
+                        {%- render 'icons-data', width: 24, height: 24, use_icon: true, icon_reference: 'whatsapp' -%}
+                      </i>
+                      WhatsApp
+                    </a>
+                  {%- endif -%}
+                </div>
+                <script id="quick-view-json-{{ section.id }}-{{ product.id }}" type="application/json">
+                  {{- product | json -}}
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</modal-component>

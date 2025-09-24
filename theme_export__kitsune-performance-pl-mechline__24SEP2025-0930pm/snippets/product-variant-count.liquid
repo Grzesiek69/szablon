@@ -1,0 +1,10 @@
+{%- comment -%}
+  renders product variant count
+  usage
+    {%- render 'product-variant-count', product: product, prefix_class: section_prefix_class -%}
+{%- endcomment -%}
+{%- for option in product.options_with_values -%}
+    <strong class="product-variant-count {{ prefix_class }}_product-variant-count product-variant-count --word-break">
+      {{- option.values.size }} {{ option.name }} {{ 'product.table_box.variant_available' | t -}}
+    </strong>
+{% endfor %}

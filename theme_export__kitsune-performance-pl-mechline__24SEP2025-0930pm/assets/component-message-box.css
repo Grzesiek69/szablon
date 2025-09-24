@@ -1,0 +1,10 @@
+.message-box{
+  padding: 15px 24px;
+  background-color: var(--section-foreground-color);
+  color: var(--section-background-color);
+  line-height: 2rem;
+}
+
+.main-product_message-box a{
+  color: var(--section-background-color);
+}

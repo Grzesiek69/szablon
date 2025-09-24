@@ -1,0 +1,138 @@
+{%- comment -%}
+  renders promotion banner on section templates
+  usage
+    {%- render 'promotion-banner', figure: block, index: forloop.index -%}
+{%- endcomment -%}
+{% liquid
+  assign block_scheme_class = figure.settings.block_scheme_class | prepend: 'scheme scheme--'
+  
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+
+  capture image_alt
+    if figure.settings.heading != blank
+      echo figure.settings.heading
+      else
+       echo 'promotion_banners.alt_label' | t: index: index
+    endif
+  endcapture
+
+  capture block_heading_size
+    case figure.settings.block_heading_size
+      when 'heading_large'
+        echo 'h3'
+      when 'heading_medium'
+        echo 'h4'
+      when 'heading_small'
+        echo 'h5'
+      else
+        echo 'h'
+    endcase
+  endcapture
+
+  capture content_position
+    case figure.settings.content_position
+      when 'top_left'
+        echo '--top-left'
+      when 'top_right'
+        echo '--top-right'
+      when 'bottom_left'
+        echo '--bottom-left'
+      when 'bottom_right'
+        echo '--bottom-right'
+      when 'top_center'
+        echo '--top-center'
+      when 'center'
+        echo '--center'
+      else
+        echo '--bottom-center'
+    endcase
+  endcapture
+%}
+{%- if figure.settings.link != blank -%}
+  {% if figure.settings.banner_clickable %}
+    <a class="banner-card {{ block_scheme_class }}" href="{{- figure.settings.link -}}" {% if figure.settings.open_new_window %}target="_blank"{% endif %}>
+  {% else %}
+    <div class="banner-card {{ block_scheme_class }}">
+  {% endif %}
+    {%- if figure.settings.image != blank -%}
+      {{- figure.settings.image | image_url: width: 3840 | image_tag: alt: image_alt,
+      class: 'object-fit object-fit--absolute',  loading: loading_attr, widths: '1024, 3840', sizes: '(max-width: 767px) 1024vw, 3840vw' -}}
+      {% else %}
+        {{- 'hero-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+    {%- endif -%}
+    <span class="visually-hidden">{{- image_alt -}}</span>
+    {%- if figure.settings.heading != blank or figure.settings.description != blank or figure.settings.button_label != blank -%}
+      <div class="banner-caption {{ block_scheme_class }} --align-{{ figure.settings.block_text_alignment }} {% if figure.settings.remove_container %}remove-container{% endif %} banner-card_content-position {{ content_position }}">
+        {%- if figure.settings.heading != blank -%}
+          <h2 class="banner-card_heading {{ block_heading_size }} --h-anchor-none mty">
+            {{- figure.settings.heading -}}
+          </h2>
+        {%- endif -%}
+        {%- if figure.settings.description != blank -%}
+          <div class="banner-card_description --word-break text-size--{{ figure.settings.block_text_size }} mty">
+            <p>{{- figure.settings.description -}}</p>
+          </div>
+        {%- endif -%}
+        {%- if figure.settings.button_label != blank -%}
+          {% unless figure.settings.banner_clickable  %}
+            <a
+              {% if figure.settings.link != blank %}href="{{ figure.settings.link -}}"{% else %}aria-disabled="true"{% endif %}
+              {% if figure.settings.open_new_window %}target="_blank"{% endif %}
+              class="banner_button button button--{{ figure.settings.type }}"
+            >
+          {% else %}
+            <div class="banner_button button button--{{ figure.settings.type }}" aria-disabled="true">
+          {% endunless %}
+            {{- figure.settings.button_label -}}
+          {% unless figure.settings.banner_clickable  %}
+            </a>
+          {% else %}
+            </div>
+          {% endunless %}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  {%if figure.settings.banner_clickable  %}
+    </a>
+  {%- else -%}
+    </div>
+  {% endif %}
+{%- else -%}
+    <figure class="banner-card {{ block_scheme_class }}">
+      {%- if figure.settings.image != blank -%}
+        {{- figure.settings.image | image_url: width: 3840 | image_tag: alt: image_alt,
+        class: 'object-fit object-fit--absolute',  loading: loading_attr, widths: '1024, 3840', sizes: '(max-width: 767px) 1024vw, 3840vw' -}}
+        {% else %}
+          {{- 'hero-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+      {%- endif -%}
+      {%- if figure.settings.heading != blank or figure.settings.description != blank or figure.settings.button_label != blank -%}
+        <div class="banner-caption {{ block_scheme_class }} --align-{{ figure.settings.block_text_alignment }} {% if figure.settings.remove_container %}remove-container{% endif %} banner-card_content-position {{ content_position }}">
+          {%- if figure.settings.heading != blank -%}
+            <h2 class="banner-card_heading {{ block_heading_size }} --h-anchor-none mty">
+              {{- figure.settings.heading -}}
+            </h2>
+          {%- endif -%}
+          {%- if figure.settings.description != blank -%}
+            <div class="banner-card_description --word-break text-size--{{ figure.settings.block_text_size }} mty">
+              <p>{{- figure.settings.description -}}</p>
+            </div>
+          {%- endif -%}
+          {%- if figure.settings.button_label != blank -%}
+            <a
+              {% if figure.settings.link != blank %}href="{{ figure.settings.link -}}"{% else %}aria-disabled="true"{% endif %}
+              {% if figure.settings.open_new_window %}target="_blank"{% endif %}
+              class="banner_button button button--{{ figure.settings.type }}"
+            >
+              {{- figure.settings.button_label -}}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </figure>
+{%- endif -%}

@@ -1,0 +1,218 @@
+{%- comment -%}
+  renders socials widget
+  usage
+    {%- render 'socials-widget' -%}
+{%- endcomment -%}
+
+{%- liquid
+
+  capture widget_position
+    case settings.widget_position
+      when 'bottom_left'
+        echo '--bottom-left'
+      when 'bottom_right'
+        echo '--bottom-right'
+    endcase
+  endcapture
+-%}
+
+<div class="socials-widget scheme scheme--{{ settings.widget_color_scheme }}">
+  <div class="dropdown-component --word-break {{ widget_position }}">
+    <dropdown-component data-sorting="true">
+      <button
+        type="button"
+        class="dropdown-component_opener btn-icn-ixi"
+        data-tooltip="{{ 'socials_widgets.contact' | t }}"
+        aria-expanded="false"
+      >
+        <span class="visually-hidden">{{- 'socials_widgets.contact' | t -}}</span>
+        <i class="dropdown-componenet_icn-caret btn-icn-ixi_wrapper dropdown-componenet_icn-caret--open" >
+          {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'chat' -%}
+        </i>
+        <i class="dropdown-componenet_icn-caret btn-icn-ixi_wrapper dropdown-componenet_icn-caret--close" >
+          {%- render 'icons-data', width: 20, height: 20, use_icon: true, icon_reference: 'cross' -%}
+        </i>
+      </button>
+      <div class="dropdown-component_wrapper">
+        <ul class="socials-widget_socials-list socials-list list-unstyled">
+          {%- if settings.social_instagram_link != blank -%}
+            <li>
+              <a href="{{- settings.social_instagram_link -}}" class="list-social_link--insta {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'instagram'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">{{- 'socials.instagram' | t -}}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_linkedin_link != blank -%}
+            <li>
+              <a href="{{- settings.social_linkedin_link -}}" class="list-social_link--linkedin {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'linkedin'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">{{- 'socials.linkedin' | t -}}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_facebook_link != blank -%}
+            <li>
+              <a href="{{- settings.social_facebook_link -}}" class="list-social_link--facebook {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'facebook'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">{{- 'socials.facebook' | t -}}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_youtube_link != blank -%}
+            <li>
+              <a href="{{- settings.social_youtube_link -}}" class="list-social_link--youtube {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'youtube'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">{{- 'socials.youtube' | t -}}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_twitter_link != blank -%}
+            <li>
+              <a href="{{- settings.social_twitter_link -}}" class="list-social_link--twitter {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'twitter'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">{{- 'socials.twitter' | t -}}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_snapchat_link != blank -%}
+            <li>
+              <a href="{{- settings.social_snapchat_link -}}" class="list-social_link--snapchat {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'snapchat'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">{{- 'socials.snapchat' | t -}}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_pinterest_link != blank -%}
+            <li>
+              <a href="{{- settings.social_pinterest_link -}}" class="list-social_link--pinterest {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'pinterest'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">{{- 'socials.pinterest' | t -}}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_tiktok_link != blank -%}
+            <li>
+              <a href="{{- settings.social_tiktok_link -}}" class="list-social_link--tiktok {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'tiktok'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">{{- 'socials.tiktok' | t -}}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_tumblr_link != blank -%}
+            <li>
+              <a href="{{- settings.social_tumblr_link -}}" class="list-social_link--tumblr {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'tumblr'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">{{- 'socials.tumblr' | t -}}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_vimeo_link != blank -%}
+            <li>
+              <a href="{{- settings.social_vimeo_link -}}" class="list-social_link--vimeo {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'vimeo'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">{{- 'socials.vimeo' | t -}}</span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_whatsapp_number != blank -%}
+            <li>
+              <a href="tel:{{- settings.social_whatsapp_number -}}" class="list-social_link--whatsapp {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'whatsapp'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">
+                  {{- 'socials.whatsapp' | t -}}
+                </span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_email != blank -%}
+            <li>
+              <a href="mailto:{{- settings.social_email -}}" class="list-social_link--email {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'email'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">
+                  {{- 'socials.email' | t -}}
+                </span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_phone_number != blank -%}
+            <li>
+              <a href="tel:{{- settings.social_phone_number -}}" class="list-social_link--phone-number {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'phone'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">
+                  {{- 'socials.phone_number' | t -}}
+                </span>
+              </a>
+            </li>
+          {%- endif -%}
+          {%- if settings.social_messenger != blank -%}
+            <li>
+              <a href="{{- settings.social_messenger -}}" class="list-social_link--messenger {% unless social_icons_enable == false %}list-social_link{% else %}list-social_text-link{% endunless %}">
+                {%- liquid
+                  unless social_icons_enable == false
+                    render 'icons-data', width: 17, height: 17, use_icon: true, icon_reference: 'messenger'
+                  endunless
+                -%}
+                <span class="{% unless social_icons_enable == false %}visually-hidden{% endunless %}">
+                  {{- 'socials.messenger' | t -}}
+                </span>
+              </a>
+            </li>
+          {%- endif -%}
+        </ul>
+      </div>
+    </dropdown-component>
+  </div>
+</div>

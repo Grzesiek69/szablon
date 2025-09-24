@@ -1,0 +1,545 @@
+{{ 'contact-form.css' | asset_url | stylesheet_tag }}
+{%- liquid
+  assign section_prefix_class = 'contact-form'
+  assign section_scheme_class = section.settings.section_color_scheme | prepend: 'scheme scheme--'
+
+  capture section_heading_size
+    case section.settings.section_heading_size
+      when 'heading_x_large'
+        echo 'h2'
+      when 'heading_large'
+        echo 'h3'
+      when 'heading_medium'
+        echo 'h4'
+      when 'heading_small'
+        echo 'h5'
+      when 'heading_x_small'
+        echo 'h6'
+      else
+        echo 'h'
+    endcase
+  endcapture
+
+  capture cols_order_class
+    if section.settings.section_text_order == 'row_reverse'
+      echo '--row-reverse'
+    endif
+  endcapture
+
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+
+  assign enable_info_box = false
+  assign enable_social_box = false
+  if section.blocks.size > 0
+    for block in section.blocks
+      case block.type
+        when 'information_box'
+          assign enable_info_box = true
+        when 'social_box'
+          assign enable_social_box = true
+      endcase
+    endfor
+  endif
+-%}
+{%- style -%}
+  .{{ section_prefix_class }}-{{ section.id }}{
+    --section-radius: 20px;
+    --section-padding-top: {{ section.settings.section_top_padding }}px;
+    --section-padding-bottom: {{ section.settings.section_bottom_padding }}px;
+  }
+{%- endstyle -%}
+
+<div class="global-block {{ section_prefix_class }} {{ section_prefix_class }}-{{ section.id }} {{ section_scheme_class }} {{ section_prefix_class }}--bdr-bottom {{ section_prefix_class }}--bdr-top {% unless enable_info_box or enable_social_box %}{{ section_prefix_class }}--form-center{% endunless %}">
+  <div class="container">
+    <div class="{{ section_prefix_class }}_wrapper">
+      <div class="{{ section_prefix_class }}_col {{ section_prefix_class }}_col-form">
+        {%- if section.settings.heading != blank or section.settings.section_description != blank -%}
+          <header class="heading-head --align-{{ section.settings.section_text_alignment }}">
+            {%- if section.settings.heading != blank -%}
+              <h2 class="form-wrapper_heading {{ section_prefix_class }}_heading {{ section_heading_size }} --h-anchor-none mty">{{ section.settings.heading }}</h2>
+            {%- endif -%}
+            {%- if section.settings.section_description != blank -%}
+              <div class="form-wrapper_description {{ section_prefix_class }}_description text-size--{{ section.settings.section_text_size }} mty">
+                <p>{{- section.settings.section_description -}}</p>
+              </div>
+            {%- endif -%}
+          </header>
+        {%- endif -%}
+        <div class="form-wrapper {{ section_prefix_class }}_form-wrapper">
+          {%- assign form_id = 'ContactForm' | append: section.id -%}
+            {%- form 'contact', id: form_id, class: 'isolate' -%}
+              {%- if form.errors != blank -%}
+                <strong class="form__message mty" role="alert" tabindex="-1" autofocus>
+                  {%- render 'icons-data', width: 22, height: 22, use_icon: true, icon_reference: 'error' -%}
+                  {{- 'contact_form.error.heading' | t -}}
+                </strong>
+                <ul class="errors-list list-unstyled">
+                  <li class="errors-list_item">
+                    <smooth-anchor data-offset=".sticky-header-wrapper">
+                      <a class="errors-list_link" href="#ContactForm-email-{{ form_id }}">
+                        *{{- form.errors.translated_fields.email | capitalize }}
+                        {{ form.errors.messages.email -}}
+                      </a>
+                    </smooth-anchor>
+                  </li>
+                </ul>
+              {%- endif -%}
+              <div class="form-group">
+                <label for="contact-name">{{- 'contact_form.form_label.name.label' | t -}}</label>
+                <input type="text" id="contact-name" name="contact[Name]" placeholder="{{- 'contact_form.form_placeholder.name.label' | t -}}">
+              </div>
+              <div class="form-group">
+                <label for="ContactForm-email-{{ form_id }}">{{- 'contact_form.form_label.email.label' | t -}}</label>
+                <input type="email" id="ContactForm-email-{{ form_id }}" name="contact[email]" placeholder="{{- 'contact_form.form_placeholder.email.label' | t -}}"
+                onkeydown="validation()">
+                <div class="newsletter-form_results-wrap results-wrap_message text-size--small">
+                  {%- if form.errors contains 'email' -%}
+                    <div class="error-email">
+                      {%- render 'icons-data', width: 22, height: 22, use_icon: true, icon_reference: 'error' -%}
+                      <small class="contact__field-error" id="ContactForm-email-{{ form_id }}-error">
+                        {{- form.errors.translated_fields.email | capitalize }}
+                        {{ form.errors.messages.email -}}
+                      </small>
+                    </div>
+                  {%- endif -%}
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="contact-textarea">{{- 'contact_form.form_label.your_request.label' | t -}}</label>
+                <textarea name="contact[textarea]" id="contact-textarea" placeholder="{{- 'contact_form.form_placeholder.your_request.label' | t -}}"></textarea>
+              </div>
+              <div class="form-wrapper_btn-wrap">
+                <button class="button button--primary form-wrapper_button" type="submit">
+                  {%- render 'icons-data', width: 30, height: 15, use_icon: true, icon_reference: 'arrow-form' -%}
+                  {{- 'contact_form.submit_label' | t -}}
+                </button>
+              </div>
+              {%- if form.posted_successfully? -%}
+                <div class="success-message" role="alert" tabindex="-1" autofocus>
+                  <i class="success-message_icn">
+                    {%- render 'icons-data', width: 54, height: 54, use_icon: true, icon_reference: 'smile' -%}
+                  </i>
+                  <p>{{- 'contact_form.success.heading1' | t -}}</p>
+                  <p>{{- 'contact_form.success.heading2' | t -}}</p>
+                </div>
+              {%- endif -%}
+            {%- endform -%}
+        </div>
+      </div>
+      {%- if enable_info_box or enable_social_box -%}
+        <div class="{{ section_prefix_class }}_col {{ section_prefix_class }}_col-info">
+          {%- for block in section.blocks -%}
+            {% case block.type %}
+              {% when 'information_box' %}
+                {%- liquid
+                  assign block_scheme_class = block.settings.block_color_scheme | prepend: 'scheme scheme--'
+                  capture block_heading_size
+                    case block.settings.block_heading_size
+                      when 'heading_x_large'
+                        echo 'h2'
+                      when 'heading_large'
+                        echo 'h3'
+                      when 'heading_medium'
+                        echo 'h4'
+                      when 'heading_small'
+                        echo 'h5'
+                      when 'heading_x_small'
+                        echo 'h6'
+                      else
+                        echo 'h'
+                    endcase
+                  endcapture
+                -%}
+                <div class="card --align-center {{ block_scheme_class }}">
+                  {%- if block.settings.image != null -%}
+                    <div class="image">
+                      {%- liquid
+                        capture image_sizes
+                          
+                        endcapture
+                      -%}
+                      {{- block.settings.image | image_url: width: block.settings.image.width | image_tag: loading: loading_attr, widths: '540, 840', sizes: '(max-width: 767px) 540vw, 840vw' -}}
+                    </div>
+                  {%- endif -%}
+                  <div class="card_description text-size--{{ block.settings.block_text_size }}">
+                    <h2 class="card_heading {{ block_heading_size }} mty">{{- block.settings.heading -}}</h2>
+                    {{- block.settings.description -}}
+                  </div>
+                </div>
+              {% when 'social_box' %}
+                {%- liquid
+                  assign block_scheme_class = block.settings.block_color_scheme | prepend: 'scheme scheme--'
+                  capture block_heading_size
+                    case block.settings.block_heading_size
+                      when 'heading_x_large'
+                        echo 'h2'
+                      when 'heading_large'
+                        echo 'h3'
+                      when 'heading_medium'
+                        echo 'h4'
+                      when 'heading_small'
+                        echo 'h5'
+                      when 'heading_x_small'
+                        echo 'h6'
+                      else
+                        echo 'h'
+                    endcase
+                  endcapture
+                -%}
+                <a class="card card--secondary {{ block_scheme_class }}"
+                  {% if block.settings.link_url != blank %}href="{{ block.settings.link_url }}"{% else %}aria-disabled="true"{% endif %}
+                  {% if block.settings.open_new_window %}target="_blank"{% endif %}
+                  title="{{ block.settings.heading }}"
+                >
+                  <div class="card_header-wrap">
+                    <div class="card_title-wrap">
+                      <div class="image">
+                        {%- if block.settings.image != null -%}
+                          {{- block.settings.image | image_url: width: 1112 | image_tag: class: 'object-fit object-fit--absolute', alt: block.settings.heading, loading: loading_attr, widths: '92, 184', sizes: '(max-width: 767px) 92vw, 184vw' -}}
+                          {%- else -%}
+                            {{- 'hero-apparel-2' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+                        {%- endif -%}
+                      </div>
+                      <h2 class="card_title {{ block_heading_size }} mty">
+                        <strong class="card_mention">{{- block.settings.heading -}}</strong>
+                        <span class="card_counting text-size--large">{{- block.settings.subheading -}}</span>
+                      </h2>
+                    </div>
+                  </div>
+                  <div class="card_inspir-block">
+                    <h3 class="text-size--{{ block.settings.block_text_size }} card_descr-heading mty">
+                      {{- block.settings.description -}}
+                    </h3>
+                    <i class="card_heading-icn">
+                      {%- render 'icons-data', width: 38, height: 16, use_icon: true, icon_reference: 'arrow-wide' -%}
+                    </i>
+                  </div>
+                  {%- if block.settings.bg_image != blank -%}
+                    <span class="card_bg">
+                      {{- block.settings.bg_image | image_url: width: 1112 | image_tag: class: 'object-fit object-fit--absolute', alt: '', loading: loading_attr, widths: '556, 1112', sizes: '(max-width: 767px) 556vw, 1112vw' -}}
+                    </span>
+                  {%- endif -%}
+                </a>
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.contact_form.name",
+  "tag": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer",
+      "custom.overlay"
+    ]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.common.heading.label",
+      "default": "Get in Touch"
+    },
+    {
+      "type": "select",
+      "id": "section_heading_size",
+      "label": "t:sections.common.heading.size.label",
+      "options": [
+        {
+          "value": "heading_x_large",
+          "label": "t:sections.common.heading.size.options.opt_2.label"
+        },
+        {
+          "value": "heading_large",
+          "label": "t:sections.common.heading.size.options.opt_3.label"
+        },
+        {
+          "value": "heading_medium",
+          "label": "t:sections.common.heading.size.options.opt_4.label"
+        },
+        {
+          "value": "heading_small",
+          "label": "t:sections.common.heading.size.options.opt_5.label"
+        },
+        {
+          "value": "heading_x_small",
+          "label": "t:sections.common.heading.size.options.opt_6.label"
+        }
+      ],
+      "default": "heading_medium"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "section_description",
+      "label": "t:sections.common.description.label",
+      "default": "Our friendly team would love to hear from you."
+    },
+    {
+      "type": "select",
+      "id": "section_text_size",
+      "label": "t:sections.common.text.settings.fz_sizes.label",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_1.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_2.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.common.text.settings.fz_sizes.options.opt_3.label"
+        }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.layout.content"
+    },
+    {
+      "type": "color_scheme",
+      "id": "section_color_scheme",
+      "default": "scheme1",
+      "label": "t:sections.common.clr_scheme.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.common.spacing.content"
+    },
+    {
+      "type": "range",
+      "id": "section_top_padding",
+      "label": "t:sections.common.spacing.settings.top.label",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_bottom_padding",
+      "label": "t:sections.common.spacing.settings.bottom.label",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 70,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "t:sections.contact_form.blocks.information.name",
+      "type": "information_box",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.common.image.label",
+          "info": "t:sections.contact_form.blocks.information.settings.image.info"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "t:sections.common.heading.label",
+          "default": "Need Further Assistance?"
+        },
+        {
+          "type": "select",
+          "id": "block_heading_size",
+          "label": "t:sections.common.heading.size.label",
+          "options": [
+            {
+              "value": "heading_x_large",
+              "label": "t:sections.common.heading.size.options.opt_2.label"
+            },
+            {
+              "value": "heading_large",
+              "label": "t:sections.common.heading.size.options.opt_3.label"
+            },
+            {
+              "value": "heading_medium",
+              "label": "t:sections.common.heading.size.options.opt_4.label"
+            },
+            {
+              "value": "heading_small",
+              "label": "t:sections.common.heading.size.options.opt_5.label"
+            },
+            {
+              "value": "heading_x_small",
+              "label": "t:sections.common.heading.size.options.opt_6.label"
+            }
+          ],
+          "default": "heading_small"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "t:sections.common.description.label",
+          "default": "<p>Our customer support is available Monday to Friday: 11am-7pm.</p><p>We can help answer any questions about our products, shipping, or anything else on your mind!</p><p><strong>Call:</strong> <a href=\"(123)-456-7890\">(123)-456-7890</a></p><p><strong>Visit:</strong> 1234 Example Street, Anytown, ST 12345</p>"
+        },
+        {
+          "type": "select",
+          "id": "block_text_size",
+          "label": "t:sections.common.text.settings.fz_sizes.label",
+          "options": [
+            {
+              "value": "small",
+              "label": "t:sections.common.text.settings.fz_sizes.options.opt_1.label"
+            },
+            {
+              "value": "medium",
+              "label": "t:sections.common.text.settings.fz_sizes.options.opt_2.label"
+            },
+            {
+              "value": "large",
+              "label": "t:sections.common.text.settings.fz_sizes.options.opt_3.label"
+            }
+          ],
+          "default": "large"
+        },
+        {
+          "type": "color_scheme",
+          "id": "block_color_scheme",
+          "default": "scheme3",
+          "label": "t:sections.common.clr_scheme.label"
+        }
+      ]
+    },
+    {
+      "name": "t:sections.contact_form.blocks.social_box.name",
+      "type": "social_box",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "bg_image",
+          "label": "t:sections.contact_form.blocks.social_box.settings.image.bg.label",
+          "info": "t:sections.contact_form.blocks.social_box.settings.image.info"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.contact_form.blocks.social_box.settings.image.label",
+          "info": "t:sections.contact_form.blocks.social_box.settings.image.info"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.common.heading.label",
+          "default": "@Urbandén"
+        },
+        {
+          "type": "select",
+          "id": "block_heading_size",
+          "label": "t:sections.common.heading.size.label",
+          "options": [
+            {
+              "value": "heading_x_large",
+              "label": "t:sections.common.heading.size.options.opt_2.label"
+            },
+            {
+              "value": "heading_large",
+              "label": "t:sections.common.heading.size.options.opt_3.label"
+            },
+            {
+              "value": "heading_medium",
+              "label": "t:sections.common.heading.size.options.opt_4.label"
+            },
+            {
+              "value": "heading_small",
+              "label": "t:sections.common.heading.size.options.opt_5.label"
+            },
+            {
+              "value": "heading_x_small",
+              "label": "t:sections.common.heading.size.options.opt_6.label"
+            }
+          ],
+          "default": "heading_small"
+        },
+        {
+          "type": "text",
+          "id": "subheading",
+          "label": "t:sections.common.subheading.label",
+          "default": "1.3k followers"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "t:sections.common.description.label",
+          "default": "<span>Our Inspiration: Capturing Life's Moments</span>"
+        },
+        {
+          "type": "url",
+          "id": "link_url",
+          "label": "t:sections.links_bar.blocks.link.settings.url.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "open_new_window",
+          "label": "t:sections.common.target_blank.label",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "block_text_size",
+          "label": "t:sections.common.text.settings.fz_sizes.label",
+          "options": [
+            {
+              "value": "small",
+              "label": "t:sections.common.text.settings.fz_sizes.options.opt_1.label"
+            },
+            {
+              "value": "medium",
+              "label": "t:sections.common.text.settings.fz_sizes.options.opt_2.label"
+            },
+            {
+              "value": "large",
+              "label": "t:sections.common.text.settings.fz_sizes.options.opt_3.label"
+            }
+          ],
+          "default": "large"
+        },
+        {
+          "type": "color_scheme",
+          "id": "block_color_scheme",
+          "default": "scheme3",
+          "label": "t:sections.common.clr_scheme.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact_form.name",
+      "blocks": [
+        {
+          "type": "information_box",
+          "settings": {
+          }
+        },
+        {
+          "type": "social_box",
+          "settings": {
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

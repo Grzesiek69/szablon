@@ -1,0 +1,448 @@
+<product-organizer id="{{- section.id -}}">
+  {%- liquid
+    capture main_form_id
+      echo 'main-product-atc-form'
+    endcapture
+  -%}
+  <div data-render-sale-badge="">
+    {%- render 'product-saving-badge', product: product, use_variant: true -%}
+  </div>
+  <div data-render-price="">
+    {%- render 'product-price', product: product, use_variant: true, show_unit_price: true -%}
+  </div>
+  <div data-render-price-from="">
+    {%- render 'product-price', product: product, use_variant: false, show_unit_price: true -%}
+  </div>
+  <div data-render-stock="">
+    {%- render 'product-stock', product: product -%}
+  </div>
+  <div data-render-share-button="">
+    {%- liquid
+      assign share_url = request.origin | append: product.url | append: '?variant=' | append: product.selected_or_first_available_variant.id
+      render 'share-button', share_link: share_url, share_title: product.title, btn_ixi: true
+    -%}
+  </div>
+  <div data-render-price="main-product">
+    {%- render 'product-price', product: product, use_variant: true, show_unit_price: false -%}
+    {%- unless product.selected_or_first_available_variant.unit_price_measurement == nil -%}
+      <div class="show-main_unit-wrap">
+        <strong class="show-main_diff-title">
+          {{- 'product.unit_price_label' | t -}}&nbsp;:
+        </strong>
+        {%- render 'product-unit-price', product: product -%}
+      </div>
+    {%- endunless -%}
+  </div>
+  <div data-render-sku="">
+    {%- if product.selected_or_first_available_variant.sku.size != 0 or product.selected_or_first_available_variant.sku != blank -%}
+      <div class="show-main_title-col show-main_title-col--sku">
+        <span class="show-main_diff-title">
+          {{- 'product.sku_label' | t -}}&nbsp;:
+        </span>
+        <strong class="show-main_diff-descr --word-break">
+          {{- product.selected_or_first_available_variant.sku -}}
+        </strong>
+      </div>
+    {%- endif -%}
+  </div>
+  <div data-render-qty="main-product">
+    <quantity-input
+      class="quantity-input show-main_quantity-input --v-align-middle"
+      data-init-value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+      data-variant-price="{{- product.selected_or_first_available_variant.price | money_without_currency | replace: ',', '' | times: 100 -}}"
+    >
+      <label for="Quantity-main-product-{{ product.id }}" class="quantity-input_label text-size--medium">
+        {{- 'quantity.title' | t -}}
+      </label>
+      <div class="quantity-input_fielder-wrap">
+        <button class="quantity-input_button btn-icn-ixi quantity-input_button-minus disabled" disabled name="minus" type="button">
+          <span class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'minus' -%}
+            <span class="visually-hidden">
+              {{- 'quantity.decrease' | t: product: product.title | escape -}}
+            </span>
+          </span>
+        </button>
+        <input
+          type="number"
+          name="quantity"
+          data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+          min="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+          {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
+            data-max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+            max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+          {% endif %}
+          step="{{- product.selected_or_first_available_variant.quantity_rule.increment -}}"
+          value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+          aria-label="{{- 'quantity.input_label' | t: product: product.title | escape -}}"
+          id="Quantity-main-product-{{ product.id }}"
+          form="{{- main_form_id -}}"
+        >
+        <button class="quantity-input_button btn-icn-ixi quantity-input_button-plus" name="plus" type="button">
+          <span class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'plus' -%}
+            <span class="visually-hidden">
+              {{- 'quantity.increase' | t: product: product.title | escape -}}
+            </span>
+          </span>
+        </button>
+      </div>
+      <strong class="quantity-input_subtotal-wrap --word-break text-size--small">
+        <span class="quantit-input_subtotal-title">
+          {{- 'quantity.subtotal' | t -}}:
+        </span>
+        <span class="quantity-input_subtotal-price" data-qty-subtotal="">
+          {{- product.selected_or_first_available_variant.price | money -}}
+        </span>
+      </strong>
+    </quantity-input>
+  </div>
+  <div data-render-pickup="">
+    {%- liquid
+      assign pick_up_availabilities = product.selected_or_first_available_variant.store_availabilities | where: 'pick_up_enabled', true
+      assign closest_location = pick_up_availabilities.first
+    -%}
+    <div
+      class="pickup"
+      {% if product.selected_or_first_available_variant.available and pick_up_availabilities.size > 0 %}
+        available
+        {% else %}
+        hidden
+      {% endif %}
+    >
+      {%- if closest_location.available -%}
+        <strong class="pickup_heading text-size--medium">
+          {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'check' -%}
+          {{- 'product.pickup.available_at' | t: location: closest_location.location.name -}}
+        </strong>
+        <em class="pickup_subheading text-size--small">
+          {{- closest_location.pick_up_time -}}
+        </em>
+        {%- else -%}
+          <strong class="pickup_heading text-size--medium">
+            {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'cross' -%}
+            {{- 'product.pickup.unavailable_at' | t: location: closest_location.location.name -}}
+          </strong>
+          <em class="pickup_subheading text-size--small">
+            {{- closest_location.pick_up_time -}}
+          </em>
+      {%- endif -%}
+      {%- if product.selected_or_first_available_variant.available and pick_up_availabilities.size > 0 -%}
+        <modal-component-toggler>
+          <button
+            type="button"
+            data-expanded="false"
+            data-modal-ref="modal-pickup-drawer"
+            aria-haspopup="dialog"
+            aria-controls="modal-pickup-drawer"
+            class="button button--link show-main_pickup-link"
+          >
+            {%- liquid
+              if pick_up_availabilities.size == 1
+                echo 'product.pickup.view_store' | t
+                else
+                  echo 'product.pickup.other_store' | t
+              endif
+            -%}
+          </button>
+        </modal-component-toggler>
+        <modal-component
+          data-modal="modal-pickup-drawer"
+          data-container="body"
+        >
+          <div
+            class="modal modal-component --drawer modal-component--pickup-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-pickup-drawer-heading"
+            aria-describedby="modal-pickup-drawer"
+            tabindex="-1"
+          >
+            <div class="modal-component_wrapper" id="modal-pickup-drawer">
+              <modal-component-toggler>
+                <button
+                  type="button"
+                  data-expanded="true"
+                  data-toggle-attribute="false"
+                  data-modal-ref="modal-pickup-drawer"
+                  class="modal-component_btn-close btn-icn-ixi"
+                >
+                  <span class="btn-icn-ixi_wrapper">
+                    {%- render 'icons-data', width: 14, height: 14, use_icon: true, icon_reference: 'cross' -%}
+                    <span class="visually-hidden">{{- 'accessibility.close' | t -}}</span>
+                  </span>
+                </button>
+              </modal-component-toggler>
+              <div class="modal-component_body">
+                <div class="modal-component_head">
+                  <strong class="visually-hidden" id="modal-pickup-drawer-heading">
+                    {{- 'product.pickup.modal_heading' | t: product: product.title -}}
+                  </strong>
+                  <strong class="pickup_heading mty h4 --word-break">
+                    {{- product.title -}}
+                  </strong>
+                  <strong class="pickup_subheading mty text-size--small --word-break">
+                    {{- product.vendor -}}
+                  </strong>
+                  {%- unless product.has_only_default_variant -%}
+                    <ul class="list-unstyled pickup_options-list text-size--small mty">
+                      {%- for option in product.options_with_values -%}
+                        <li>
+                          <strong class="pickup_options-title text-size--medium --word-break">
+                            {{- option.name -}}:
+                          </strong>
+                          <strong class="pickup_options-value text-size--small --word-break">
+                            {{- option.selected_value -}}
+                          </strong>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- endunless -%}
+                </div>
+                <div class="modal-component_content">
+                  <ul class="list-unstyled pickup_showcase-list">
+                    {%- for availability in pick_up_availabilities -%}
+                      <li class="pickup_showcase-item">
+                        <strong class="pickup_showcase-heading h6 mty --word-break">
+                          {{- availability.location.name -}}
+                        </strong>
+                        <div class="pickup_showcase-description mty">
+                          {%- if availability.available -%}
+                            <strong class="pickup_showcase-texture text-size--medium pickup_showcase-texture--available mty">
+                              {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'check' -%}
+                              {{- 'product.pickup.available_at' | t: location: availability.location.name -}}
+                            </strong>
+                            <span class="pickup_showcase-texture pickup_showcase-texture--subtext text-size--medium">
+                              {{- availability.pick_up_time -}}
+                            </span>
+                            {%- assign address = availability.location.address -%}
+                            <address class="pickup-showcase_address text-size--medium mty">
+                              {{- address | format_address -}}
+                              {%- if address.phone.size > 0 -%}
+                                <em class="pickup_showcase-subtext">{{- address.phone -}}</em>
+                              {%- endif -%}
+                            </address>
+                            {%- else -%}
+                              <strong class="pickup_showcase-texture pickup_showcase-texture--unavailable mty">
+                                {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'cross' -%}
+                                {{- 'product.pickup.unavailable_at' | t: location: availability.location.name -}}
+                              </strong>
+                              <span class="pickup_showcase-texture pickup_showcase-texture--subtext text-size--medium">
+                                {{- availability.pick_up_time -}}
+                              </span>
+                              {%- assign address = availability.location.address -%}
+                              <address class="pickup-showcase_address text-size--medium mty">
+                                {{- address | format_address -}}
+                                {%- if address.phone.size > 0 -%}
+                                  <em class="pickup_showcase-subtext">{{- address.phone -}}</em>
+                                {%- endif -%}
+                              </address>
+                          {%- endif -%}
+                        </div>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </modal-component>
+      {%- endif -%}
+    </div>
+  </div>
+  <div data-render-price="quick-view">
+    {%- render 'product-price', product: product, use_variant: true, show_unit_price: false -%}
+    {%- unless product.selected_or_first_available_variant.unit_price_measurement == nil -%}
+      <div class="quick-view_unit-wrap">
+        <strong class="quick-view_diff-title">
+          {{- 'product.unit_price_label' | t -}}&nbsp;:
+        </strong>
+        {%- render 'product-unit-price', product: product -%}
+      </div>
+    {%- endunless -%}
+  </div>
+  <div data-render-sku="quick-view">
+    {%- if product.selected_or_first_available_variant.sku.size != 0 or product.selected_or_first_available_variant.sku != blank -%}
+      <div class="quick-view_title-col quick-view_title-col--sku">
+        <span class="quick-view_diff-title">
+          {{- 'product.sku_label' | t -}}&nbsp;:
+        </span>
+        <strong class="quick-view_diff-descr">
+          {{- product.selected_or_first_available_variant.sku -}}
+        </strong>
+      </div>
+    {%- endif -%}
+  </div>
+  <div data-render-qty="quick-view">
+    <quantity-input
+      class="quantity-input quic-view_quantity-input --v-align-middle"
+      data-init-value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+      data-variant-price="{{- product.selected_or_first_available_variant.price | money_without_currency | replace: ',', '' | times: 100 -}}"
+      data-component="modal"
+    >
+      <div class="quantity-input_fielder-wrap">
+        <button class="quantity-input_button btn-icn-ixi quantity-input_button-minus disabled" disabled name="minus" type="button">
+          <span class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'minus' -%}
+            <span class="visually-hidden">
+              {{- 'quantity.decrease' | t: product: product.title | escape -}}
+            </span>
+          </span>
+        </button>
+        <input
+          type="number"
+          name="quantity"
+          data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+          min="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+          {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
+            data-max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+            max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+          {% endif %}
+          step="{{- product.selected_or_first_available_variant.quantity_rule.increment -}}"
+          value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+          aria-label="{{- 'quantity.input_label' | t: product: product.title | escape -}}"
+          title="Quantity-quick-view-{{ product.id }}"
+        >
+        <button class="quantity-input_button btn-icn-ixi quantity-input_button-plus" name="plus" type="button">
+          <span class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'plus' -%}
+            <span class="visually-hidden">
+              {{- 'quantity.increase' | t: product: product.title | escape -}}
+            </span>
+          </span>
+        </button>
+      </div>
+      <strong class="quantity-input_subtotal-wrap --word-break text-size--small">
+        <span class="quantit-input_subtotal-title">
+          {{- 'quantity.subtotal' | t -}}:
+        </span>
+        <span class="quantity-input_subtotal-price" data-qty-subtotal="">
+          {{- product.selected_or_first_available_variant.price | money -}}
+        </span>
+      </strong>
+    </quantity-input>
+  </div>
+  <div data-render-price="featured-product">
+    {%- render 'product-price', product: product, use_variant: true, show_unit_price: false -%}
+    {%- unless product.selected_or_first_available_variant.unit_price_measurement == nil -%}
+      <div class="featured-product_unit-wrap">
+        <strong class="featured-product_diff-title">
+          {{- 'product.unit_price_label' | t -}}&nbsp;:
+        </strong>
+        {%- render 'product-unit-price', product: product -%}
+      </div>
+    {%- endunless -%}
+  </div>
+  <div data-render-qty="featured-product">
+    <quantity-input
+      class="quantity-input featured-product_quantity-input --v-align-middle"
+      data-init-value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+      data-variant-price="{{- product.selected_or_first_available_variant.price | money_without_currency | replace: ',', '' | times: 100 -}}"
+      data-ref-input="[data-product-container]"
+    >
+      <div class="quantity-input_fielder-wrap">
+        <button class="quantity-input_button btn-icn-ixi quantity-input_button-minus disabled" disabled name="minus" type="button">
+          <span class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'minus' -%}
+            <span class="visually-hidden">
+              {{- 'quantity.decrease' | t: product: product.title | escape -}}
+            </span>
+          </span>
+        </button>
+        <input
+          type="number"
+          name="quantity"
+          data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+          min="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+          {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
+            data-max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+            max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+          {% endif %}
+          step="{{- product.selected_or_first_available_variant.quantity_rule.increment | default: 1 -}}"
+          value="{{- product.selected_or_first_available_variant.quantity_rule.min | default: 1 -}}"
+          aria-label="{{- 'quantity.input_label' | t: product: product.title | escape -}}"
+          title="Quantity-featured-product-{{ product.id }}"
+        >
+        <button class="quantity-input_button btn-icn-ixi quantity-input_button-plus {% if product.title == blank %}disabled{% endif %}" name="plus" type="button" {% if product.title == blank %}disabled{% endif %}>
+          <span class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'plus' -%}
+            <span class="visually-hidden">
+              {{- 'quantity.increase' | t: product: product.title | escape -}}
+            </span>
+          </span>
+        </button>
+      </div>
+      <strong class="quantity-input_subtotal-wrap --word-break text-size--small">
+        <span class="quantit-input_subtotal-title">
+          {{- 'quantity.subtotal' | t -}}:
+        </span>
+        <span class="quantity-input_subtotal-price" data-qty-subtotal="">
+          {%- liquid
+            capture subtotal_price
+              if product.title != blank
+                echo product.selected_or_first_available_variant.price | money
+                else
+                  echo 1999 | money
+              endif
+            endcapture
+          -%}
+          {{- subtotal_price -}}
+        </span>
+      </strong>
+    </quantity-input>
+  </div>
+  <div data-render-qty="bundle-row-qty">
+    <quantity-input
+      class="quantity-input bundle-row_quantity-input --v-align-middle"
+      data-init-value="{{- product.selected_or_first_available_variant.quantity_rule.min -}}"
+      data-variant-price="{{- product.selected_or_first_available_variant.price | money_without_currency | replace: ',', '' | times: 100 -}}"
+      data-ref-input="[data-product-container]"
+      data-ref-subtotals="[data-product-container='bundle-product-{{- product.id -}}'] [data-qty-subtotal]"
+    >
+      <div class="quantity-input_fielder-wrap">
+        <button class="quantity-input_button btn-icn-ixi quantity-input_button-minus disabled" disabled name="minus" type="button">
+          <span class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'minus' -%}
+            <span class="visually-hidden">
+              {{- 'quantity.decrease' | t: product: product.title | escape -}}
+            </span>
+          </span>
+        </button>
+        <input
+          type="number"
+          data-min="{{ product.selected_or_first_available_variant.quantity_rule.min | default: 1 }}"
+          min="{{- product.selected_or_first_available_variant.quantity_rule.min | default: 1 -}}"
+          {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
+            data-max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+            max="{{- product.selected_or_first_available_variant.quantity_rule.max -}}"
+          {% endif %}
+          step="{{- product.selected_or_first_available_variant.quantity_rule.increment | default: 1 -}}"
+          value="{{- product.selected_or_first_available_variant.quantity_rule.min | default: 1 -}}"
+          aria-label="{{- 'quantity.input_label' | t: product: product.title | escape -}}"
+          title="Quantity-bundle-row-product-{{ product.id }}"
+        >
+        <button class="quantity-input_button btn-icn-ixi quantity-input_button-plus" name="plus" type="button">
+          <span class="btn-icn-ixi_wrapper">
+            {%- render 'icons-data', width: 8, height: 8, use_icon: true, icon_reference: 'plus' -%}
+            <span class="visually-hidden">
+              {{- 'quantity.increase' | t: product: product.title | escape -}}
+            </span>
+          </span>
+        </button>
+      </div>
+    </quantity-input>
+  </div>
+  <div data-render-price="bundle-row-product">
+    {%- render 'product-price', product: product, use_variant: true, show_unit_price: false -%}
+  </div>
+  <div data-render-subtotals="bundle-row-subtotals">
+    <span class="bundle-row_subtotal-price" data-qty-subtotal="">
+      {{- product.selected_or_first_available_variant.price | money -}}
+    </span>
+    {%- unless product.selected_or_first_available_variant.unit_price_measurement == nil -%}
+      <div class="bundle-row_unit-wrap">
+        {%- render 'product-unit-price', product: product -%}
+      </div>
+    {%- endunless -%}
+  </div>
+</product-organizer>

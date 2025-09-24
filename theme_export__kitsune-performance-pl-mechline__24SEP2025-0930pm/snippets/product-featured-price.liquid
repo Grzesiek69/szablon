@@ -1,0 +1,31 @@
+{%- comment -%}
+  renders product featured price
+  usage
+    {%- render 'product-featured-price', product: product, prefix_class: section_prefix_class -%}
+{%- endcomment -%}
+{%- liquid
+  assign lowest_price = nil
+  assign highest_price = nil
+  
+  for variant in product.variants
+    if lowest_price == nil or variant.price < lowest_price
+      assign lowest_price = variant.price
+    endif
+    if highest_price == nil or variant.price > highest_price
+      assign highest_price = variant.price
+    endif
+  endfor
+
+  capture lowest_price_money
+    if settings.show_currency_code
+      echo lowest_price | money_with_currency
+      else
+        echo lowest_price | money
+    endif
+  endcapture
+-%}
+{%- if lowest_price != highest_price -%}
+  {{ 'product.price' | t }}: {{- lowest_price_money -}}
+  {%- else -%}
+    {{ 'product.featured_price' | t }}: {{ lowest_price_money }}
+{%- endif -%}

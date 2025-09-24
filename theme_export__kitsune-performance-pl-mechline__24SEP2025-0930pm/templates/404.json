@@ -1,0 +1,55 @@
+{
+  "sections": {
+    "before_after": {
+      "type": "before-after",
+      "blocks": {
+        "before_MMtW9i": {
+          "type": "before",
+          "settings": {
+            "image": ""
+          }
+        },
+        "after_eNLwCn": {
+          "type": "after",
+          "settings": {
+            "image": ""
+          }
+        }
+      },
+      "block_order": [
+        "before_MMtW9i",
+        "after_eNLwCn"
+      ],
+      "settings": {
+        "heading": "See the Mechline difference.",
+        "section_heading_size": "heading_x_large",
+        "section_description": "Transform your ride with high-performance rims that elevate both style and function. Slide to compare the <strong>before and after</strong> results of a real upgrade — and witness the impact yourself.",
+        "section_text_size": "large",
+        "after_position": 50,
+        "section_color_scheme": "",
+        "section_top_padding": 60,
+        "section_bottom_padding": 12
+      }
+    },
+    "main": {
+      "type": "main-404",
+      "settings": {
+        "heading": "Something is wrong",
+        "section_heading_size": "heading_x_large",
+        "section_description": "The page you are looking for was moved, removed, renamed or may have never existed!",
+        "section_text_size": "large",
+        "button_label": "BACK TO HOMEPAGE",
+        "button_type": "primary",
+        "button_link": "",
+        "open_new_window": false,
+        "section_color_scheme": "",
+        "section_top_padding": 12,
+        "section_bottom_padding": 94
+      }
+    }
+  },
+  "order": [
+    "before_after",
+    "main"
+  ]
+}

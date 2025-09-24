@@ -1,0 +1,128 @@
+.video-card{
+  width: 100%;
+  position: relative;
+  display: block;
+  border-radius: var(--section-radius);
+  background-color: var(--section-input-background-color);
+}
+
+.video-list_remove-radius .video-card_poster,
+.video-list_remove-radius .video-card{
+  border-radius: 0;
+}
+
+.video-card:hover .video-card_icn-play{
+  color: var(--color-white);
+  background-color: var(--color-black);
+  box-shadow: 0 2px 3px -2px var(--color-white);
+  top: -1%;
+}
+
+.video-card_poster{
+  --focus-outline-offset: 2px;
+  gap: 15px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--section-radius);
+}
+
+.video-card_poster img,
+.video-card_poster > svg,
+.video-card iframe,
+.video-card video,
+.video-card .video-card_media{
+  border-radius: inherit;
+}
+
+.video-card .video-card_media{
+  min-height: 250px;
+}
+
+.video-card_icn-play{
+  display: block;
+  border-radius: calc(var(--section-radius) * 100);
+  background-color: var(--color-white);
+  color: var(--color-black);
+  line-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 54px;
+  height: 54px;
+  z-index: 1;
+  top: 0;
+  transition: color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease, top 0.3s ease;
+  box-shadow: 0 4px 50px rgba(0,0,0,0.15);
+}
+
+.video-card_icn-play svg{
+  width: 20px;
+  height: 22px;
+}
+
+[loaded="true"] .video-card_poster{
+  display: none;
+}
+
+.video-card iframe{
+  border: 0;
+  margin: 0;
+}
+
+.video-card_heading{
+  padding: 7px 20px;
+  display: inline-block;
+  vertical-align: top;
+  border-radius: calc(var(--section-radius) * 100);
+  background-color: var(--section-primary-bg);
+  color: var(--section-primary-text-color);
+  z-index: 2;
+  font-weight: 400;
+  max-width: 90%;
+  max-height: 120px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@media (min-width: 992px){
+  .video-card_poster{
+    gap: 25px;
+  }
+
+  .video-card_icn-play{
+    width: 64px;
+    height: 64px;
+  }
+  
+  .video-card_icn-play svg{
+    width: 20px;
+    height: 22px;
+  }
+
+  .video-card_heading{
+    padding: 12px 25px;
+  }
+}
+
+@media (min-width: 1200px){
+  .video-card_icn-play{
+    width: 84px;
+    height: 84px;
+  }
+  
+  .video-card_icn-play svg{
+    width: 25px;
+    height: 27px;
+  }
+}

@@ -1,0 +1,337 @@
+{%- liquid
+assign back_url = page.url | append: '?contact_posted=true#wyslane'
+assign guide_pdf = 'https://cdn.shopify.com/s/files/1/0833/4003/4383/files/Informator_Kitsune.pdf?v=1757656237'
+-%}
+
+<style>
+:root{
+  --radius:8px;
+  --text:#111; --muted:#666; --line:#ddd; --bg:#fff;
+  --btn:#eee; --btn-border:#ccc; --btn-hover:#ddd;
+  --primary:#c00; --primary-hover:#a00;
+}
+
+/* WRAPPER */
+.kp-wrap{max-width:900px;margin:28px auto;padding:0 12px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text)}
+.kp-title{font-size:clamp(28px,4.8vw,48px);line-height:1.1;margin:0 0 6px;font-weight:800;word-break:keep-all}
+.kp-sub{color:var(--muted);margin:0 0 18px;font-size:15px}
+
+/* PILLS */
+.kp-pills{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 18px}
+.kp-pill{background:#f6f6f6;border:1px solid var(--line);padding:10px 12px;font-size:13px;color:#333;border-radius:var(--radius)}
+
+/* PROGRESS */
+.kp-stepbar{display:flex;align-items:center;gap:10px;margin:10px 0 16px}
+.kp-stepbar .bar{flex:1;height:6px;background:#eee;border:1px solid var(--line);position:relative;border-radius:var(--radius)}
+.kp-stepbar .bar span{position:absolute;left:0;top:-1px;bottom:-1px;width:0;background:var(--primary);border-radius:var(--radius);transition:width .25s ease}
+.kp-stepbar .label{font-size:12px;color:#888;min-width:64px;text-align:right}
+
+/* GUIDE (PDF) */
+.kp-guide{border:1px solid var(--line);background:#fafafa;padding:14px;border-radius:var(--radius);margin:0 0 16px}
+.kp-guide h3{margin:0 0 4px;font-size:16px}
+.kp-guide p{margin:0 0 8px;color:#555;font-size:14px}
+.kp-guide-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{background:var(--btn);border:1px solid var(--btn-border);padding:10px 14px;font-weight:600;cursor:pointer;color:#111;text-decoration:none;display:inline-block;border-radius:var(--radius)}
+.btn:hover{background:var(--btn-hover)}
+.btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-hover)}
+.kp-preview{display:none;margin-top:10px;border:1px solid #e1e1e1;border-radius:var(--radius);overflow:hidden}
+.kp-preview object,
+.kp-preview embed{width:100%;height:460px;border:0}
+
+/* FORM */
+.kp-form .step{display:none}
+.kp-form .step.active{display:block}
+.kp-form .row{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:760px){.kp-form .row.two{grid-template-columns:1fr 1fr}}
+.kp-form .field{display:flex;flex-direction:column}
+.kp-form label{margin-bottom:6px;font-weight:700;font-size:14px}
+.kp-form input,.kp-form select,.kp-form textarea{
+  width:100%;padding:12px 14px;border:1px solid var(--line);font-size:15px;background:#fff;border-radius:var(--radius)
+}
+.kp-form input:focus,.kp-form select:focus,.kp-form textarea:focus{
+  outline:none;border-color:var(--primary);box-shadow:0 0 0 2px rgba(192,0,0,.15)
+}
+.kp-form small{margin-top:4px;color:#777}
+
+/* NAV BUTTONS */
+.kp-nav{display:flex;gap:10px;margin-top:16px}
+.kp-nav .spacer{flex:1}
+.kp-btn{background:#f0f0f0;border:1px solid var(--line);padding:12px 16px;font-weight:800;cursor:pointer;border-radius:var(--radius)}
+.kp-btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.kp-btn-primary:hover{background:var(--primary-hover)}
+.kp-submit{width:100%}
+
+/* MESSAGES */
+.kp-success{background:rgba(46,204,113,.1);border:1px solid #2ecc71;color:#1e874b;padding:14px;border-radius:var(--radius);text-align:center;margin-bottom:16px}
+.kp-errors ul{list-style:none;margin:0 0 16px;padding:0}
+.kp-errors li{color:#e74c3c;background:rgba(231,76,60,.1);border:1px solid #e74c3c;padding:12px;border-radius:var(--radius);text-align:center}
+</style>
+
+<div class="kp-wrap">
+  <h1 class="kp-title">Wycena układu wydechowego do Twojego&nbsp;auta</h1>
+  <p class="kp-sub">Wypełnij krótki formularz (60–90 s). W 24h odeślemy wycenę i rekomendacje. Montaż w naszym warsztacie w Toruniu.</p>
+
+  <div class="kp-pills">
+    <div class="kp-pill">Opcje pod dźwięk, osiągi i wygląd</div>
+    <div class="kp-pill">Normy emisji – doradzimy odpowiednie rozwiązania</div>
+    <div class="kp-pill">Darmowa konsultacja 15 min po wycenie</div>
+  </div>
+
+  <div class="kp-stepbar">
+    <div class="bar"><span id="kp-progress" style="width:0%"></span></div>
+    <div class="label"><span id="kp-step-label">Krok 1/4</span></div>
+  </div>
+
+  {%- form 'contact', id: 'CustomContactForm', return_to: back_url -%}
+    {%- if form.posted_successfully? -%}
+      <div id="wyslane" class="kp-success">
+        Dziękujemy! Wycena trafi do Ciebie w 24h (dni robocze).
+      </div>
+    {%- endif -%}
+
+    <div class="kp-errors">{{ form.errors | default_errors }}</div>
+
+    {%- unless form.posted_successfully? -%}
+
+    <div class="kp-form">
+
+      <!-- KROK 1 -->
+      <div class="step active" data-step="1">
+        <div class="kp-guide">
+          <h3>Masz 2 minuty? Przewodnik (PDF)</h3>
+          <p>Krótko pokazuje, jak wypełnić formularz i co przygotować (rocznik, wersję, priorytety).</p>
+          <div class="kp-guide-actions">
+            <button type="button" class="btn btn-primary" id="kp-btn-preview">Podgląd w stronie</button>
+            <a class="btn" href="{{ guide_pdf }}" download>Pobierz PDF</a>
+          </div>
+          <div class="kp-preview" id="kp-preview-box">
+            <object id="kp-preview-object" data="" type="application/pdf" aria-label="Podgląd PDF">
+              <embed id="kp-preview-embed" src="" type="application/pdf" />
+              <p>Twoja przeglądarka nie obsługuje podglądu PDF. <a href="{{ guide_pdf }}" target="_blank" rel="noopener">Otwórz w nowej karcie</a>.</p>
+            </object>
+          </div>
+        </div>
+
+        <div class="row two">
+          <div class="field">
+            <label for="ContactForm-Marka">Marka *</label>
+            <input id="ContactForm-Marka" name="contact[Marka]" placeholder="np. Audi" required>
+          </div>
+          <div class="field">
+            <label for="ContactForm-Model">Model *</label>
+            <input id="ContactForm-Model" name="contact[Model]" placeholder="np. RS3 8Y" required>
+          </div>
+          <div class="field">
+            <label for="ContactForm-Rocznik">Rocznik/Generacja *</label>
+            <input id="ContactForm-Rocznik" name="contact[Rocznik/Generacja]" placeholder="np. 2023 / 8Y" required>
+          </div>
+          <div class="field">
+            <label for="ContactForm-Silnik">Silnik / kod <span style="font-weight:400;color:#888">(opcjonalne)</span></label>
+            <input id="ContactForm-Silnik" name="contact[Silnik/Kod]" placeholder="np. 2.5 TFSI / DNWA">
+            <small>Nie znasz kodu? Zostaw puste.</small>
+          </div>
+        </div>
+
+        <div class="kp-nav">
+          <div class="spacer"></div>
+          <button type="button" class="kp-btn kp-btn-primary" data-next>Krok 2</button>
+        </div>
+      </div>
+
+      <!-- KROK 2 -->
+      <div class="step" data-step="2">
+        <div class="row two">
+          <div class="field">
+            <label for="ContactForm-Priorytet">Co najważniejsze? *</label>
+            <select id="ContactForm-Priorytet" name="contact[Priorytet]" required>
+              <option value="">Wybierz</option>
+              <option>Dźwięk</option>
+              <option>Osiągi</option>
+              <option>Wygląd</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="ContactForm-Uklad">Rodzaj układu *</label>
+            <select id="ContactForm-Uklad" name="contact[Rodzaj układu]" required>
+              <option value="">Wybierz</option>
+              <option>Cat-back</option>
+              <option>Axle-back</option>
+              <option>Downpipe</option>
+              <option>Inne / custom</option>
+              <option>Nie wiem – doradźcie</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="ContactForm-Klapy">Klapy wydechu *</label>
+            <select id="ContactForm-Klapy" name="contact[Klapy wydechu]" required>
+              <option value="">Wybierz</option>
+              <option>Aktywny (z klapami)</option>
+              <option>Pasywny (bez klap)</option>
+              <option>Nie wiem – doradźcie</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="ContactForm-Emisja">Normy emisji spalin <span style="font-weight:400;color:#888">(opcjonalne)</span></label>
+            <select id="ContactForm-Emisja" name="contact[Normy emisji spalin]">
+              <option value="">Wybierz (opcjonalne)</option>
+              <option>Euro 6/6d</option>
+              <option>Euro 5</option>
+              <option>Euro 4 lub starsze</option>
+              <option>Nie wiem</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="kp-nav">
+          <button type="button" class="kp-btn" data-prev>Wstecz</button>
+          <div class="spacer"></div>
+          <button type="button" class="kp-btn kp-btn-primary" data-next>Krok 3</button>
+        </div>
+      </div>
+
+      <!-- KROK 3 -->
+      <div class="step" data-step="3">
+        <div class="row two">
+          <div class="field">
+            <label for="ContactForm-Budzet">Budżet (widełki)</label>
+            <select id="ContactForm-Budzet" name="contact[Budżet]">
+              <option selected>Wolę nie podawać</option>
+              <option>3–5 tys. zł</option>
+              <option>5–8 tys. zł</option>
+              <option>8–12 tys. zł</option>
+              <option>12 tys. zł+</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="ContactForm-Termin">Termin realizacji</label>
+            <select id="ContactForm-Termin" name="contact[Termin]">
+              <option selected>Jak najszybciej</option>
+              <option>W ciągu 30 dni</option>
+              <option>1–3 miesiące</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="ContactForm-Lokalizacja">Lokalizacja</label>
+            <select id="ContactForm-Lokalizacja" name="contact[Lokalizacja]">
+              <option selected>Na miejscu w Toruniu</option>
+              <option>Mogę dojechać</option>
+              <option>Tylko wysyłka</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="kp-nav">
+          <button type="button" class="kp-btn" data-prev>Wstecz</button>
+          <div class="spacer"></div>
+          <button type="button" class="kp-btn kp-btn-primary" data-next>Krok 4</button>
+        </div>
+      </div>
+
+      <!-- KROK 4 -->
+      <div class="step" data-step="4">
+        <div class="row two">
+          <div class="field">
+            <label for="ContactForm-Name">Imię *</label>
+            <input id="ContactForm-Name" name="contact[Imię]" required>
+          </div>
+          <div class="field">
+            <label for="ContactForm-Email">Adres e-mail *</label>
+            <input type="email" id="ContactForm-Email" name="contact[email]" required>
+          </div>
+          <div class="field">
+            <label for="ContactForm-Phone">Telefon <span style="font-weight:400;color:#888">(opcjonalne)</span></label>
+            <input id="ContactForm-Phone" name="contact[Telefon]">
+          </div>
+          <div class="field">
+            <label for="ContactForm-Prefer">Preferowany kontakt</label>
+            <select id="ContactForm-Prefer" name="contact[Preferowany kontakt]">
+              <option>E-mail</option>
+              <option>Telefon</option>
+              <option>WhatsApp</option>
+            </select>
+          </div>
+          <div class="field" style="grid-column:1/-1">
+            <label for="ContactForm-Notes">Dodatkowe informacje <span style="font-weight:400;color:#888">(opcjonalne)</span></label>
+            <textarea id="ContactForm-Notes" name="contact[Dodatkowe informacje]" placeholder="Np. zawory, końcówki, materiał (stal/tytan)…"></textarea>
+          </div>
+          <div class="field" style="grid-column:1/-1">
+            <label><input type="checkbox" name="contact[RODO]" required> Zgadzam się na kontakt w sprawie przygotowania wyceny.</label>
+          </div>
+        </div>
+
+        <div class="kp-nav">
+          <button type="button" class="kp-btn" data-prev>Wstecz</button>
+        </div>
+        <div class="field" style="margin-top:10px">
+          <button type="submit" class="kp-btn kp-btn-primary kp-submit">Odbierz wycenę w 24h</button>
+        </div>
+      </div>
+
+    </div>
+    {%- endunless -%}
+  {%- endform -%}
+</div>
+
+<script>
+(function(){
+  var form = document.getElementById('CustomContactForm');
+  if(!form) return;
+
+  var steps = [].slice.call(form.querySelectorAll('.step'));
+  var idx = 0;
+  var bar = document.getElementById('kp-progress');
+  var lab = document.getElementById('kp-step-label');
+
+  function updateProgress(){
+    steps.forEach(function(s,i){ s.classList.toggle('active', i===idx); });
+    var pct = Math.round(((idx+1)/steps.length)*100);
+    if(bar) bar.style.width = pct + '%';
+    if(lab) lab.textContent = 'Krok ' + (idx+1) + '/' + steps.length;
+    try{ window.scrollTo({top: form.offsetTop - 10, behavior: 'instant'}); }catch(e){}
+  }
+  function validateCurrent(){
+    var req = steps[idx].querySelectorAll('[required]');
+    for(var i=0;i<req.length;i++){
+      if(!(req[i].value||'').trim()){
+        try{ req[i].reportValidity(); }catch(e){}
+        req[i].focus(); return false;
+      }
+    }
+    return true;
+  }
+
+  form.addEventListener('click', function(e){
+    var next = e.target.closest('[data-next]');
+    var prev = e.target.closest('[data-prev]');
+    if(next){
+      if(!validateCurrent()) return;
+      idx = Math.min(idx+1, steps.length-1);
+      updateProgress(); return;
+    }
+    if(prev){
+      idx = Math.max(idx-1, 0);
+      updateProgress(); return;
+    }
+  });
+  updateProgress();
+
+  // PDF PREVIEW (toggle + lazy-load) — OBJECT + EMBED (działa szerzej niż iframe)
+  var btnPrev  = document.getElementById('kp-btn-preview');
+  var box      = document.getElementById('kp-preview-box');
+  var obj      = document.getElementById('kp-preview-object');
+  var emb      = document.getElementById('kp-preview-embed');
+  function ensurePDF(){
+    var url = '{{ guide_pdf }}#view=FitH&toolbar=0&navpanes=0&statusbar=0&scrollbar=1';
+    if(obj && !obj.getAttribute('data')) obj.setAttribute('data', url);
+    if(emb && !emb.getAttribute('src')) emb.setAttribute('src', url);
+  }
+  if(btnPrev && box){
+    btnPrev.addEventListener('click', function(){
+      var show = box.style.display !== 'block';
+      box.style.display = show ? 'block' : 'none';
+      if(show) ensurePDF();
+    });
+  }
+})();
+</script>

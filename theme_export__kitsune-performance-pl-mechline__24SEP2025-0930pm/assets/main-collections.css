@@ -1,0 +1,24 @@
+.main-collections {
+  --desktop-columns-count: var(--columns-count-mobile);
+
+}
+
+.main-collections_description{
+  --mt-top: 24px;
+}
+
+.main-collections .heading-head{
+  max-width: 943px;
+  margin: 0 auto 39px;
+}
+
+@media (min-width: 768px){
+  .main-collections{
+    --desktop-columns-count: 3;
+  }
+}
+@media (min-width: 992px){
+  .main-collections{
+    --desktop-columns-count: var(--columns-count);
+  }
+}

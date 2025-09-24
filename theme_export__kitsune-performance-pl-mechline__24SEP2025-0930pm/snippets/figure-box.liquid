@@ -1,0 +1,36 @@
+{%- comment -%}
+  renders figure box with product featured image
+  usage
+    {%- render 'figure-box', figure: media, prefix_class: section_prefix_class -%}
+{%- endcomment -%}
+
+{%- liquid
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+
+  capture card_media_size
+    if section.settings.section_media_size == 'adapt'
+        echo figure.preview_image.aspect_ratio | default: '1'
+    else 
+        echo '1'
+    endif
+ endcapture
+-%}
+
+<div class="fig-box-wrapper mty {{ prefix_class }}_fig-box {% if section.settings.remove_image_bdr %}remove-image-bdr{% endif %}">
+  <a {% if product_url != blank %}href="{{- product_url -}}"{% else %}aria-disabled="true"{% endif %} class="figure-box --media-size-{{ section.settings.section_media_size }}" style="--media-ratio: {{ card_media_size }};">
+    {%- if figure != blank -%}
+      {{ figure.preview_image | image_url: width: 1350 | image_tag: class: 'object-fit object-fit--cover object-fit--absolute', loading: loading_attr, widths: '675, 1350', sizes: '(max-width: 767px) 675vw, 1350vw' }}
+      {%- else -%}
+        {{- 'product-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+    {%- endif -%}
+    <span class="visually-hidden">
+      {{- 'figure_box.image_alt' | t -}}
+    </span>
+  </a>
+</div>

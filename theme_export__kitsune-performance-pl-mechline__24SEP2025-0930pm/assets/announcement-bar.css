@@ -1,0 +1,74 @@
+.announcement-bar{
+  --section-padding-top: 12px;
+  --section-padding-bottom: 13px;
+}
+
+.announcement-bar .container-fluid{
+  --cp-spacer-left: 0;
+  --cp-spacer-right: 0;
+}
+
+.announcement-bar_text{
+  font-size: 1.2rem;
+  line-height: 1.8rem;
+}
+
+.announcement-bar_separator{
+  line-height: 0;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.announcement-bar_separator .separator-icon,
+.announcement-bar_marquee-col .separator-icon_placeholder{
+  width: 20px;
+  height: 20px;
+}
+
+.announcement-bar_marquee-col .separator-icon{
+  padding-left: 30px;
+  padding-right: 30px;
+}
+.announcement-bar_marquee-col .separator-icon_placeholder {
+  margin-left: 30px;
+  margin-right: 30px;
+}
+
+.announcement-bar_marquee-col .separator-icon{
+  display: flex;
+  align-items: center;
+}
+
+.announcement-bar_marquee-col .separator-icon_placeholder{
+  position: relative;
+}
+
+.announcement-bar_marquee-col{
+  display: flex;
+  align-items: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.announcement-bar_text a{
+  --outline-offset: 1px;
+}
+
+.announcement-bar--bdr-bottom{
+  border-bottom: 1px solid var(--section-border-color);
+}
+
+.marquee-component--gap{
+  gap: 100px;
+}
+
+.marquee-component--gap .announcement-bar_marquee-col{
+  display: block;
+}
+
+@media (min-width: 992px){
+  .announcement-bar_separator{
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+}

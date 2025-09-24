@@ -1,0 +1,72 @@
+{%- comment -%}
+  renders product card
+  usage
+    {%- render 'product-card', product: product, prefix_class: section_prefix_class -%}
+{%- endcomment -%}
+{%- liquid
+  if product.selected_or_first_available_variant.featured_media != null
+    assign media = product.selected_or_first_available_variant.featured_media
+    
+    else
+      for media in product.media
+        assign media = media
+        break
+      endfor
+  endif
+
+  capture loading_attr
+    if section.index > 1
+      echo 'lazy'
+      else
+        echo 'eager'
+    endif
+  endcapture
+
+  if media != blank
+    capture image_alt
+      echo media.preview_image.alt | default: product.title
+    endcapture
+  endif
+
+  capture height_ratio
+    assign case_var = section.settings.card_media_size
+    case case_var
+      when 'small'
+        echo '0.8'
+      when 'medium'
+        echo '0.6'
+      when 'large'
+        echo '0.4'
+    endcase
+  endcapture
+-%}
+<a
+  href="{{- product.url -}}"
+  class="{{ prefix_class }}_product-card product-card --align-left"
+>
+  {%- if media != null -%}
+    <div class="product-card_image --media-size-adapt" style="--media-ratio: {{ height_ratio }};">
+      {{- media.preview_image | image_url: width: 840 | image_tag: alt: image_alt, class: 'object-fit object-fit--cover object-fit--absolute', loading: loading_attr, widths: '540, 840', sizes: '(max-width: 767px) 540vw, 840vw' -}}
+    </div>
+    {%- else -%}
+      <div class="product-card_image --media-size-adapt" style="--media-ratio: {{ height_ratio }};">
+        {{- 'product-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+      </div>
+  {%- endif -%}
+  <div class="product-card_description">
+    <div class="product-card_align">
+      <h3 class="mty product-card_text product-card_heading text-size--{{ section.settings.card_text_size }}">{{- product.title -}}</h3>
+      {%- if section.settings.show_vendor -%}
+        <h4 class="mty product-card_text product-card_category text-size--small">{{- product.vendor -}}</h4>
+      {%- endif -%}
+      {%- if section.settings.card_show_price -%}
+        <h5 class="mty product-card_text product-card_price">
+          <strong class="product-card_price-title text-size--medium">{{- 'product.price' | t -}}:</strong>
+          <strong class="product-card_price-description">
+            {%- render 'product-price', product: product, prefix_class: section_prefix_class, price_tag: true -%}
+          </strong>
+        </h5>
+      {%- endif -%}
+    </div>
+  </div>
+</a>

@@ -1,0 +1,57 @@
+{%- comment -%}
+  renders article/blog card placeholder on section templates
+  usage
+    {%- render 'mega-collection-card-placeholder', index: forloop.index -%}
+{%- endcomment -%}
+<div class="mega-menu_collection-card">
+  <strong id="collection-link-{{- index -}}-heading-2nd-level" class="visually-hidden">{{- 'collection.title' | t -}}</strong>
+  <dropdown-component
+    data-dropdown-level="2"
+    data-desktop-hidden="wide"
+  >
+    <button
+      type="button"
+      class="dropdown-component_opener main-navigation_dropdown-link--level1 main-navigation_dropdown-link main-navigation_dropdown-link--opener --hidden-desktop"
+      aria-expanded="false"
+      aria-controls="collection-handle-{{- index -}}-2nd-level"
+      aria-describedby="collection-link-{{- index -}}-heading-2nd-level"
+    >
+      {{- 'collection.title' | t -}}
+      <i class="dropdown-component_opener-icn dropdown-component_opener--icn-open">
+        {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'plus' -%}
+      </i>
+      <i class="dropdown-component_opener-icn dropdown-component_opener--icn-close">
+        {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
+      </i>
+    </button>
+    <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level2 main-navigation_dropdown--inner-wrapper" id="collection-handle-{{- index -}}-2nd-level">
+      <div class="top-wrap">
+        <a aria-disabled="true" class="mega-menu_collection-card-image --media-size-square">
+          {{- 'collection-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+        </a>
+        <strong class="mega-menu_collection-card-title">
+          <a aria-disabled="true">
+            {{- 'collection.title' | t -}}
+          </a>
+        </strong>
+        <ul class="list-unstyled mega-menu_inner-list">
+          {%- for item in (1..4) -%}
+            <li class="mega-menu_inner-list-item">
+              <a aria-disabled="true" class="mega-menu_inner-list-link">
+                {{- 'product.title' | t -}}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="mega-menu_details-button bottom-wrap">
+        <a aria-disabled="true" class="mega-menu_details-link">
+          {%- liquid
+            echo 'mega_menu.link_more' | t
+            render 'icons-data', width: 13, height: 13, use_icon: true, icon_reference: 'arrow-pointer'
+          -%}
+        </a>
+      </div>
+    </div>
+  </dropdown-component>
+</div>

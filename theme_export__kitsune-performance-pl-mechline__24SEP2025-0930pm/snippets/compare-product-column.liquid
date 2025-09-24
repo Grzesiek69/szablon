@@ -1,0 +1,153 @@
+{%- liquid
+  if product.selected_or_first_available_variant.featured_media != null
+    assign media = product.selected_or_first_available_variant.featured_media
+    else
+      for media in product.media
+        assign media = media
+        break
+      endfor
+  endif
+
+  if media != blank
+    capture image_alt
+      echo media.preview_image.alt | default: product.title
+    endcapture
+  endif
+
+  capture product_clean_url
+    if product.url contains '?'
+      assign parts = product.url | split: '?'
+      echo parts[0]
+      else
+        echo product.url
+    endif
+  endcapture
+-%}
+<div class="compare-grid_col" data-compare-grid-col="">
+  <article class="compare-column">
+    <header class="compare-column_top-wrap">
+      <a href="{{- product_clean_url -}}" class="compare-column_image --media-size-adapt" style="--media-ratio: 1.6;">
+        {%- if media != null -%}
+          {{- media.preview_image | image_url: width: 840 | image_tag: alt: image_alt, class: 'object-fit object-fit--absolute', loading: 'eager', widths: '540, 840', sizes: '(max-width: 767px) 540vw, 840vw' -}}
+          {%- else -%}
+            {{- 'product-apparel-1' | placeholder_svg_tag: 'object-fit object-fit--absolute' -}}
+        {%- endif -%}
+        <span class="visually-hidden">{{- product.title -}}</span>
+      </a>
+      {%- if product.vendor != blank -%}
+        <strong class="mty compare-column_text compare-column_text--vendor --word-break">
+          {{- product.vendor -}}
+        </strong>
+      {%- endif -%}
+      <strong class="h4 mty compare-column_heading --word-break" role="heading" aria-level="2">
+        <a href="{{- product_clean_url -}}" class="--hover-underline">
+          {{- product.title -}}
+        </a>
+      </strong>
+    </header>
+    <div class="compare-column_row compare-column_row--price">
+      <strong class="compare-column_key-title">
+        {{- 'accessibility.compare.price' | t -}}
+      </strong>
+      <div class="compare-column_key-description">
+        {%- render 'product-price', product: product, use_variant: false, show_unit_price: true -%}
+      </div>
+    </div>
+    <div class="compare-column_row compare-column_row--stock">
+      <strong class="compare-column_key-title">
+        {{- 'accessibility.compare.stock' | t -}}
+      </strong>
+      <div class="compare-column_key-description">
+        {%- render 'product-stock', product: product, on_compare: true -%}
+      </div>
+    </div>
+    <div class="compare-column_row compare-column_row--variation">
+      <strong class="compare-column_key-title">
+        {{- 'accessibility.compare.variation' | t -}}
+      </strong>
+      <div class="compare-column_key-description">
+        {%- liquid
+          unless product.has_only_default_variant
+            render 'product-variant-count', product: product, prefix_class: 'compare-column'
+            else
+              echo 'accessibility.compare.nil' | t
+          endunless
+        -%}
+      </div>
+    </div>
+    <div class="compare-column_row compare-column_row--type">
+      <strong class="compare-column_key-title">
+        {{- 'accessibility.compare.type' | t -}}
+      </strong>
+      <div class="compare-column_key-description">
+        <strong class="compare-column_key-value">
+          {%- liquid
+            if product.type != blank
+              echo product.type
+              else
+                echo 'accessibility.compare.nil' | t
+            endif
+          -%}
+        </strong>
+      </div>
+    </div>
+    <div class="compare-column_row compare-column_row--rating">
+      <strong class="compare-column_key-title">
+        {{- 'accessibility.compare.rating' | t -}}
+      </strong>
+      <div class="compare-column_key-description">
+        {%- render 'product-rating', product: product, on_compare: true -%}
+      </div>
+    </div>
+    <div class="compare-column_row compare-column_row--sku">
+      <strong class="compare-column_key-title">
+        {{- 'accessibility.compare.sku' | t -}}
+      </strong>
+      <div class="compare-column_key-description">
+        <strong class="compare-column_key-value --word-break">
+          {%- liquid
+            if product.selected_or_first_available_variant.sku != blank
+              echo product.selected_or_first_available_variant.sku
+              else
+                echo 'accessibility.compare.nil' | t
+            endif
+          -%}
+        </strong>
+      </div>
+    </div>
+    <div class="compare-column_row compare-column_row--installment">
+      <strong class="compare-column_key-title">
+        {{- 'accessibility.compare.on_installment' | t -}}
+      </strong>
+      <div class="compare-column_key-description">
+        <strong class="compare-column_key-value">
+          {%- liquid
+            unless product.requires_selling_plan
+              echo 'accessibility.compare.installment_available' | t
+              else
+                echo 'accessibility.compare.installment_not_available' | t
+            endunless
+          -%}
+        </strong>
+      </div>
+    </div>
+    <footer class="compare-column_bottom-wrap">
+      <a href="{{- product_clean_url -}}" class="button button--{{ settings.compare_button_style }} compare-column_btn compare-column_btn--view">
+        {{- 'accessibility.compare.view' | t -}}
+      </a>
+      <compare-togller-button
+        data-handle="{{- product.handle -}}"
+        data-active="true"
+      >
+        <button type="button" class="button button--link compare-column_btn--remove --hover-underline">
+          <span aria-hidden="true">
+            {{- 'accessibility.compare.remove' | t -}}
+          </span>
+          <span class="visually-hidden">
+            {{- 'product.remove_from_compare' | t: product_title: product.title -}}
+          </span>
+        </button>
+      </compare-togller-button>
+    </footer>
+  </article>
+</div>

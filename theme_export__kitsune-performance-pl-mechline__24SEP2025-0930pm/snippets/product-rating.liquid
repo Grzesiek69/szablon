@@ -1,0 +1,51 @@
+{%- comment -%}
+  renders product saving text badge
+  usage
+    {%- render 'product-rating', product: product, show_details: false -%}
+{%- endcomment -%}
+
+{%- liquid
+  assign rating_value = product.metafields.reviews.rating.value.rating
+  assign rating_count = product.metafields.reviews.rating_count
+
+  # Fallback when no product or no rating
+  if rating_value == blank or rating_value == 0
+    assign rating_value = 4.5
+    assign rating_count = 99
+  endif
+
+  assign rating_actual = rating_value | round | plus: 0
+  assign rating_decimal = 0
+  assign decimal = rating_value | modulo: 1
+  if decimal >= 0.3 and decimal <= 0.7
+    assign rating_decimal = 0.5
+  elsif decimal > 0.7
+    assign rating_decimal = 1
+  endif
+-%}
+
+{%- if on_compare -%}
+  <div class="product_rating-tag --word-break">
+    <strong>
+      <i class="product_rating-star">
+        {%- render 'icons-data', width: 12, height: 12, use_icon: true, icon_reference: 'star' -%}
+      </i>
+      {{- rating_value | round: 1 }}
+      <span class="{% unless show_details %}visually-hidden{% endunless %}">
+        ({{ rating_count }} {{ 'accessibility.total_reviews' | t }})
+      </span>
+    </strong>
+  </div>
+{%- else -%}
+  <div class="product_rating-tag --word-break">
+    <strong>
+      <i class="product_rating-star">
+        {%- render 'icons-data', width: 12, height: 12, use_icon: true, icon_reference: 'star' -%}
+      </i>
+      {{- rating_value | round: 1 }}
+      <span class="{% unless show_details %}visually-hidden{% endunless %}">
+        ({{ rating_count }} {{ 'accessibility.total_reviews' | t }})
+      </span>
+    </strong>
+  </div>
+{%- endif -%}

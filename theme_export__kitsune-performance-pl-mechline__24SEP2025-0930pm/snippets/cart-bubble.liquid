@@ -1,0 +1,28 @@
+{%- comment -%}
+  renders cart icon bubble counter
+  usage
+    {%- render 'cart-bubble', prefix_class: 'section_prefix_class' -%}
+{%- endcomment -%}
+{%- liquid
+  capture cart_text
+    if cart.item_count == 0
+      echo 'cart.bubble.zero' | t: count: cart.item_count
+      elsif cart.item_count == 1
+        echo 'cart.bubble.one' | t: count: cart.item_count
+      else
+        echo 'cart.bubble.other' | t: count: cart.item_count
+    endif
+  endcapture
+-%}
+
+<span data-cart-bubble="">
+  <i class="btn-icn-ixi_wrapper">
+    {%- render 'icons-data', width: 18, height: 18, use_icon: true, icon_reference: 'cart' -%}
+    {%- unless cart == empty -%}
+      <span class="cart-bubble" aria-hidden="true">{{- cart.item_count -}}</span>
+    {%- endunless -%}
+    <span class="visually-hidden">
+      {{- cart_text -}}
+    </span>
+  </i>
+</span>

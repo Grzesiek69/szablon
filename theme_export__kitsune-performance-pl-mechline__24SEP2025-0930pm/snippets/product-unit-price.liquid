@@ -1,0 +1,28 @@
+{%- comment -%}
+  renders product saving text badge
+  usage
+    {%- render 'product-unit-price', product: product -%}
+{%- endcomment -%}
+
+<span class="product-unit-price --word-break">
+  {%- unless product.selected_or_first_available_variant.unit_price_measurement == nil -%}
+    {%- comment -%} Unit price {%- endcomment -%}
+    <span class="visually-hidden">
+      {{ 'product.price_from.unit_price' | t }}
+    </span>
+    <span class="unit-price">
+      {%- comment -%} Price {%- endcomment -%}
+      <span>{{- product.selected_or_first_available_variant.unit_price | money -}}</span>
+      {%- comment -%} Separator {%- endcomment -%}
+      <span aria-hidden="true">/</span>
+      <span class="visually-hidden">&nbsp;{{- 'product.unit_price_separator' | t -}}&nbsp;</span>
+      {%- comment -%} Unit {%- endcomment -%}
+      <span>
+        {%- if product.selected_or_first_available_variant.unit_price_measurement.reference_value != 1 -%}
+          {{- product.selected_or_first_available_variant.unit_price_measurement.reference_value -}}
+        {%- endif -%}
+        {{- product.selected_or_first_available_variant.unit_price_measurement.reference_unit -}}
+      </span>
+    </span>
+  {%- endunless -%}
+</span>

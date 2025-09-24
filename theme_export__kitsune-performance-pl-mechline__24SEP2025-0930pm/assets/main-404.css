@@ -1,0 +1,24 @@
+.main-404_heading{
+  --headings-font-weight: 700;
+  --heading-size-factor: 1.5;
+  display: block;
+  text-shadow: 3px 5px 0 var(--section-secondary-border-color);
+}
+
+.main-404_heading img{
+  vertical-align: top;
+}
+
+.main-404_description{
+  --mt-top: 26px;
+}
+
+.main-404_foot{
+  --mt-top: 40px;
+}
+
+.main-404_btn-wrapper {
+  --mt-top: 26px;
+  display: flex;
+  flex-wrap: wrap;
+}
