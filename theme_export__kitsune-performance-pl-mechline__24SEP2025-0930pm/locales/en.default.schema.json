@@ -1866,6 +1866,10 @@
               "label": "Menu item label",
               "info": "Enter the exact label from navigation, such as 'Home' or 'Contact'; it is case-sensitive and space-sensitive."
             },
+            "menu_handle": {
+              "label": "Menu item handle (optional)",
+              "info": "Provide the navigation item handle when it differs from the label. Leave empty to match by label."
+            },
             "banners": {
               "info": "For best results, use an image with a 5:7 aspect ratio. [Learn more](https:\/\/help.shopify.com\/manual\/shopify-admin\/productivity-tools\/image-editor#understanding-image-aspect-ratio)",
               "first": {
@@ -1883,6 +1887,10 @@
             "item": {
               "label": "Menu item label",
               "info": "Enter the exact label from navigation, such as 'Home' or 'Contact'; it is case-sensitive and space-sensitive."
+            },
+            "menu_handle": {
+              "label": "Menu item handle (optional)",
+              "info": "Provide the navigation item handle when it differs from the label. Leave empty to match by label."
             }
           }
         }
