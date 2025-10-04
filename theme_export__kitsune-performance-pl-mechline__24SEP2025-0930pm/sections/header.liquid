@@ -104,27 +104,26 @@
     endif
   endcapture
 
-  capture mega_titles
-    assign mega_titles_arr = ''
-    for block in section.blocks
-      assign block_handle_source = block.settings.menu_handle | default: block.settings.heading
-      if block_handle_source != blank
-        assign block_handle = block_handle_source | handle
-        assign mega_titles_arr = mega_titles_arr | append: block_handle
-        assign mega_titles_arr = mega_titles_arr | append: ','
-      endif
-    endfor
-    if mega_titles_arr != ''
-      assign final_string = mega_titles_arr | remove_last: ','
-      assign myArr = final_string | split: ','
-      echo myArr
+  assign mega_handles = ''
+  for block in section.blocks
+    assign block_handle_setting = block.settings.menu_handle | strip
+    assign block_heading = block.settings.heading | strip
+    assign block_handle_source = block_handle_setting
+    if block_handle_source == blank
+      assign block_handle_source = block_heading
     endif
-  endcapture
--%}
+    if block_handle_source != blank
+      assign block_handle = block_handle_source | handle
+      assign mega_handles = mega_handles | append: ',' | append: block_handle
+    endif
+  endfor
+  if mega_handles != ''
+    assign mega_handles = mega_handles | append: ','
+  endif
 {%- if on_dropdown_css == 'true' -%}
   {{- 'component-nav-dropdown.css' | asset_url | stylesheet_tag -}}
 {%- endif -%}
-{%- if mega_titles != blank -%}
+{%- if mega_handles != blank -%}
   {{- 'component-mega-dropdown.css' | asset_url | stylesheet_tag -}}
 {%- endif -%}
 {%- style -%}
@@ -202,16 +201,22 @@
                             {%- liquid
                               assign link_title = link.title | escape
                               assign dropdown_link_title = 'navigation.dropdown_link' | t: link: link.title | escape
-                              assign link_handle = link.title | handle
+                              assign link_handle = link.handle | default: link.title | handle
+                              assign link_token = ',' | append: link_handle | append: ','
                             -%}
                             {%- if link.links != blank -%}
                               {%- if section.blocks.size > 0 -%}
-                                {%- unless mega_titles contains link_handle -%}
+                                {%- unless mega_handles contains link_token -%}
                                   {%- render 'menu-dropdown', link: link, link_title: link_title, index: forloop.index, dropdown_link_title: dropdown_link_title, link_handle: link_handle -%}
                                   {%- else -%}
                                     {%- liquid
                                       for block in section.blocks
-                                        assign block_handle_source = block.settings.menu_handle | default: block.settings.heading
+                                        assign block_handle_setting = block.settings.menu_handle | strip
+                                        assign block_heading = block.settings.heading | strip
+                                        assign block_handle_source = block_handle_setting
+                                        if block_handle_source == blank
+                                          assign block_handle_source = block_heading
+                                        endif
                                         assign mega_title = block_handle_source | handle
                                         case block.type
                                           when 'mega_menu_banner' and link_handle == mega_title
@@ -505,16 +510,22 @@
                             {%- liquid
                               assign link_title = link.title | escape
                               assign dropdown_link_title = 'navigation.dropdown_link' | t: link: link.title | escape
-                              assign link_handle = link.title | handle
+                              assign link_handle = link.handle | default: link.title | handle
+                              assign link_token = ',' | append: link_handle | append: ','
                             -%}
                             {%- if link.links != blank -%}
                               {%- if section.blocks.size > 0 -%}
-                                {%- unless mega_titles contains link_handle -%}
+                                {%- unless mega_handles contains link_token -%}
                                   {%- render 'menu-dropdown', link: link, link_title: link_title, index: forloop.index, dropdown_link_title: dropdown_link_title, link_handle: link_handle -%}
                                   {%- else -%}
                                     {%- liquid
                                       for block in section.blocks
-                                        assign block_handle_source = block.settings.menu_handle | default: block.settings.heading
+                                        assign block_handle_setting = block.settings.menu_handle | strip
+                                        assign block_heading = block.settings.heading | strip
+                                        assign block_handle_source = block_handle_setting
+                                        if block_handle_source == blank
+                                          assign block_handle_source = block_heading
+                                        endif
                                         assign mega_title = block_handle_source | handle
                                         case block.type
                                           when 'mega_menu_banner' and link_handle == mega_title
