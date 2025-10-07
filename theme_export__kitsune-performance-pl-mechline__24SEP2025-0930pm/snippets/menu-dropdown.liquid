@@ -12,12 +12,16 @@
       aria-expanded="false"
       aria-controls="{{- link_handle -}}-{{- index -}}-1st-level"
       aria-describedby="{{- link_handle -}}-{{- index -}}-heading-1st-level"
-      data-level="0"
+      data-level="1"
     >
       {{- link_title -}}
       {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'chevron-arrow' -%}
     </button>
-    <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level1 main-navigation_dropdown--inner-wrapper" id="{{- link_handle -}}-{{- index -}}-1st-level">
+    <div
+      class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level1 main-navigation_dropdown--inner-wrapper"
+      id="{{- link_handle -}}-{{- index -}}-1st-level"
+      tabindex="-1"
+    >
       <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--simple main-navigation_dropdown-list--level1">
         {%- for childlink in link.links -%}
           {%- liquid
@@ -39,7 +43,7 @@
                   aria-expanded="false"
                   aria-controls="{{- child_controls_id -}}"
                   aria-describedby="{{- child_heading_id -}}"
-                  data-level="1"
+                  data-level="2"
                 >
                   {{- child_title -}}
                   <i class="dropdown-component_opener-icn dropdown-component_opener--icn-open">
@@ -49,7 +53,11 @@
                     {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
                   </i>
                 </button>
-                <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level2 main-navigation_dropdown--inner-wrapper" id="{{- child_controls_id -}}">
+                <div
+                  class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level2 main-navigation_dropdown--inner-wrapper"
+                  id="{{- child_controls_id -}}"
+                  tabindex="-1"
+                >
                   <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--inner main-navigation_dropdown-list--level2">
                     {%- for grandchildlink in childlink.links -%}
                       {%- liquid
@@ -71,7 +79,7 @@
                               aria-expanded="false"
                               aria-controls="{{- grandchild_controls_id -}}"
                               aria-describedby="{{- grandchild_heading_id -}}"
-                              data-level="2"
+                              data-level="3"
                             >
                               {{- grandchild_title -}}
                               <i class="dropdown-component_opener-icn dropdown-component_opener--icn-open">
@@ -81,7 +89,11 @@
                                 {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
                               </i>
                             </button>
-                            <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level3 main-navigation_dropdown--inner-wrapper" id="{{- grandchild_controls_id -}}">
+                            <div
+                              class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level3 main-navigation_dropdown--inner-wrapper"
+                              id="{{- grandchild_controls_id -}}"
+                              tabindex="-1"
+                            >
                               <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--inner main-navigation_dropdown-list--level3">
                                 {%- for greatgrandchildlink in grandchildlink.links -%}
                                   {%- liquid
@@ -103,7 +115,7 @@
                                           aria-expanded="false"
                                           aria-controls="{{- greatgrandchild_controls_id -}}"
                                           aria-describedby="{{- greatgrandchild_heading_id -}}"
-                                          data-level="3"
+                                          data-level="4"
                                         >
                                           {{- greatgrandchild_title -}}
                                           <i class="dropdown-component_opener-icn dropdown-component_opener--icn-open">
@@ -113,7 +125,11 @@
                                             {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
                                           </i>
                                         </button>
-                                        <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level4 main-navigation_dropdown--inner-wrapper" id="{{- greatgrandchild_controls_id -}}">
+                                        <div
+                                          class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level4 main-navigation_dropdown--inner-wrapper"
+                                          id="{{- greatgrandchild_controls_id -}}"
+                                          tabindex="-1"
+                                        >
                                           <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--inner main-navigation_dropdown-list--level4">
                                             {%- for greatgreatgrandchildlink in greatgrandchildlink.links -%}
                                               <li class="main-navigation_dropdown-item">

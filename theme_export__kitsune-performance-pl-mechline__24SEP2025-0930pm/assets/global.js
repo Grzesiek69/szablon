@@ -732,8 +732,12 @@ if (!customElements.get('dropdown-component')) {
       this.setIndexing(false, focusables);
     }
 
-    toggleDropdown(event){
-      if(event.target.getAttribute('aria-expanded') === 'true') return this.close();
+    toggleDropdown(){
+      const isExpanded = this.button.getAttribute('aria-expanded') === 'true';
+      if(isExpanded) {
+        this.close();
+        return;
+      }
       this.open();
     }
 
