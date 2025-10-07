@@ -1,5 +1,5 @@
 {%- comment -%}
-  renders mega menu banner on main navigation dropdown item
+  Renders multi-level dropdown menu items with support up to four levels.
   usage
     {%- render 'menu-dropdown', link: link, link_title: link_title, index: forloop.index, dropdown_link_title: dropdown_link_title, link_handle: link_handle -%}
 {%- endcomment -%}
@@ -12,53 +12,179 @@
       aria-expanded="false"
       aria-controls="{{- link_handle -}}-{{- index -}}-1st-level"
       aria-describedby="{{- link_handle -}}-{{- index -}}-heading-1st-level"
+      data-level="1"
     >
       {{- link_title -}}
       {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'chevron-arrow' -%}
     </button>
-    <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level1 main-navigation_dropdown--inner-wrapper" id="{{- link_handle -}}-{{- index -}}-1st-level">
-      <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--simple">
+    <div
+      class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level1 main-navigation_dropdown--inner-wrapper"
+      id="{{- link_handle -}}-{{- index -}}-1st-level"
+      tabindex="-1"
+    >
+      <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--simple main-navigation_dropdown-list--level1">
         {%- for childlink in link.links -%}
-          <li class="main-navigation_dropdown-item {% unless childlink.links == blank %}--has-dropdown{% endunless %}">
-            {%- if childlink.links == blank -%}
-              <a class="main-navigation_dropdown-link main-navigation_dropdown-link--level1 main-navigation_no-dropdown-link {% if childlink.current %}main-navigation_link--active{% endif %}" href="{{- childlink.url -}}" {% if childlink.current %}aria-current="{{- 'navigation.current_page_label' | t -}}"{% endif %}>
-                {{- childlink.title | escape -}}
-              </a>
-              {%- else -%}
-                {%- liquid
-                  assign link_title = childlink.title | escape
-                  assign dropdown_link_title = 'navigation.dropdown_link' | t: link: childlink.title | escape
-                  assign link_handle = childlink.title | handle
-                -%}
-                <strong id="{{- link_handle -}}-{{- forloop.index -}}-heading-2nd-level" class="visually-hidden">{{- dropdown_link_title -}}</strong>
-                <dropdown-component data-dropdown-level="2">
-                  <button
-                    type="button"
-                    class="dropdown-component_opener main-navigation_dropdown-link--level1 main-navigation_dropdown-link main-navigation_dropdown-link--opener"
-                    aria-expanded="false"
-                    aria-controls="{{- link_handle -}}-{{- forloop.index -}}-2nd-level"
-                    aria-describedby="{{- link_handle -}}-{{- forloop.index -}}-heading-2nd-level"
-                  >
-                    {{- link_title -}}
-                    <i class="dropdown-component_opener-icn dropdown-component_opener--icn-open">
-                      {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'plus' -%}
-                    </i>
-                    <i class="dropdown-component_opener-icn dropdown-component_opener--icn-close">
-                      {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
-                    </i>
-                  </button>
-                  <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level2 main-navigation_dropdown--inner-wrapper" id="{{- link_handle -}}-{{- forloop.index -}}-2nd-level">
-                    <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--inner">
-                      {%- for grandchildlink in childlink.links -%}
-                        <li class="main-navigation_dropdown-item">
-                          <a class="main-navigation_dropdown-link main-navigation_dropdown-link--level2 {% if grandchildlink.current %}main-navigation_link--active{% endif %}" href="{{- grandchildlink.url -}}" {% if grandchildlink.current %}aria-current="{{- 'navigation.current_page_label' | t -}}"{% endif %}>
-                            {{- grandchildlink.title | escape -}}
+          {%- liquid
+            assign child_title = childlink.title | escape
+            assign child_dropdown_title = 'navigation.dropdown_link' | t: link: childlink.title | escape
+            assign child_handle = childlink.title | handle
+            assign child_index = forloop.index
+            assign child_controls_id = link_handle | append: '-' | append: index | append: '-' | append: child_handle | append: '-' | append: child_index | append: '-2nd-level'
+            assign child_heading_id = child_controls_id | append: '-heading'
+            assign child_links_count = childlink.links | size
+          -%}
+          <li class="main-navigation_dropdown-item{% if child_links_count > 0 %} --has-dropdown{% endif %}">
+            {%- if child_links_count > 0 -%}
+              <strong id="{{- child_heading_id -}}" class="visually-hidden">{{- child_dropdown_title -}}</strong>
+              <dropdown-component data-dropdown-level="2">
+                <button
+                  type="button"
+                  class="dropdown-component_opener main-navigation_dropdown-link main-navigation_dropdown-link--level1 main-navigation_dropdown-link--opener"
+                  aria-expanded="false"
+                  aria-controls="{{- child_controls_id -}}"
+                  aria-describedby="{{- child_heading_id -}}"
+                  data-level="2"
+                >
+                  {{- child_title -}}
+                  <i class="dropdown-component_opener-icn dropdown-component_opener--icn-open">
+                    {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'plus' -%}
+                  </i>
+                  <i class="dropdown-component_opener-icn dropdown-component_opener--icn-close">
+                    {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
+                  </i>
+                </button>
+                <div
+                  class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level2 main-navigation_dropdown--inner-wrapper"
+                  id="{{- child_controls_id -}}"
+                  tabindex="-1"
+                >
+                  <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--inner main-navigation_dropdown-list--level2">
+                    {%- for grandchildlink in childlink.links -%}
+                      {%- liquid
+                        assign grandchild_title = grandchildlink.title | escape
+                        assign grandchild_dropdown_title = 'navigation.dropdown_link' | t: link: grandchildlink.title | escape
+                        assign grandchild_handle = grandchildlink.title | handle
+                        assign grandchild_index = forloop.index
+                        assign grandchild_controls_id = child_controls_id | append: '-' | append: grandchild_handle | append: '-' | append: grandchild_index | append: '-3rd-level'
+                        assign grandchild_heading_id = grandchild_controls_id | append: '-heading'
+                        assign grandchild_links_count = grandchildlink.links | size
+                      -%}
+                      <li class="main-navigation_dropdown-item{% if grandchild_links_count > 0 %} --has-dropdown{% endif %}">
+                        {%- if grandchild_links_count > 0 -%}
+                          <strong id="{{- grandchild_heading_id -}}" class="visually-hidden">{{- grandchild_dropdown_title -}}</strong>
+                          <dropdown-component data-dropdown-level="3">
+                            <button
+                              type="button"
+                              class="dropdown-component_opener main-navigation_dropdown-link main-navigation_dropdown-link--level2 main-navigation_dropdown-link--opener"
+                              aria-expanded="false"
+                              aria-controls="{{- grandchild_controls_id -}}"
+                              aria-describedby="{{- grandchild_heading_id -}}"
+                              data-level="3"
+                            >
+                              {{- grandchild_title -}}
+                              <i class="dropdown-component_opener-icn dropdown-component_opener--icn-open">
+                                {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'plus' -%}
+                              </i>
+                              <i class="dropdown-component_opener-icn dropdown-component_opener--icn-close">
+                                {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
+                              </i>
+                            </button>
+                            <div
+                              class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level3 main-navigation_dropdown--inner-wrapper"
+                              id="{{- grandchild_controls_id -}}"
+                              tabindex="-1"
+                            >
+                              <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--inner main-navigation_dropdown-list--level3">
+                                {%- for greatgrandchildlink in grandchildlink.links -%}
+                                  {%- liquid
+                                    assign greatgrandchild_title = greatgrandchildlink.title | escape
+                                    assign greatgrandchild_dropdown_title = 'navigation.dropdown_link' | t: link: greatgrandchildlink.title | escape
+                                    assign greatgrandchild_handle = greatgrandchildlink.title | handle
+                                    assign greatgrandchild_index = forloop.index
+                                    assign greatgrandchild_controls_id = grandchild_controls_id | append: '-' | append: greatgrandchild_handle | append: '-' | append: greatgrandchild_index | append: '-4th-level'
+                                    assign greatgrandchild_heading_id = greatgrandchild_controls_id | append: '-heading'
+                                    assign greatgrandchild_links_count = greatgrandchildlink.links | size
+                                  -%}
+                                  <li class="main-navigation_dropdown-item{% if greatgrandchild_links_count > 0 %} --has-dropdown{% endif %}">
+                                    {%- if greatgrandchild_links_count > 0 -%}
+                                      <strong id="{{- greatgrandchild_heading_id -}}" class="visually-hidden">{{- greatgrandchild_dropdown_title -}}</strong>
+                                      <dropdown-component data-dropdown-level="4">
+                                        <button
+                                          type="button"
+                                          class="dropdown-component_opener main-navigation_dropdown-link main-navigation_dropdown-link--level3 main-navigation_dropdown-link--opener"
+                                          aria-expanded="false"
+                                          aria-controls="{{- greatgrandchild_controls_id -}}"
+                                          aria-describedby="{{- greatgrandchild_heading_id -}}"
+                                          data-level="4"
+                                        >
+                                          {{- greatgrandchild_title -}}
+                                          <i class="dropdown-component_opener-icn dropdown-component_opener--icn-open">
+                                            {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'plus' -%}
+                                          </i>
+                                          <i class="dropdown-component_opener-icn dropdown-component_opener--icn-close">
+                                            {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
+                                          </i>
+                                        </button>
+                                        <div
+                                          class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level4 main-navigation_dropdown--inner-wrapper"
+                                          id="{{- greatgrandchild_controls_id -}}"
+                                          tabindex="-1"
+                                        >
+                                          <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--inner main-navigation_dropdown-list--level4">
+                                            {%- for greatgreatgrandchildlink in greatgrandchildlink.links -%}
+                                              <li class="main-navigation_dropdown-item">
+                                                <a
+                                                  class="main-navigation_dropdown-link main-navigation_dropdown-link--level4{% if greatgreatgrandchildlink.current %} main-navigation_link--active{% endif %}"
+                                                  href="{{- greatgreatgrandchildlink.url -}}"
+                                                  data-level="4"
+                                                  {% if greatgreatgrandchildlink.current %}aria-current="{{- 'navigation.current_page_label' | t -}}"{% endif %}
+                                                >
+                                                  {{- greatgreatgrandchildlink.title | escape -}}
+                                                </a>
+                                              </li>
+                                            {%- endfor -%}
+                                          </ul>
+                                        </div>
+                                      </dropdown-component>
+                                    {%- else -%}
+                                      <a
+                                        class="main-navigation_dropdown-link main-navigation_dropdown-link--level3{% if greatgrandchildlink.current %} main-navigation_link--active{% endif %}"
+                                        href="{{- greatgrandchildlink.url -}}"
+                                        data-level="3"
+                                        {% if greatgrandchildlink.current %}aria-current="{{- 'navigation.current_page_label' | t -}}"{% endif %}
+                                      >
+                                        {{- greatgrandchild_title -}}
+                                      </a>
+                                    {%- endif -%}
+                                  </li>
+                                {%- endfor -%}
+                              </ul>
+                            </div>
+                          </dropdown-component>
+                        {%- else -%}
+                          <a
+                            class="main-navigation_dropdown-link main-navigation_dropdown-link--level2{% if grandchildlink.current %} main-navigation_link--active{% endif %}"
+                            href="{{- grandchildlink.url -}}"
+                            data-level="2"
+                            {% if grandchildlink.current %}aria-current="{{- 'navigation.current_page_label' | t -}}"{% endif %}
+                          >
+                            {{- grandchild_title -}}
                           </a>
-                        </li>
-                      {%- endfor -%}
-                    </ul>
-                  </div>
-                </dropdown-component>
+                        {%- endif -%}
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              </dropdown-component>
+            {%- else -%}
+              <a
+                class="main-navigation_dropdown-link main-navigation_dropdown-link--level1 main-navigation_no-dropdown-link{% if childlink.current %} main-navigation_link--active{% endif %}"
+                href="{{- childlink.url -}}"
+                data-level="1"
+                {% if childlink.current %}aria-current="{{- 'navigation.current_page_label' | t -}}"{% endif %}
+              >
+                {{- child_title -}}
+              </a>
             {%- endif -%}
           </li>
         {%- endfor -%}
