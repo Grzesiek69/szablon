@@ -31,10 +31,10 @@
             assign child_index = forloop.index
             assign child_controls_id = link_handle | append: '-' | append: index | append: '-' | append: child_handle | append: '-' | append: child_index | append: '-2nd-level'
             assign child_heading_id = child_controls_id | append: '-heading'
-            assign child_has_children = childlink.links != blank
+            assign child_links_count = childlink.links | size
           -%}
-          <li class="main-navigation_dropdown-item{% if child_has_children %} --has-dropdown{% endif %}">
-            {%- if child_has_children -%}
+          <li class="main-navigation_dropdown-item{% if child_links_count > 0 %} --has-dropdown{% endif %}">
+            {%- if child_links_count > 0 -%}
               <strong id="{{- child_heading_id -}}" class="visually-hidden">{{- child_dropdown_title -}}</strong>
               <dropdown-component data-dropdown-level="2">
                 <button
@@ -67,10 +67,10 @@
                         assign grandchild_index = forloop.index
                         assign grandchild_controls_id = child_controls_id | append: '-' | append: grandchild_handle | append: '-' | append: grandchild_index | append: '-3rd-level'
                         assign grandchild_heading_id = grandchild_controls_id | append: '-heading'
-                        assign grandchild_has_children = grandchildlink.links != blank
+                        assign grandchild_links_count = grandchildlink.links | size
                       -%}
-                      <li class="main-navigation_dropdown-item{% if grandchild_has_children %} --has-dropdown{% endif %}">
-                        {%- if grandchild_has_children -%}
+                      <li class="main-navigation_dropdown-item{% if grandchild_links_count > 0 %} --has-dropdown{% endif %}">
+                        {%- if grandchild_links_count > 0 -%}
                           <strong id="{{- grandchild_heading_id -}}" class="visually-hidden">{{- grandchild_dropdown_title -}}</strong>
                           <dropdown-component data-dropdown-level="3">
                             <button
@@ -103,10 +103,10 @@
                                     assign greatgrandchild_index = forloop.index
                                     assign greatgrandchild_controls_id = grandchild_controls_id | append: '-' | append: greatgrandchild_handle | append: '-' | append: greatgrandchild_index | append: '-4th-level'
                                     assign greatgrandchild_heading_id = greatgrandchild_controls_id | append: '-heading'
-                                    assign greatgrandchild_has_children = greatgrandchildlink.links != blank
+                                    assign greatgrandchild_links_count = greatgrandchildlink.links | size
                                   -%}
-                                  <li class="main-navigation_dropdown-item{% if greatgrandchild_has_children %} --has-dropdown{% endif %}">
-                                    {%- if greatgrandchild_has_children -%}
+                                  <li class="main-navigation_dropdown-item{% if greatgrandchild_links_count > 0 %} --has-dropdown{% endif %}">
+                                    {%- if greatgrandchild_links_count > 0 -%}
                                       <strong id="{{- greatgrandchild_heading_id -}}" class="visually-hidden">{{- greatgrandchild_dropdown_title -}}</strong>
                                       <dropdown-component data-dropdown-level="4">
                                         <button
