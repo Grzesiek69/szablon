@@ -1,5 +1,5 @@
 {%- comment -%}
-  renders mega menu banner on main navigation dropdown item
+  Renders multi-level dropdown menu items with support up to four levels.
   usage
     {%- render 'menu-dropdown', link: link, link_title: link_title, index: forloop.index, dropdown_link_title: dropdown_link_title, link_handle: link_handle -%}
 {%- endcomment -%}
@@ -12,55 +12,15 @@
       aria-expanded="false"
       aria-controls="{{- link_handle -}}-{{- index -}}-1st-level"
       aria-describedby="{{- link_handle -}}-{{- index -}}-heading-1st-level"
+      data-level="0"
     >
       {{- link_title -}}
       {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'chevron-arrow' -%}
     </button>
     <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level1 main-navigation_dropdown--inner-wrapper" id="{{- link_handle -}}-{{- index -}}-1st-level">
-      <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--simple">
+      <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--simple main-navigation_dropdown-list--level1">
         {%- for childlink in link.links -%}
-          <li class="main-navigation_dropdown-item {% unless childlink.links == blank %}--has-dropdown{% endunless %}">
-            {%- if childlink.links == blank -%}
-              <a class="main-navigation_dropdown-link main-navigation_dropdown-link--level1 main-navigation_no-dropdown-link {% if childlink.current %}main-navigation_link--active{% endif %}" href="{{- childlink.url -}}" {% if childlink.current %}aria-current="{{- 'navigation.current_page_label' | t -}}"{% endif %}>
-                {{- childlink.title | escape -}}
-              </a>
-              {%- else -%}
-                {%- liquid
-                  assign link_title = childlink.title | escape
-                  assign dropdown_link_title = 'navigation.dropdown_link' | t: link: childlink.title | escape
-                  assign link_handle = childlink.title | handle
-                -%}
-                <strong id="{{- link_handle -}}-{{- forloop.index -}}-heading-2nd-level" class="visually-hidden">{{- dropdown_link_title -}}</strong>
-                <dropdown-component data-dropdown-level="2">
-                  <button
-                    type="button"
-                    class="dropdown-component_opener main-navigation_dropdown-link--level1 main-navigation_dropdown-link main-navigation_dropdown-link--opener"
-                    aria-expanded="false"
-                    aria-controls="{{- link_handle -}}-{{- forloop.index -}}-2nd-level"
-                    aria-describedby="{{- link_handle -}}-{{- forloop.index -}}-heading-2nd-level"
-                  >
-                    {{- link_title -}}
-                    <i class="dropdown-component_opener-icn dropdown-component_opener--icn-open">
-                      {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'plus' -%}
-                    </i>
-                    <i class="dropdown-component_opener-icn dropdown-component_opener--icn-close">
-                      {%- render 'icons-data', width: 10, height: 10, use_icon: true, icon_reference: 'minus' -%}
-                    </i>
-                  </button>
-                  <div class="dropdown-component_wrapper main-navigation_dropdown-wrapper main-navigation_dropdown-wrapper--level2 main-navigation_dropdown--inner-wrapper" id="{{- link_handle -}}-{{- forloop.index -}}-2nd-level">
-                    <ul class="list-unstyled main-navigation_dropdown-list main-navigation_dropdown-list--inner">
-                      {%- for grandchildlink in childlink.links -%}
-                        <li class="main-navigation_dropdown-item">
-                          <a class="main-navigation_dropdown-link main-navigation_dropdown-link--level2 {% if grandchildlink.current %}main-navigation_link--active{% endif %}" href="{{- grandchildlink.url -}}" {% if grandchildlink.current %}aria-current="{{- 'navigation.current_page_label' | t -}}"{% endif %}>
-                            {{- grandchildlink.title | escape -}}
-                          </a>
-                        </li>
-                      {%- endfor -%}
-                    </ul>
-                  </div>
-                </dropdown-component>
-            {%- endif -%}
-          </li>
+          {%- render 'menu-dropdown-node', node: childlink, level: 1, path: link_handle, index: forloop.index -%}
         {%- endfor -%}
       </ul>
     </div>

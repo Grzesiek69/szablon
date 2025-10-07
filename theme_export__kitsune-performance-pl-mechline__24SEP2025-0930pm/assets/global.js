@@ -632,6 +632,10 @@ if (!customElements.get('dropdown-component')) {
       if(this.dataset.desktopHidden === 'wide' && screen.width > 991) return;
       this.button = this.querySelector('.dropdown-component_opener:not(.hidden)');
       this.content = this.querySelector('.dropdown-component_wrapper');
+      this.dropdownLevel = parseInt(this.dataset.dropdownLevel || '1');
+      if (isNaN(this.dropdownLevel) || this.dropdownLevel < 1) {
+        this.dropdownLevel = 1;
+      }
       this.onButtonClick = this.toggleDropdown.bind(this);
       this.shareEvent = this.copyToClipboard.bind(this);
       this.onButtonClose = this.close.bind(this);
@@ -692,7 +696,8 @@ if (!customElements.get('dropdown-component')) {
       this.button.setAttribute('aria-expanded', true);
       this.content.focus();
       this.content.classList.add('dropdown--open');
-      const focusables = this.dataset.dropdownLevel === '2' ? this.querySelectorAll('a[data-level="2"],button[data-level="2"]') : this.querySelectorAll('a[data-level="1"],button[data-level="1"]');
+      const focusSelector = `[data-level="${this.dropdownLevel}"]`;
+      const focusables = this.querySelectorAll(focusSelector);
       document.body.addEventListener('click', this.onBodyClick);
       this.addEventListener('keyup', this.onKeyUp);
       if(this.dataset.facets === 'true') this.closeButton.addEventListener('click', this.onButtonClose);
@@ -721,7 +726,8 @@ if (!customElements.get('dropdown-component')) {
         }
         this.toggleDetails();
       }
-      const focusables = this.dataset.dropdownLevel === '2' ? this.querySelectorAll('a[data-level="2"],button[data-level="2"]') : this.querySelectorAll('a[data-level="1"],button[data-level="1"]');
+      const focusSelector = `[data-level="${this.dropdownLevel}"]`;
+      const focusables = this.querySelectorAll(focusSelector);
       if(!focusables) return;
       this.setIndexing(false, focusables);
     }
@@ -736,7 +742,7 @@ if (!customElements.get('dropdown-component')) {
       if(this.contains(target) || target === this || target === this.button
         && this.button.getAttribute('aria-expanded') === 'true') return;
       
-      if(this.dataset.dropdownLevel === '2'){
+      if(this.dropdownLevel > 1){
         event.stopPropagation();
         this.close();
         return;
@@ -748,7 +754,7 @@ if (!customElements.get('dropdown-component')) {
     onKeyUp(event){
       if(event.code.toUpperCase() !== 'ESCAPE') return;
       
-      if(this.dataset.dropdownLevel === '2'){
+      if(this.dropdownLevel > 1){
         event.stopPropagation();
         this.close();
         return;
